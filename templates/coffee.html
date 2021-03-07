@@ -10,17 +10,19 @@
     </head>
     <div id="container-main" class="container">
         <h3>Hi</h3>
-        <h1>Stefan Hackenberg</h1>
-        <h4>ID</h4>
+        <h1>{{ user.prename }} {{ user.name }}</h1>
+        <h4>Tag 0x{{ user.tag.hex() }}</h4>
         <div id="container-btn" class="container">
-            <button id="btn-coffee-one" class="btn-coffee color-berry">
-                <div class="btn-coffee-icon fas fa-coffee"></div>
-                <h3 class="color-berry">Take one coffee</h3>
-            </button>
+            <form method="post">
+                <button type="submit" id="btn-coffee-one" class="btn-coffee color-berry" name="coffee" value="coffee">
+                    <div class="btn-coffee-icon fas fa-coffee"></div>
+                    <h3 class="color-berry">Take one coffee</h3>
+                </button>
+            </form>
         </div>
         <div id="container-info">
             <h2 class="inline">You had</h2>
-            <div class="coffee-number-badge">5</div>
+            <div class="coffee-number-badge">{{ user.coffees }}</div>
             <h2 class="inline">coffees.</h2>
         </div>
     </div>
