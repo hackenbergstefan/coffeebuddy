@@ -1,0 +1,52 @@
+:root {
+    --color-engineering-light: #e9e6e7;
+    --color-engineering: #928285;
+    --color-engineering-dark: #644f54;
+    --color-berry: #ab377a;
+}
+
+body {
+    color: var(--color-engineering-dark);
+    background-image: linear-gradient(45deg, var(--color-engineering-light), white 90%);
+}
+
+h1 {
+    font-size: 70px
+}
+
+#container-main {
+    margin: 50px;
+}
+
+#container-btn {
+    text-align: center;
+}
+
+.btn-coffee {
+    margin: 50px;
+    padding: 25px 40px 20px 40px;
+    border-radius: 15px;
+    background: none;
+    border: 1px solid var(--color-engineering);
+}
+
+.btn-coffee-icon {
+    font-size: 150px;
+}
+
+.color-berry {
+    color: var(--color-berry);
+}
+
+.inline {
+    display: inline-block;
+}
+
+.coffee-number-badge {
+    display: inline-block;
+    font-size: 50px;
+    padding: 0px 10px;
+    /* background: var(--color-engineering-dark); */
+    /* color: var(--color-engineering-light); */
+    /* border-radius: 5px; */
+}

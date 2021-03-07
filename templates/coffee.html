@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.4.1-dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.4.1-dist/css/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='coffeetag.css') }}">
+        <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap-3.4.1-dist/js/bootstrap.min.js') }}"></script>
+    </head>
+    <div id="container-main" class="container">
+        <h3>Hi</h3>
+        <h1>Stefan Hackenberg</h1>
+        <h4>ID</h4>
+        <div id="container-btn" class="container">
+            <button id="btn-coffee-one" class="btn-coffee color-berry">
+                <div class="btn-coffee-icon fas fa-coffee"></div>
+                <h3 class="color-berry">Take one coffee</h3>
+            </button>
+        </div>
+        <div id="container-info">
+            <h2 class="inline">You had</h2>
+            <div class="coffee-number-badge">5</div>
+            <h2 class="inline">coffees.</h2>
+        </div>
+    </div>
+</html>
