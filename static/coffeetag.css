@@ -5,6 +5,12 @@
     --color-berry: #ab377a;
 }
 
+html, body {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
 body {
     color: var(--color-engineering-dark);
     background-image: linear-gradient(45deg, var(--color-engineering-light), white 90%);
@@ -15,7 +21,7 @@ h1 {
 }
 
 #container-main {
-    margin: 50px;
+    margin: 20px 50px;
 }
 
 #container-btn {
@@ -23,7 +29,7 @@ h1 {
 }
 
 .btn-coffee {
-    margin: 50px;
+    margin: 10px 50px;
     padding: 25px 40px 20px 40px;
     border-radius: 15px;
     background: none;
