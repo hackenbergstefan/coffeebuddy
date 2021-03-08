@@ -22,4 +22,5 @@ class TestUsers(TestCoffeetag):
         self.app.db.commit()
         response = self.client.post('/coffee.html?tag=123', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(user.coffees, 1)
+        self.assertEqual(len(user.coffees), 1)
+        self.assertEqual(len(user.coffees_today()), 1)

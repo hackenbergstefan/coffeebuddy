@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,8 +10,10 @@ Base = None
 
 
 def init_db_develop():
-    from coffeetag.user import User
-    db_session.add(User(tag=b'5', name='Hackenberg', prename='Stefan', coffees=0))
+    from coffeetag.user import User, Drink
+    user = User(tag=b'5', name='Hackenberg', prename='Stefan')
+    db_session.add(user)
+    db_session.add(Drink(user=user))
     db_session.commit()
 
 
@@ -20,7 +24,7 @@ def init_db():
 
     from coffeetag import app
     if app.config['ENV'] == 'development' or app.testing:
-        engine = create_engine('sqlite://', connect_args={"check_same_thread": False}, poolclass=StaticPool)
+        engine = create_engine('sqlite://', connect_args={"check_same_thread": False}, poolclass=StaticPool, echo=True)
     else:
         engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
 
