@@ -9,14 +9,14 @@ class TestUsers(TestCoffeetag):
         self.assertEqual(response.status_code, 404)
 
     def test_existing_user(self):
-        from coffeetag.user import User
+        from coffeetag.model import User
         self.app.db.add(User(tag=b'123', name='Mustermann', prename='Max'))
         self.app.db.commit()
         response = self.client.get('/coffee.html?tag=123')
         self.assertEqual(response.status_code, 200)
 
     def test_drink_coffee(self):
-        from coffeetag.user import User
+        from coffeetag.model import User
         user = User(tag=b'123', name='Mustermann', prename='Max')
         self.app.db.add(user)
         self.app.db.commit()

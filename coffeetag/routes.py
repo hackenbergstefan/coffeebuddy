@@ -1,5 +1,5 @@
 from flask import url_for, render_template, request, abort
-from coffeetag.user import User, Drink
+from coffeetag.model import User, Drink
 from coffeetag import app
 
 

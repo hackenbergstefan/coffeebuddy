@@ -10,7 +10,7 @@ Base = None
 
 
 def init_db_develop():
-    from coffeetag.user import User, Drink
+    from coffeetag.model import User, Drink
     user = User(tag=b'5', name='Hackenberg', prename='Stefan')
     db_session.add(user)
     db_session.add(Drink(user=user))
@@ -33,7 +33,7 @@ def init_db():
     Base = declarative_base()
     Base.query = db_session.query_property()
 
-    import coffeetag.user
+    import coffeetag.model
     Base.metadata.create_all(bind=engine)
 
     if app.config['ENV'] == 'development':
