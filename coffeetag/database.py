@@ -14,7 +14,7 @@ def init_db():
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
-    import user
+    import coffeetag.user
     Base.metadata.create_all(bind=engine)
     # db_session.add(user.User(tag=b'5', name='Hackenberg', prename='Stefan', coffees=0))
     # db_session.commit()
