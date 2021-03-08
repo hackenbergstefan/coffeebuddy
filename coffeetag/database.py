@@ -1,20 +1,37 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.pool import StaticPool
 
-engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-Base = declarative_base()
-Base.query = db_session.query_property()
+db_session = None
+Base = None
+
+
+def init_db_develop():
+    from coffeetag.user import User
+    db_session.add(User(tag=b'5', name='Hackenberg', prename='Stefan', coffees=0))
+    db_session.commit()
 
 
 def init_db():
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
+    global db_session
+    if db_session is not None:
+        return db_session
+
+    from coffeetag import app
+    if app.config['ENV'] == 'development' or app.testing:
+        engine = create_engine('sqlite://', connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    else:
+        engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
+
+    db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+    global Base
+    Base = declarative_base()
+    Base.query = db_session.query_property()
+
     import coffeetag.user
     Base.metadata.create_all(bind=engine)
-    # db_session.add(user.User(tag=b'5', name='Hackenberg', prename='Stefan', coffees=0))
-    # db_session.commit()
+
+    if app.config['ENV'] == 'development':
+        init_db_develop()
+    return db_session
