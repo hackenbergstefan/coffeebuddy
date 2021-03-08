@@ -7,4 +7,4 @@ class User(Base):
     tag = Column(LargeBinary)
     name = Column(String(50))
     prename = Column(String(50))
-    coffees = Column(Integer)
+    coffees = Column(Integer, default=0)

@@ -15,7 +15,7 @@ def hello():
         return abort(404)
     if request.method == 'POST' and 'coffee' in request.form:
         user.coffees += 1
-        coffeetag.database.database.db_session.commit()
+        coffeetag.database.db_session.commit()
     return render_template('coffee.html', user=user)
 
 
