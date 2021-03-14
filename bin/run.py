@@ -6,5 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import coffeetag
 
 if __name__ == '__main__':
-    coffeetag.create_app()
+    app = coffeetag.create_app()
+    with app.app_context():
+        coffeetag.init_db(app)
     coffeetag.app.run()

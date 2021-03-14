@@ -1,4 +1,4 @@
-from flask import url_for, render_template, request, abort, g
+from flask import url_for, render_template, request, abort
 from coffeetag.model import User, Drink
 
 
@@ -9,6 +9,6 @@ def init_routes(app):
         if user is None:
             return abort(404)
         if request.method == 'POST' and 'coffee' in request.form:
-            g.db.session.add(Drink(user=user, price=app.config['PRICE']))
-            g.db.session.commit()
+            app.db.session.add(Drink(user=user, price=app.config['PRICE']))
+            app.db.session.commit()
         return render_template('coffee.html', user=user)
