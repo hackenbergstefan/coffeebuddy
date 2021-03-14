@@ -13,6 +13,7 @@ import coffeetag.routes
 def create_app(config):
     global app
     app = Flask('coffeetag')
+    app.config['PRICE'] = 30
     app.config.update(config)
     if app.config['ENV'] == 'development' or app.testing:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'

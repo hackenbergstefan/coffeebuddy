@@ -4,7 +4,7 @@ import unittest
 import flask
 
 import coffeetag
-from coffeetag.model import Drink, User
+from coffeetag.model import Drink, User, Pay
 from . import TestCoffeetag
 
 
@@ -28,7 +28,7 @@ class TestUsers(TestCoffeetag):
         response = self.client.post('/coffee.html?tag=123', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user1.coffees), 1)
-        self.assertEqual(len(user1.coffees_today()), 1)
+        self.assertEqual(len(user1.coffees_today), 1)
         response = self.client.post('/coffee.html?tag=345', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user2.coffees), 1)
@@ -40,10 +40,23 @@ class TestUsers(TestCoffeetag):
         self.db.session.add(user2)
         self.db.session.commit()
 
-        user1.coffees.append(Drink())
-        user1.coffees.append(Drink(timestamp=datetime.datetime.now() - datetime.timedelta(days=1)))
-        user2.coffees.append(Drink())
+        user1.coffees.append(Drink(price=30))
+        user1.coffees.append(Drink(price=30, timestamp=datetime.datetime.now() - datetime.timedelta(days=1)))
+        user2.coffees.append(Drink(price=30))
 
         self.assertEqual(len(user1.coffees), 2)
-        self.assertEqual(len(user1.coffees_today()), 2)
+        self.assertEqual(len(user1.coffees_today), 2)
         self.assertEqual(len(user2.coffees), 1)
+
+    def test_pay(self):
+        user = User(tag=b'123', name='Mustermann', prename='Max')
+        self.db.session.add(user)
+        self.db.session.commit()
+
+        user.coffees.append(Drink(price=30))
+        user.coffees.append(Drink(price=30))
+        user.coffees.append(Drink(price=30))
+        user.pays.append(Pay(amount=60))
+        self.db.session.commit()
+
+        self.assertEqual(user.unpayed, 30)
