@@ -10,5 +10,11 @@ class TestCoffeetag(unittest.TestCase):
         self.db = flask.g.db = coffeetag.init_db(self.app)
 
     def tearDown(self):
+        self.truncate_all()
         self.ctx.__exit__(None, None, None)
         self.client.__exit__(None, None, None)
+
+    def truncate_all(self):
+        for table in reversed(self.db.metadata.sorted_tables):
+            self.db.session.execute(table.delete())
+        self.db.session.commit()

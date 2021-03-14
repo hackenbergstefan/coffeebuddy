@@ -10,9 +10,9 @@ class User(db.Model):
     prename = db.Column(db.String(50))
 
     def coffees_today(self):
-        return Drink.query.join(User.coffees, aliased=True).filter(
+        return Drink.query.filter(
             self.id == Drink.userid and
-            db.DATE(Drink.timestamp) == datetime.date.today()
+            db.func.Date(Drink.timestamp) == datetime.date.today()
         ).all()
 
 

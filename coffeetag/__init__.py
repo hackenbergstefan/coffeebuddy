@@ -34,7 +34,6 @@ def init_db(app):
     coffeetag.routes.init_routes(app)
 
     if app.config['ENV'] == 'development' or app.testing:
-        db.drop_all()
         db.create_all()
 
     @app.context_processor
