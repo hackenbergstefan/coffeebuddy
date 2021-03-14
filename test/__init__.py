@@ -1,13 +1,14 @@
 import unittest
+import flask
 import coffeetag
 
 class TestCoffeetag(unittest.TestCase):
     def setUp(self):
-        coffeetag.app.testing = True
-        coffeetag.create_app()
-
-        self.app = coffeetag.app
+        self.app = coffeetag.create_app({'TESTING': True})
         self.client = self.app.test_client().__enter__()
+        self.ctx = self.app.app_context().__enter__()
+        self.db = flask.g.db = coffeetag.init_db(self.app)
 
     def tearDown(self):
+        self.ctx.__exit__(None, None, None)
         self.client.__exit__(None, None, None)

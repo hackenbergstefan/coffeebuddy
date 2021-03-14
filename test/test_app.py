@@ -1,5 +1,9 @@
 import unittest
 
+import flask
+
+import coffeetag
+from coffeetag.model import User
 from . import TestCoffeetag
 
 
@@ -9,18 +13,21 @@ class TestUsers(TestCoffeetag):
         self.assertEqual(response.status_code, 404)
 
     def test_existing_user(self):
-        from coffeetag.model import User
-        self.app.db.add(User(tag=b'123', name='Mustermann', prename='Max'))
-        self.app.db.commit()
+        self.db.session.add(User(tag=b'123', name='Mustermann', prename='Max'))
+        self.db.session.commit()
         response = self.client.get('/coffee.html?tag=123')
         self.assertEqual(response.status_code, 200)
 
     def test_drink_coffee(self):
-        from coffeetag.model import User
-        user = User(tag=b'123', name='Mustermann', prename='Max')
-        self.app.db.add(user)
-        self.app.db.commit()
+        user1 = User(tag=b'123', name='Mustermann', prename='Max')
+        user2 = User(tag=b'345', name='Doe', prename='Jane')
+        self.db.session.add(user1)
+        self.db.session.add(user2)
+        self.db.session.commit()
         response = self.client.post('/coffee.html?tag=123', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(user.coffees), 1)
-        self.assertEqual(len(user.coffees_today()), 1)
+        self.assertEqual(len(user1.coffees), 1)
+        self.assertEqual(len(user1.coffees_today()), 1)
+        response = self.client.post('/coffee.html?tag=345', data=dict(coffee='coffee'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(user2.coffees), 1)

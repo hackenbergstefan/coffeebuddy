@@ -1,24 +1,46 @@
-from flask import Flask
+import importlib
 
-app = Flask('coffeetag')
+from flask import Flask, g
+from flask_sqlalchemy import SQLAlchemy
 
+app = None
+db = SQLAlchemy()
 
-@app.context_processor
-def inject_globals():
-    return {
-        'len': len
-    }
-
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    app.db.remove()
+import coffeetag.model
+import coffeetag.routes
 
 
-def create_app():
-    # Import database
-    import coffeetag.database
-    app.db = coffeetag.database.init_db()
+def create_app(config):
+    global app
+    app = Flask('coffeetag')
+    app.config.update(config)
+    if app.config['ENV'] == 'development' or app.testing:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    # app.config['SQLALCHEMY_ECHO'] = True
 
-    # Import routes
-    import coffeetag.routes
+    @app.teardown_appcontext
+    def teardown_db(exception):
+        db = g.pop('db', None)
+        if db is not None:
+            db.session.close()
+
+    return app
+
+
+def init_db(app):
+    db.init_app(app)
+    coffeetag.routes.init_routes(app)
+
+    if app.config['ENV'] == 'development' or app.testing:
+        db.drop_all()
+        db.create_all()
+
+    @app.context_processor
+    def inject_globals():
+        return {
+            'len': len
+        }
+
+    return db

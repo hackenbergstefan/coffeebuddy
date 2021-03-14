@@ -1,30 +1,26 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, DateTime, cast, Date, func
-from sqlalchemy.orm import relationship
-from coffeetag.database import Base
+from coffeetag import db
 
 
-class User(Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    tag = Column(LargeBinary)
-    name = Column(String(50))
-    prename = Column(String(50))
-    coffees = relationship('Drink')
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.LargeBinary)
+    name = db.Column(db.String(50))
+    prename = db.Column(db.String(50))
 
     def coffees_today(self):
         return Drink.query.join(User.coffees, aliased=True).filter(
-            func.DATE(Drink.timestamp) == datetime.date.today()
+            self.id == Drink.userid and
+            db.DATE(Drink.timestamp) == datetime.date.today()
         ).all()
 
 
-class Drink(Base):
-    __tablename__ = 'drink'
-    id = Column(Integer, primary_key=True)
-    timestamp = Column(DateTime)
-    userid = Column(Integer, ForeignKey('user.id'))
-    user = relationship('User', back_populates='coffees')
+class Drink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime)
+    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('coffees', lazy=True))
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
