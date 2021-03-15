@@ -1,18 +1,68 @@
 <!doctype html>
+{% set coffee_state = {
+    0: 'fa-meh-blank',
+    1: 'fa-surprise',
+    2: 'fa-smile-wink',
+    3: 'fa-smile-beam',
+    4: 'fa-grin',
+    5: 'fa-grin-wink',
+    6: 'fa-grin-stars',
+    7: 'fa-grimace',
+} %}
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.4.1-dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.4.1-dist/css/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.6.0-dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='coffeetag.css') }}">
         <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bootstrap-3.4.1-dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
     </head>
-    <div id="container-main" class="container">
-        <h3>Hi</h3>
-        <h1>{{ user.prename }} {{ user.name }}</h1>
-        <h4>Tag 0x{{ user.tag.hex() }}</h4>
-        <div id="container-btn">
+    <body>
+        <div id="container-main-wrapper">
+            <div id="container-main">
+                <div class="coffeemeter-container">
+                    <div class="position-relative h-100">
+                        <div class="coffeemeter-title">
+                            COFFEEMETER
+                        </div>
+                        <div class="coffeemeter-tag">
+                            {{ len(user.coffees_today) }}
+                        </div>
+                        <div class="coffeemeter-baricon-container">
+                            <div class="coffeemeter-baricon-icon fas {{ coffee_state[min(len(coffee_state) - 1, len(user.coffees_today))] }}"
+                                 style="{{ 'color: var(--danger);' if len(user.coffees_today) >= len(coffee_state) }}">
+                            </div>
+                            <div class="coffeemeter-bar-container">
+                                <div class="coffeemeter-bar-bar"
+                                     style="height: {{ len(user.coffees_today) / len(coffee_state) * 100 | round }}%;
+                                            {{ 'background: var(--danger); color: white;' if len(user.coffees_today) >= len(coffee_state) }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="container-top">
+                    <h3>Hi</h3>
+                    <h1>{{ user.prename }} {{ user.name }}</h1>
+                    <h4>Tag 0x{{ user.tag.hex() }}</h4>
+                </div>
+
+                <div id="container-bottom">
+                    <div>
+                        <form method="post">
+                            <button type="submit" id="btn-pay" class="btn-pay" name="pay" value={{ config['PAY'] }}>
+                                <div class="btn-pay-icon fas fa-euro-sign"></div>
+                                <h4>I payed {{ config['PAY'] }} €</h4>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="mt-2">
+                        <h4>Your bill: {{ "%.2f €" | format(user.unpayed) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="btn-coffee-container">
             <form method="post">
                 <button type="submit" id="btn-coffee-one" class="btn-coffee color-berry" name="coffee" value="coffee">
                     <div class="btn-coffee-icon fas fa-coffee"></div>
@@ -20,15 +70,5 @@
                 </button>
             </form>
         </div>
-        <div id="container-info">
-            <h2 class="inline">You had</h2>
-            <div class="coffee-number-badge">{{ len(user.coffees) }}</div>
-            <h2 class="inline">coffees in total.</h2>
-        </div>
-        <div id="container-info">
-            <h2 class="inline">You had</h2>
-            <div class="coffee-number-badge">{{ len(user.coffees_today) }}</div>
-            <h2 class="inline">coffees today.</h2>
-        </div>
-    </div>
+    </body>
 </html>

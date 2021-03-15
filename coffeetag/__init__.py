@@ -13,7 +13,8 @@ import coffeetag.routes
 def create_app(config=None):
     global app
     app = Flask('coffeetag')
-    app.config['PRICE'] = 30
+    app.config['PRICE'] = 0.30
+    app.config['PAY'] = 10
     # app.config['SQLALCHEMY_ECHO'] = True
     if config:
         app.config.update(config)
@@ -42,7 +43,10 @@ def init_db(app):
     @app.context_processor
     def inject_globals():
         return {
-            'len': len
+            'len': len,
+            'round': round,
+            'max': max,
+            'min': min,
         }
 
     # Default database content
