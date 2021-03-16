@@ -1,2 +1,4 @@
 flask
 sqlalchemy
+flask-socketio
+pyscard

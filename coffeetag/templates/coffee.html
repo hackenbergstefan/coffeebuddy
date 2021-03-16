@@ -60,7 +60,7 @@
                 <div id="container-top">
                     <h3>Hi</h3>
                     <h1>{{ user.prename }} {{ user.name }}</h1>
-                    <h4>Tag 0x{{ user.tag.hex() }}</h4>
+                    <code class="h5">{{ hexstr(user.tag) }}</code>
                 </div>
 
                 <div id="container-bottom">

@@ -81,6 +81,10 @@ h1, h2, h3, h4, h5, h6, h7 {
     background-color: var(--color-engineering);
     border-color: var(--color-engineering-dark);
 }
+.btn-primary:hover {
+    background-color: var(--color-berry);
+    border-color: var(--color-engineering-dark);
+}
 
 #btn-coffee-container {
     position: absolute;

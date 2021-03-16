@@ -51,11 +51,12 @@ def init_db(app):
             'round': round,
             'max': max,
             'min': min,
+            'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data),
         }
 
     # Default database content
     if app.config['ENV'] == 'development':
-        db.session.add(coffeetag.model.User(tag=b'1', name='Mustermann', prename='Max'))
+        db.session.add(coffeetag.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
         db.session.commit()
 
     app.db = db

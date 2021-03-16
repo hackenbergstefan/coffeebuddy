@@ -21,6 +21,9 @@ class User(db.Model):
         # TODO: Fast enough?
         return sum(c.price for c in self.coffees) - sum(p.amount for p in self.pays)
 
+    def __repr__(self):
+        return f'<User tag={self.tag} name={self.name} prename={self.prename}>'
+
 
 class Drink(db.Model):
     id = db.Column(db.Integer, primary_key=True)

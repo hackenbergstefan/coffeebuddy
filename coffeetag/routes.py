@@ -1,24 +1,15 @@
-import threading
-from flask import url_for, render_template, request, abort
+from flask import url_for, render_template, request, abort, redirect
 import flask_socketio
 from coffeetag.model import User, Drink, Pay
-
-poll_thread = None
-
-
-def poll_card():
-    import time
-    from coffeetag import socketio
-    time.sleep(5)
-    socketio.emit('card_connected', data={'tag': '1'})
+from coffeetag.card import Card
 
 
 def init_routes(app, socketio):
     @app.route('/coffee.html', methods=['GET', 'POST'])
     def hello():
-        user = User.query.filter(User.tag == request.args['tag'].encode()).first()
+        user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
         if user is None:
-            return abort(404)
+            return render_template('cardnotfound.html', uuid=request.args['tag'])
         if request.method == 'POST':
             if 'coffee' in request.form:
                 app.db.session.add(Drink(user=user, price=app.config['PRICE']))
@@ -30,14 +21,11 @@ def init_routes(app, socketio):
 
     @app.route('/')
     def welcome():
-        global poll_thread
-        if not app.testing:
-            poll_thread = threading.Thread(target=poll_card)
-            poll_thread.start()
         return render_template('welcome.html')
 
     @app.route('/adduser.html', methods=['GET', 'POST'])
     def add_user():
+        data = dict()
         if request.method == 'POST':
             # TODO: Errorhandling
             app.db.session.add(User(
@@ -46,4 +34,12 @@ def init_routes(app, socketio):
                 prename=request.form['first_name'],
             ))
             app.db.session.commit()
-        return render_template('adduser.html')
+            return redirect('/')
+        elif request.method == 'GET':
+            data = {
+                'tag': request.args.get('tag'),
+            }
+        return render_template('adduser.html', data=data)
+
+    if not app.testing:
+        Card(socketio=socketio).start()

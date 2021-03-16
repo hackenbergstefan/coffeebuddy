@@ -11,32 +11,32 @@ from . import TestCoffeetag
 
 class TestUsers(TestCoffeetag):
     def test_non_existing_user(self):
-        response = self.client.get('/coffee.html?tag=0')
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/coffee.html?tag=00', follow_redirects=True)
+        self.assertIn(b'Card not found', response.data)
 
     def test_existing_user(self):
-        self.db.session.add(User(tag=b'123', name='Mustermann', prename='Max'))
+        self.db.session.add(User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max'))
         self.db.session.commit()
-        response = self.client.get('/coffee.html?tag=123')
+        response = self.client.get('/coffee.html?tag=010203')
         self.assertEqual(response.status_code, 200)
 
     def test_drink_coffee(self):
-        user1 = User(tag=b'123', name='Mustermann', prename='Max')
-        user2 = User(tag=b'345', name='Doe', prename='Jane')
+        user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
+        user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
         self.db.session.add(user2)
         self.db.session.commit()
-        response = self.client.post('/coffee.html?tag=123', data=dict(coffee='coffee'))
+        response = self.client.post('/coffee.html?tag=010203', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user1.coffees), 1)
         self.assertEqual(len(user1.coffees_today), 1)
-        response = self.client.post('/coffee.html?tag=345', data=dict(coffee='coffee'))
+        response = self.client.post('/coffee.html?tag=030405', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user2.coffees), 1)
 
     def test_drinks_today(self):
-        user1 = User(tag=b'123', name='Mustermann', prename='Max')
-        user2 = User(tag=b'345', name='Doe', prename='Jane')
+        user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
+        user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
         self.db.session.add(user2)
         self.db.session.commit()
@@ -50,7 +50,7 @@ class TestUsers(TestCoffeetag):
         self.assertEqual(len(user2.coffees), 1)
 
     def test_pay(self):
-        user = User(tag=b'123', name='Mustermann', prename='Max')
+        user = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         self.db.session.add(user)
         self.db.session.commit()
 
@@ -68,7 +68,7 @@ class TestUsers(TestCoffeetag):
             last_name='Mustermann',
             first_name='Max',
         ))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         users = User.query.all()
         self.assertEqual(len(users), 1)
         self.assertEqual(users[0].tag, b'\x01\x02\x03\x04')
@@ -81,7 +81,7 @@ class TestUsers(TestCoffeetag):
             last_name='Mustermann',
             first_name='Max',
         ))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         with self.assertRaises(sqlalchemy.exc.IntegrityError):
             self.client.post('/adduser.html', data=dict(
                 tag='01 02 03 04',
