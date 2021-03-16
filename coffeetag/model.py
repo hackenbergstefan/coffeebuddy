@@ -5,7 +5,7 @@ from coffeetag import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    tag = db.Column(db.LargeBinary, nullable=False)
+    tag = db.Column(db.LargeBinary, nullable=False, unique=True)
     name = db.Column(db.String(50), nullable=False)
     prename = db.Column(db.String(50), nullable=False)
 

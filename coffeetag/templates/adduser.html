@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.6.0-dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='coffeetag.css') }}">
+        <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="display-1">Add User</h1>
+            <form method="post">
+                <div class="form-group">
+                    <label>Tag ID</label>
+                    <input class="form-control form-control-lg" type="text" name="tag_id" placeholder="Enter tag id" required>
+                    <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01 02 03 04</code></small>
+                </div>
+                <div class="form-group">
+                    <label>First name</label>
+                    <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required>
+                    <label>Last name</label>
+                    <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </body>
+</html>

@@ -35,3 +35,15 @@ def init_routes(app, socketio):
             poll_thread = threading.Thread(target=poll_card)
             poll_thread.start()
         return render_template('welcome.html')
+
+    @app.route('/adduser.html', methods=['GET', 'POST'])
+    def add_user():
+        if request.method == 'POST':
+            # TODO: Errorhandling
+            app.db.session.add(User(
+                tag=bytes.fromhex(request.form['tag']),
+                name=request.form['last_name'],
+                prename=request.form['first_name'],
+            ))
+            app.db.session.commit()
+        return render_template('adduser.html')

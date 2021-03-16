@@ -2,6 +2,7 @@ import datetime
 import unittest
 
 import flask
+import sqlalchemy
 
 import coffeetag
 from coffeetag.model import Drink, User, Pay
@@ -60,3 +61,31 @@ class TestUsers(TestCoffeetag):
         self.db.session.commit()
 
         self.assertEqual(user.unpayed, 30)
+
+    def test_adduser(self):
+        response = self.client.post('/adduser.html', data=dict(
+            tag='01 02 03 04',
+            last_name='Mustermann',
+            first_name='Max',
+        ))
+        self.assertEqual(response.status_code, 200)
+        users = User.query.all()
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].tag, b'\x01\x02\x03\x04')
+        self.assertEqual(users[0].name, 'Mustermann')
+        self.assertEqual(users[0].prename, 'Max')
+
+    def test_add_existing_user_fails(self):
+        response = self.client.post('/adduser.html', data=dict(
+            tag='01 02 03 04',
+            last_name='Mustermann',
+            first_name='Max',
+        ))
+        self.assertEqual(response.status_code, 200)
+        with self.assertRaises(sqlalchemy.exc.IntegrityError):
+            self.client.post('/adduser.html', data=dict(
+                tag='01 02 03 04',
+                last_name='Mustermann',
+                first_name='Max',
+            ))
+        self.db.session.rollback()
