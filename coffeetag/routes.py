@@ -16,3 +16,7 @@ def init_routes(app):
                 app.db.session.add(Pay(user=user, amount=request.form['pay']))
                 app.db.session.commit()
         return render_template('coffee.html', user=user)
+
+    @app.route('/')
+    def welcome():
+        return render_template('welcome.html')
