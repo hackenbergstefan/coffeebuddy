@@ -4,7 +4,7 @@ import coffeetag
 
 class TestCoffeetag(unittest.TestCase):
     def setUp(self):
-        self.app = coffeetag.create_app({'TESTING': True})
+        self.app, _ = coffeetag.create_app({'TESTING': True})
         self.client = self.app.test_client().__enter__()
         self.ctx = self.app.app_context().__enter__()
         self.db = flask.g.db = coffeetag.init_db(self.app)

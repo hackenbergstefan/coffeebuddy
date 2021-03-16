@@ -1,8 +1,19 @@
+import threading
 from flask import url_for, render_template, request, abort
+import flask_socketio
 from coffeetag.model import User, Drink, Pay
 
+poll_thread = None
 
-def init_routes(app):
+
+def poll_card():
+    import time
+    from coffeetag import socketio
+    time.sleep(5)
+    socketio.emit('card_connected', data={'tag': '1'})
+
+
+def init_routes(app, socketio):
     @app.route('/coffee.html', methods=['GET', 'POST'])
     def hello():
         user = User.query.filter(User.tag == request.args['tag'].encode()).first()
@@ -19,4 +30,8 @@ def init_routes(app):
 
     @app.route('/')
     def welcome():
+        global poll_thread
+        if not app.testing:
+            poll_thread = threading.Thread(target=poll_card)
+            poll_thread.start()
         return render_template('welcome.html')

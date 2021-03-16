@@ -2,17 +2,21 @@ import os
 
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 
 app = None
 db = SQLAlchemy()
+socketio = None
 
 import coffeetag.model
 import coffeetag.routes
 
 
 def create_app(config=None):
-    global app
+    global app, socketio
     app = Flask('coffeetag')
+    socketio = SocketIO(app)
+
     app.config['PRICE'] = 0.30
     app.config['PAY'] = 10
     # app.config['SQLALCHEMY_ECHO'] = True
@@ -30,12 +34,12 @@ def create_app(config=None):
         if db is not None:
             db.session.close()
 
-    return app
+    return app, socketio
 
 
 def init_db(app):
     db.init_app(app)
-    coffeetag.routes.init_routes(app)
+    coffeetag.routes.init_routes(app, socketio)
 
     if app.config['ENV'] == 'development' or app.testing:
         db.create_all()
