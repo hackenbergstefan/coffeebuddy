@@ -16,6 +16,22 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='coffeetag.css') }}">
         <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
+        <script>
+         $(() => {
+             if (window.location.search.search('notimeout') == -1)
+             {
+                 setTimeout(() => {
+                     window.location.href = '../';
+                 }, 5000);
+                 setInterval(() => {
+                     $('#timeout-container').children()[0].remove();
+                 }, 1000);
+             }
+             $('#logout-btn').click(() => {
+                 window.location.href = '../';
+             });
+         });
+        </script>
     </head>
     <body>
         <div id="container-main-wrapper">
@@ -69,6 +85,16 @@
                     <h3 class="color-berry">Take one coffee</h3>
                 </button>
             </form>
+        </div>
+        <div id="timeout-container">
+            <div class="fas fa-circle"></div>
+            <div class="fas fa-circle"></div>
+            <div class="fas fa-circle"></div>
+            <div class="fas fa-circle"></div>
+            <div class="fas fa-circle"></div>
+        </div>
+        <div id="logout-container">
+            <button id="logout-btn" class="fas fa-sign-out-alt"></button>
         </div>
     </body>
 </html>

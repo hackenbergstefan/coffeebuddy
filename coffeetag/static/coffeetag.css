@@ -176,3 +176,41 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 /* }}} */
+
+/* Timeout {{{ */
+
+#timeout-container {
+    font-size: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    padding: 5px;
+}
+
+#timeout-container > div {
+    margin: 2px;
+}
+
+/* }}} */
+
+/* Logout {{{ */
+
+#logout-container {
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+#logout-btn {
+    border: 1px solid var(--color-engineering);
+    border-radius: 3px;
+    font-size: 2rem;
+    color: var(--color-engineering);
+    background: none;
+    padding: 0.5rem 1rem;
+}
+
+/* }}} */
