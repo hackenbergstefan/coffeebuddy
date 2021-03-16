@@ -14,10 +14,13 @@ class Card(threading.Thread):
 
     def run(self):
         while True:
-            request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
-            service = request.waitforcard()
-            service.connection.connect()
-            uuid = bytes(service.connection.transmit(list(NFC_GET_UUID))[0])
-            self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
-            time.sleep(2)
-            service.connection.disconnect()
+            try:
+                request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
+                service = request.waitforcard()
+                service.connection.connect()
+                uuid = bytes(service.connection.transmit(list(NFC_GET_UUID))[0])
+                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                time.sleep(2)
+                service.connection.disconnect()
+            except:
+                continue
