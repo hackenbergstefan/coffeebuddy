@@ -62,8 +62,8 @@ class TestUsers(TestCoffeetag):
 
         self.assertEqual(user.unpayed, 30)
 
-    def test_adduser(self):
-        response = self.client.post('/adduser.html', data=dict(
+    def test_edituser(self):
+        response = self.client.post('/edituser.html', data=dict(
             tag='01 02 03 04',
             last_name='Mustermann',
             first_name='Max',
@@ -76,14 +76,14 @@ class TestUsers(TestCoffeetag):
         self.assertEqual(users[0].prename, 'Max')
 
     def test_add_existing_user_fails(self):
-        response = self.client.post('/adduser.html', data=dict(
+        response = self.client.post('/edituser.html', data=dict(
             tag='01 02 03 04',
             last_name='Mustermann',
             first_name='Max',
         ))
         self.assertEqual(response.status_code, 302)
         with self.assertRaises(sqlalchemy.exc.IntegrityError):
-            self.client.post('/adduser.html', data=dict(
+            self.client.post('/edituser.html', data=dict(
                 tag='01 02 03 04',
                 last_name='Mustermann',
                 first_name='Max',

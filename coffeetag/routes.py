@@ -23,23 +23,32 @@ def init_routes(app, socketio):
     def welcome():
         return render_template('welcome.html')
 
-    @app.route('/adduser.html', methods=['GET', 'POST'])
-    def add_user():
+    @app.route('/edituser.html', methods=['GET', 'POST'])
+    def edit_user():
+        tag = bytes.fromhex(request.args['tag'])
+        user = User.query.filter(User.tag == tag).first()
         data = dict()
         if request.method == 'POST':
             # TODO: Errorhandling
-            app.db.session.add(User(
-                tag=bytes.fromhex(request.form['tag']),
-                name=request.form['last_name'],
-                prename=request.form['first_name'],
-            ))
-            app.db.session.commit()
+            if user is None:
+                # Add new user
+                app.db.session.add(User(
+                    tag=bytes.fromhex(request.form['tag']),
+                    name=request.form['last_name'],
+                    prename=request.form['first_name'],
+                ))
+                app.db.session.commit()
+            else:
+                # Edit existing new user
+                user.name = request.form['last_name']
+                user.prename = request.form['first_name']
+                app.db.session.commit()
             return redirect('/')
         elif request.method == 'GET':
             data = {
-                'tag': request.args.get('tag'),
+                'tag': request.args['tag'],
             }
-        return render_template('adduser.html', data=data)
+        return render_template('edituser.html', data=data, user=(user or User(name='', prename='')))
 
     if not app.testing:
         Card(socketio=socketio).start()
