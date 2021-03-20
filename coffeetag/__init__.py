@@ -8,8 +8,8 @@ app = None
 db = SQLAlchemy()
 socketio = None
 
-import coffeetag.model
-import coffeetag.routes
+import coffeetag.model  # noqa: E402
+import coffeetag.routes  # noqa: E402
 
 
 def create_app(config=None):

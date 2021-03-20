@@ -1,10 +1,7 @@
 import datetime
-import unittest
 
-import flask
 import sqlalchemy
 
-import coffeetag
 from coffeetag.model import Drink, User, Pay
 from . import TestCoffeetag
 

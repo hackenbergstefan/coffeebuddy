@@ -22,5 +22,5 @@ class Card(threading.Thread):
                 self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
-            except:
+            except:  # noqa: E722
                 continue

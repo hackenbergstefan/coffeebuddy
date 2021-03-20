@@ -1,5 +1,4 @@
-from flask import url_for, render_template, request, abort, redirect
-import flask_socketio
+from flask import render_template, request, redirect
 from coffeetag.model import User, Drink, Pay
 from coffeetag.card import Card
 

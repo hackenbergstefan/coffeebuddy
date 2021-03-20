@@ -2,6 +2,7 @@ import unittest
 import flask
 import coffeetag
 
+
 class TestCoffeetag(unittest.TestCase):
     def setUp(self):
         self.app, _ = coffeetag.create_app({'TESTING': True})
