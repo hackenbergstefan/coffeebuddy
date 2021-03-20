@@ -25,9 +25,9 @@ def init_routes(app, socketio):
 
     @app.route('/edituser.html', methods=['GET', 'POST'])
     def edit_user():
-        tag = bytes.fromhex(request.args['tag'])
-        user = User.query.filter(User.tag == tag).first()
         data = dict()
+        tag = bytes.fromhex(request.args['tag']) if 'tag' in request.args else None
+        user = User.query.filter(User.tag == tag).first()
         if request.method == 'POST':
             # TODO: Errorhandling
             if user is None:

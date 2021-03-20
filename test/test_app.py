@@ -46,7 +46,7 @@ class TestUsers(TestCoffeetag):
         user2.coffees.append(Drink(price=30))
 
         self.assertEqual(len(user1.coffees), 2)
-        self.assertEqual(len(user1.coffees_today), 2)
+        self.assertEqual(len(user1.coffees_today), 1)
         self.assertEqual(len(user2.coffees), 1)
 
     def test_pay(self):
