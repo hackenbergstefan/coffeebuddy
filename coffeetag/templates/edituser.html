@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="container">
-            <h1 class="display-1">Add User</h1>
+            <h1 class="display-1">Edit User</h1>
             <form method="post">
                 <div class="form-group">
                     <label>Tag ID</label>
@@ -18,11 +18,12 @@
                 </div>
                 <div class="form-group">
                     <label>First name</label>
-                    <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required>
+                    <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required value="{{ user.prename }}">
                     <label>Last name</label>
-                    <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required>
+                    <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required value="{{ user.name }}">
                 </div>
-                <button type="submit" class="btn btn-primary">Add</button>
+                <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
+                <button type="submit" class="btn btn-primary">Ok</button>
             </form>
         </div>
     </body>
