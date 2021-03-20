@@ -21,12 +21,19 @@
          $(() => {
              if (window.location.search.search('notimeout') == -1)
              {
+                 const autologout_time = 20;
                  setTimeout(() => {
                      window.location.href = '../';
-                 }, 20000);
+                 }, autologout_time * 1000);
                  setInterval(() => {
-                     $('#timeout-container').children()[0].remove();
-                 }, 4000);
+                     $('#autologout-bar-container').children()[0].remove();
+                 }, 1000);
+                 for (var i = 0; i < autologout_time; i++) {
+                     $("<div></div>")
+                         .appendTo('#autologout-bar-container')
+                         .addClass('autologout-bar-ruler')
+                         .css('width', $('#autologout-bar-container').width() / autologout_time - 2);
+                 }
              }
          });
         </script>
@@ -89,6 +96,21 @@
              position: absolute;
              display: block;
          }
+
+         #autologout-bar-container {
+             position: absolute;
+             bottom: 0;
+             left: 0;
+             width: 200px;
+         }
+
+         .autologout-bar-ruler {
+             height: 3px;
+             background: var(--color-engineering);
+             border-radius: 3px;
+             margin-left: 1px;
+             margin-right: 1px;
+         }
         </style>
     </head>
     <body>
@@ -116,11 +138,13 @@
                         <button type="submit" name="logout">
                             <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
                             <span>Logout</span>
+                            <div id="autologout-bar-container" class="d-flex flex-row">
+                            </div>
                         </button>
                     </div>
                 </form>
             </div>
-            <div class="d-flex flex-column flex-grow text-center mx-5 my-4">
+            <div class="d-flex flex-column flex-grow text-center w-100 mx-5 my-4">
                 <div class="text-left">
                     <h3>Hi</h3>
                     <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
