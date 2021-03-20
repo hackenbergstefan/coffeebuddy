@@ -39,199 +39,42 @@ h1, h2, h3, h4, h5, h6, h7 {
     color: var(--color-engineering-light);
 }
 
-.bg-color-engineering-dark {
+.bg-engineering-dark {
     background: var(--color-engineering-dark);
 }
 
 /* }}} */
 
-/* Container {{{ */
+/* Button {{{ */
 
-#container-main-wrapper {
-    padding: 2rem;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-#container-main {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-#container-top {
-    position: absolute;
-
-}
-
-#container-bottom {
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-}
-
-/* }}} */
-
-/* Buttons {{{ */
-.btn-primary {
-    background-color: var(--color-berry);
-    border-color: var(--color-engineering-dark);
-}
-.btn-primary:hover {
-    background-color: var(--color-berry);
-    border-color: var(--color-engineering-dark);
-}
-.btn-secondary {
-    background-color: var(--color-engineering);
-    border-color: var(--color-engineering-dark);
-}
-.btn-secondary:hover {
-    background-color: var(--color-engineering);
-    border-color: var(--color-engineering-dark);
-}
-
-#btn-coffee-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    pointer-events: none;
-}
-
-.btn-coffee {
-    margin: 10px 50px;
-    padding: 25px 40px 20px 40px;
-    border-radius: 15px;
-    background: none;
-    border: 1px solid var(--color-engineering);
-    pointer-events: auto;
-}
-
-.btn-coffee-icon {
-    font-size: 150px;
-}
-
-.btn-pay {
-    padding: 10px 10px 5px 10px;
-    border-radius: 5px;
-    background: none;
-    border: 1px solid var(--color-engineering);
-}
-
-.btn-pay-icon {
-    font-size: 40px;
+.btn, button {
     color: var(--color-engineering-dark);
-}
-
-/* }}} */
-
-/* Coffeemeter {{{ */
-
-.coffeemeter-container {
-    position: absolute;
-    right: 0;
-    width: 8rem;
-    height: 100%;
-}
-
-.coffeemeter-title {
-    position: absolute;
-    bottom: 0;
+    background: none;
+    border: none;
     font-size: 1.3rem;
-    margin-left: 0.5rem;
-    transform-origin: 0 100%;
-    transform: rotate(-90deg);
-    color: var(--color-engineering);
-}
-
-.coffeemeter-tag {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    font-size: 1.75rem;
-    color: var(--color-engineering-light);
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.coffeemeter-baricon-container {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    height: 100%;
-}
-
-.coffeemeter-baricon-icon {
-    font-size: 6rem;
-    color: var(--color-engineering-dark);
-    margin: 1rem 0;
-    text-align: center;
-    padding: 0.5rem;
-    border-radius: 2px;
-}
-
-.coffeemeter-bar-container {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    border: 1px solid var(--color-engineering-light);
-}
-
-.coffeemeter-bar-bar {
-    background-color: var(--color-engineering-dark);
-    border-radius: 10px;
-    margin: 10px 20px;
-}
-
-/* }}} */
-
-/* Timeout {{{ */
-
-#timeout-container {
-    font-size: 0.5rem;
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    padding: 5px;
-}
-
-#timeout-container > div {
-    margin: 2px;
-}
-
-/* }}} */
-
-/* Logout {{{ */
-
-#logout-container {
-    position: absolute;
-    width: 100%;
-    bottom: 10px;
-    display: flex;
-    align-content: center;
-    justify-content: center;
-}
-
-#logout-btn {
     border: 1px solid var(--color-engineering);
-    border-radius: 3px;
-    font-size: 2rem;
-    color: var(--color-engineering);
+    border-radius: 5px;
+}
+
+.btn:hover, button:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--color-engineering-dark);
+    border-color: var(--color-engineering-dark);
+}
+
+.btn-lg {
+    color: var(--color-berry);
     background: none;
-    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-engineering);
+    font-size: 6rem;
 }
 
 /* }}} */
 
-#matrix {
-    position: absolute;
-    display: block;
+/* Border {{{ */
+
+.border {
+    border: 1px solid var(--color-engineering-dark);
 }
+
+/* }}} */
