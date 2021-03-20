@@ -12,7 +12,7 @@ class User(db.Model):
     @property
     def coffees_today(self):
         return Drink.query.filter(
-            self.id == Drink.userid and
+            self.id == Drink.userid,
             db.func.Date(Drink.timestamp) == datetime.date.today()
         ).all()
 
