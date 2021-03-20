@@ -1,3 +1,6 @@
+![test](https://github.com/hackenbergstefan/coffeetag/workflows/test/badge.svg)
+![flake8](https://github.com/hackenbergstefan/coffeetag/workflows/flake8/badge.svg)
+
 # coffeetag
 
 Do you use a paper based tally sheet to count your team's coffee consumption? Throw it away and use `coffeetag`!
@@ -25,4 +28,4 @@ Do you use a paper based tally sheet to count your team's coffee consumption? Th
 
 
 ## Tests
-Run tests with `python -m unittest test/test_app.py` 
+Run tests with `python -m unittest test/test_app.py`
