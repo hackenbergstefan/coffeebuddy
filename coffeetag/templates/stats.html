@@ -1,0 +1,144 @@
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.6.0-dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='coffeetag.css') }}">
+        <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='plotly-1.58.4.js') }}"></script>
+        <script>
+            $(() => {
+                if (window.location.search.search('notimeout') == -1)
+                {
+                    const autologout_time = 60;
+                    setTimeout(() => {
+                        window.location.href = '../';
+                    }, autologout_time * 1000);
+                    setInterval(() => {
+                        $('#autologout-bar-container').children()[0].remove();
+                    }, 3000);
+                    for (var i = 0; i < 20; i++) {
+                        $("<div></div>")
+                            .appendTo('#autologout-bar-container')
+                            .addClass('autologout-bar-ruler')
+                            .css('width', $('#autologout-bar-container').width() / 20 - 2);
+                    }
+                }
+            });
+        </script>
+        <style>
+            .btnbar {
+                width: 200px;
+            }
+
+            .btnbar > * {
+                border: none;
+                border-bottom: 1px solid var(--color-engineering);
+                border-radius: 0;
+                padding: 1.5rem 0.3rem 1.5rem 1rem ;
+                font-size: 1.2rem;
+                width: 100%;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+            .btnbar > button:last-child {
+                margin-top: auto;
+                border-top: 1px solid var(--color-engineering);
+                border-bottom: none;
+            }
+
+            .btnbar-button-icon {
+                font-size: 1.75rem;
+                /* TODO: No idea why the icon is optically higher than the text */
+                transform: translateY(3px);
+                width: 35px;
+            }
+
+            .btn-coffee {
+                padding: 25px 40px 20px 40px;
+                border-radius: 15px;
+                color: var(--color-berry);
+            }
+
+            #autologout-bar-container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 200px;
+            }
+
+            .autologout-bar-ruler {
+                height: 3px;
+                background: var(--color-engineering);
+                border-radius: 3px;
+                margin-left: 1px;
+                margin-right: 1px;
+            }
+         }
+        </style>
+    </head>
+    <body>
+        <div class="d-flex flex-row w-100 h-100">
+            <div style="width: 200px">
+                <form method="post" class="h-100">
+                    <div class="d-flex flex-column h-100 btnbar">
+                        <div class="" type="submit">
+                            <span>Your bill:
+                                <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
+                            </span>
+                        </div>
+                        <button type="submit" name="coffee">
+                            <span class="btnbar-button-icon fas fa-coffee"></span>
+                            <span>coffee</span>
+                        </button>
+                        <button type="submit" name="logout">
+                            <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
+                            <span>Logout</span>
+                            <div id="autologout-bar-container" class="d-flex flex-row">
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="d-flex flex-column flex-grow text-center text-center ml-5 my-4">
+                <div class="text-left">
+                    <h3>Hi</h3>
+                    <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
+                    <code class="h5">{{ hexstr(user.tag) }}</code>
+                </div>
+                <div id="stats" style="width: 700px; height: 500px;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            data = {{ datasets|tojson }};
+            layout = {
+                title: "Your Coffee Stats",
+                showlegend: false,
+                xaxis: {
+                    tickfont: {
+                        size: 16,
+                    }
+                },
+                yaxis: {
+                    tickformat: '%H:%M',
+                    tickfont: {
+                        size: 16,
+                    }
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                margin: {
+                    t: 75,
+                    b: 50,
+                    l: 45,
+                    r: 30,
+                },
+            };
+            Plotly.newPlot('stats', data, layout);
+        </script>
+    </body>
+</html>
