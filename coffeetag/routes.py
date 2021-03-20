@@ -16,6 +16,14 @@ def init_routes(app, socketio):
             elif 'pay' in request.form:
                 app.db.session.add(Pay(user=user, amount=request.form['pay']))
                 app.db.session.commit()
+            elif 'undopay' in request.form:
+                # TODO: Really deleting pay? Introduce property 'undone' on Pay?
+                app.db.session.delete(user.pays[-1])
+                app.db.session.commit()
+            elif 'logout' in request.form:
+                return redirect('/')
+            elif 'edituser' in request.form:
+                return redirect(f'edituser.html?tag={request.args["tag"]}')
         return render_template('coffee.html', user=user)
 
     @app.route('/')

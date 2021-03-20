@@ -28,75 +28,135 @@
                      $('#timeout-container').children()[0].remove();
                  }, 4000);
              }
-             $('#logout-btn').click(() => {
-                 window.location.href = '../';
-             });
          });
         </script>
+        <style>
+         .btnbar {
+             width: 200px;
+         }
+
+         .btnbar > * {
+             border: none;
+             border-bottom: 1px solid var(--color-engineering);
+             border-radius: 0;
+             padding: 1.5rem 0.3rem 1.5rem 1rem ;
+             font-size: 1.2rem;
+             width: 100%;
+             text-align: left;
+             white-space: nowrap;
+         }
+
+         .btnbar > button:last-child {
+             margin-top: auto;
+             border-top: 1px solid var(--color-engineering);
+             border-bottom: none;
+         }
+
+         .btnbar-button-icon {
+             font-size: 1.75rem;
+             /* TODO: No idea why the icon is optically higher than the text */
+             transform: translateY(3px);
+             width: 35px;
+         }
+
+         .btn-coffee {
+             padding: 25px 40px 20px 40px;
+             border-radius: 15px;
+             color: var(--color-berry);
+         }
+
+         .coffeemeter-title {
+             position: absolute;
+             bottom: 0;
+             font-size: 1.3rem;
+             margin-left: 0.5rem;
+             transform-origin: 0 100%;
+             transform: rotate(-90deg);
+             color: var(--color-engineering);
+         }
+
+         .coffeemeter-tag {
+             position: absolute;
+             bottom: 0;
+             width: 100%;
+             font-size: 1.75rem;
+             color: var(--color-engineering-light);
+             text-align: center;
+             margin-bottom: 1rem;
+         }
+
+         #matrix {
+             position: absolute;
+             display: block;
+         }
+        </style>
     </head>
     <body>
-        <canvas id="matrix"></canvas>
-        <div id="container-main-wrapper">
-            <div id="container-main">
-                <div class="coffeemeter-container">
-                    <div class="position-relative h-100">
-                        <div class="coffeemeter-title">
-                            COFFEEMETER
+        <div class="d-flex flex-row w-100 h-100">
+            <div style="width: 200px">
+                <form method="post" class="h-100">
+                    <div class="d-flex flex-column h-100 btnbar">
+                        <div class="" type="submit">
+                            <span>Your bill:
+                                <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
+                            </span>
                         </div>
-                        <div class="coffeemeter-tag">
-                            {{ len(user.coffees_today) }}
-                        </div>
-                        <div class="coffeemeter-baricon-container">
-                            <div class="coffeemeter-baricon-icon fas {{ coffee_state[min(len(coffee_state) - 1, len(user.coffees_today))] }}"
-                                 style="{{ 'color: var(--danger);' if len(user.coffees_today) >= len(coffee_state) }}">
-                            </div>
-                            <div class="coffeemeter-bar-container">
-                                <div id="coffeemeter-bar-bar" class="coffeemeter-bar-bar"
-                                     style="height: {{ len(user.coffees_today) / len(coffee_state) * 100 | round }}%;
-                                            {{ 'background: var(--danger); color: white;' if len(user.coffees_today) >= len(coffee_state) }}">
-                                </div>
-                            </div>
-                        </div>
+                        <button type="submit" name="pay" value={{ config['PAY'] }}>
+                            <span class="btnbar-button-icon fas fa-euro-sign"></span>
+                            <span>payed {{ config['PAY'] }}€</span>
+                        </button>
+                        <button type="submit" name="undopay">
+                            <span class="btnbar-button-icon fas fa-undo-alt"></span>
+                            <span>undo last pay</span>
+                        </button>
+                        <button type="submit" name="edituser">
+                            <span class="btnbar-button-icon fas fa-edit"></span>
+                            <span>edit user</span>
+                        </button>
+                        <button type="submit" name="logout">
+                            <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
+                            <span>Logout</span>
+                        </button>
                     </div>
-                </div>
-                <div id="container-top">
+                </form>
+            </div>
+            <div class="d-flex flex-column flex-grow text-center mx-5 my-4">
+                <div class="text-left">
                     <h3>Hi</h3>
                     <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
                     <code class="h5">{{ hexstr(user.tag) }}</code>
                 </div>
-
-                <div id="container-bottom">
-                    <div>
-                        <form method="post">
-                            <button type="submit" id="btn-pay" class="btn-pay" name="pay" value={{ config['PAY'] }}>
-                                <div class="btn-pay-icon fas fa-euro-sign"></div>
-                                <h4>I payed {{ config['PAY'] }} €</h4>
-                            </button>
-                        </form>
+                <div class="my-auto">
+                    <form method="post">
+                        <button type="submit" class="btn-coffee" name="coffee" value="coffee">
+                            <div class="display-1 fas fa-coffee"></div>
+                            <div class="h3">Take one coffee</div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="d-flex m-4" style="width: 100px;">
+                <div class="position-relative h-100 w-100">
+                    <div class="coffeemeter-title">
+                        COFFEEMETER
                     </div>
-                    <div class="mt-2">
-                        <h4>Your bill: {{ "%.2f €" | format(user.unpayed) }}</h4>
+                    <div class="coffeemeter-tag">
+                        {{ len(user.coffees_today) }}
+                    </div>
+                    <div class="d-flex flex-column h-100">
+                        <div class="display-2 fas {{ coffee_state[min(len(coffee_state) - 1, len(user.coffees_today))] }}"
+                             style="{{ 'color: var(--danger);' if len(user.coffees_today) >= len(coffee_state) }}">
+                        </div>
+                        <div class="d-flex flex-column justify-content-end h-100 border mt-2 px-2">
+                            <div class="bg-engineering-dark m-1 rounded"
+                                 style="height: {{ len(user.coffees_today) / len(coffee_state) * 100 | round }}%;
+                                     {{ 'background: var(--danger); color: white;' if len(user.coffees_today) >= len(coffee_state) }}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="btn-coffee-container">
-            <form method="post">
-                <button type="submit" id="btn-coffee-one" class="btn-coffee color-berry" name="coffee" value="coffee">
-                    <div id="coffee-icon" class="btn-coffee-icon {{ 'fas fa-coffee' }}"></div>
-                    <h3 id="coffee-text" class="color-berry">Take one coffee</h3>
-                </button>
-            </form>
-        </div>
-        <div id="timeout-container">
-            <div class="fas fa-circle"></div>
-            <div class="fas fa-circle"></div>
-            <div class="fas fa-circle"></div>
-            <div class="fas fa-circle"></div>
-            <div class="fas fa-circle"></div>
-        </div>
-        <div id="logout-container">
-            <button id="logout-btn" class="fas fa-sign-out-alt"></button>
-        </div>
+        <canvas id="matrix"></canvas>
     </body>
 </html>
