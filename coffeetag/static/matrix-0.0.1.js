@@ -8,7 +8,7 @@ var ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var matrix_text_color = "#008800";
+var matrix_text_color = "#ff5b91";
 var matrix_fg_color = getComputedStyle(document.body).getPropertyValue('--color-engineering');
 
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}タダチヂッツヅテデトドナニヌネノハ".split("");
@@ -37,20 +37,21 @@ function coffee_prepare() {
     for (var i=0, max=all.length; i < max; i++) {
         all[i].style.color = matrix_fg_color;
     }
-    document.getElementById("coffeemeter-bar-bar").style.background = matrix_fg_color;
+    document.getElementById("coffeemeter-bar").style.background = matrix_fg_color;
 
     /* replace fontawesome coffee icon */
-    document.getElementById("coffee-icon").classList.remove('fa-coffee');
-    document.getElementById("coffee-icon").classList.add('fa-user-secret');
+    document.getElementById("btn-coffee-icon").classList.remove('fa-coffee');
+    document.getElementById("btn-coffee-icon").classList.add('fa-user-secret');
 
     /* replace coffee text */
-    document.getElementById("coffee-text").textContent = "T4k3 a c4f3";
+    document.getElementById("btn-coffee-text").textContent = "T4k3 a c4f3";
+    canvas.style.visibility = "visible";
 
 }
 
 function matrix_prepare() {
     /* canvas background to black */
-    ctx.fillStyle = "rgba(0, 0, 0)";
+    // ctx.fillStyle = "rgba(0, 0, 0)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     /* all drops are y=1 at start */
@@ -89,6 +90,12 @@ function matrix_draw() {
     }
 }
 
+function matrix_start() {
+    coffee_prepare();
+    matrix_prepare();
+    setInterval(matrix_draw, 35);
+}
+
 var salt = "59ecf0380ab60a048aa5f9536e1642aa5de99371cbf903a383d5afa51f580ef7"
 var user = document.getElementById("user-name").textContent
 var magic_user_hashes = [
@@ -98,8 +105,12 @@ var magic_user_hashes = [
 /* run matrix if salted user name in list of magic hashes */
 sha256(salt + user).then(function(digest) {
     if (magic_user_hashes.indexOf(digest) > -1) {
-        coffee_prepare();
-        matrix_prepare();
-        setInterval(matrix_draw, 35);
+        matrix_start();
     }
 });
+
+/* or just if you like */
+if (window.location.search.search('matrix') > -1)
+{
+    matrix_start();
+}

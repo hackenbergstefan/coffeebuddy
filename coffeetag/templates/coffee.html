@@ -111,6 +111,17 @@
              margin-left: 1px;
              margin-right: 1px;
          }
+
+         #matrix {
+             position: absolute;
+             width: 100%;
+             height: 100%;
+             z-index: -1;
+             visibility: hidden;
+             left: 0;
+             top: 0;
+         }
+
         </style>
     </head>
     <body>
@@ -153,8 +164,8 @@
                 <div class="my-auto">
                     <form method="post">
                         <button type="submit" class="btn-coffee" name="coffee" value="coffee">
-                            <div class="display-1 fas fa-coffee"></div>
-                            <div class="h3">Take one coffee</div>
+                            <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
+                            <div id="btn-coffee-text" class="h3">Take one coffee</div>
                         </button>
                     </form>
                 </div>
@@ -172,7 +183,7 @@
                              style="{{ 'color: var(--danger);' if len(user.coffees_today) >= len(coffee_state) }}">
                         </div>
                         <div class="d-flex flex-column justify-content-end h-100 border mt-2 px-2">
-                            <div class="bg-engineering-dark m-1 rounded"
+                            <div id="coffeemeter-bar" class="bg-engineering-dark m-1 rounded"
                                  style="height: {{ len(user.coffees_today) / len(coffee_state) * 100 | round }}%;
                                      {{ 'background: var(--danger); color: white;' if len(user.coffees_today) >= len(coffee_state) }}">
                             </div>
