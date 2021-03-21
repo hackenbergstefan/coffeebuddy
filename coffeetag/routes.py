@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect
 from coffeetag.model import User, Drink, Pay
-from coffeetag.card import Card
+from coffeetag.card import PCSCCard, MRFC522Card
 
 
 def init_routes(app, socketio):
@@ -59,4 +59,7 @@ def init_routes(app, socketio):
         return render_template('edituser.html', data=data, user=(user or User(name='', prename='')))
 
     if not app.testing:
-        Card(socketio=socketio).start()
+        if app.config['CARD'] == 'MRFC522':
+            MRFC522Card(socketio=socketio).start()
+        else:
+            PCSCCard(socketio=socketio).start()

@@ -17,8 +17,7 @@ def create_app(config=None):
     app = Flask('coffeetag')
     socketio = SocketIO(app)
 
-    app.config['PRICE'] = 0.30
-    app.config['PAY'] = 10
+    app.config.from_object('config')
     # app.config['SQLALCHEMY_ECHO'] = True
     if config:
         app.config.update(config)
