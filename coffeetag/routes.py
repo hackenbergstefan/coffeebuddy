@@ -5,7 +5,7 @@ from coffeetag.card import Card
 
 def init_routes(app, socketio):
     @app.route('/coffee.html', methods=['GET', 'POST'])
-    def hello():
+    def coffee():
         user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
         if user is None:
             return render_template('cardnotfound.html', uuid=request.args['tag'])
