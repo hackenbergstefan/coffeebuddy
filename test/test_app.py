@@ -1,7 +1,5 @@
 import datetime
 
-import sqlalchemy
-
 from coffeetag.model import Drink, User, Pay
 from . import TestCoffeetag
 
@@ -66,7 +64,7 @@ class TestRouteEdituser(TestCoffeetag):
 
     def test_edituser(self):
         self.db.session.add(User(tag=b'\x01\x02\x03\x04', name='Mustermann', prename='Max'))
-        response = self.client.post(f'/edituser.html?tag=01020304', data=dict(
+        response = self.client.post('/edituser.html?tag=01020304', data=dict(
             tag='01 02 03 04',
             last_name='Doe',
             first_name='Jane',
