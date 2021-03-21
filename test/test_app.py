@@ -98,3 +98,9 @@ class TestRouteCoffee(TestCoffeetag):
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user.pays), 0)
+
+    def test_undopay_empty(self):
+        user, _ = self.add_default_user()
+        response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(user.pays), 0)
