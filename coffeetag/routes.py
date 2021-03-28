@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template, request, redirect
 
 from coffeetag.model import User, Drink, Pay
@@ -78,7 +80,10 @@ def init_routes(app, socketio):
 
     @app.route('/')
     def welcome():
-        return render_template('welcome.html')
+        return render_template(
+            'welcome.html',
+            dataset=Drink.drinks_vs_days(datetime.timedelta(weeks=12))
+        )
 
     @app.route('/edituser.html', methods=['GET', 'POST'])
     def edit_user():

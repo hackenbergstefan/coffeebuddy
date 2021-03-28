@@ -74,6 +74,18 @@ class Drink(db.Model):
     def by_date(date):
         return Drink.query.filter(db.func.Date(Drink.timestamp) == date)
 
+    @staticmethod
+    def drinks_vs_days(timedelta):
+        return (
+            db.session.query(
+                db.func.count(db.func.Date(Drink.timestamp)),
+                db.func.Date(Drink.timestamp),
+            )
+            .filter(Drink.timestamp > datetime.datetime.now() - timedelta)
+            .group_by(db.func.Date(Drink.timestamp))
+            .all()
+        )
+
 
 class Pay(db.Model):
     id = db.Column(db.Integer, primary_key=True)

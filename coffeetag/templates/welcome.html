@@ -7,6 +7,7 @@
         <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url_for('static', filename='socket.io-client-4.0.0/dist/socket.io.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='plotly-1.58.4.js') }}"></script>
         <script>
          $(() => {
              var socket = io.connect(window.location.host);
@@ -18,8 +19,37 @@
     </head>
     <body>
         <div class="d-flex flex-column justify-content-center text-center h-100">
-            <h1 class="display-1">Welcome</h1>
+            <h1 class="display-1" style="margin-top: 100px;">Welcome</h1>
             <h3>Tap your card to continue</h3>
+            <div>
+            </div>
+            <div id="stats" class="flex-grow-1"></div>
         </div>
+        <script>
+         var data = [{
+             x: {{ dataset|map(attribute=1)|list|tojson }},
+             y: {{ dataset|map(attribute=0)|list|tojson }},
+             type: "bar",
+             mode: "lines",
+             marker: {
+                 colorscale: [
+                     ["0.0", "#ab377a10"],
+                     ["1.0", "#ab377aff"],
+                 ],
+                 color: {{ dataset|map(attribute=0)|list|tojson }},
+             },
+         }];
+         var layout = {
+             showlegend: false,
+             plot_bgcolor: "rgba(0,0,0,0)",
+             paper_bgcolor: "rgba(0,0,0,0)",
+             bargap: 0,
+             margin: {
+                 t: "20",
+             },
+             autosize: true,
+         };
+         Plotly.newPlot("stats", data, layout);
+        </script>
     </body>
 </html>
