@@ -3,7 +3,7 @@ import time
 
 
 class PCSCCard(threading.Thread):
-    PCSC_GET_UUID = bytes.fromhex('ff ca 00 00 00')
+    PCSC_GET_UUID_APDU = bytes.fromhex('ff ca 00 00 00')
 
     def __init__(self, socketio):
         super().__init__()
@@ -17,7 +17,7 @@ class PCSCCard(threading.Thread):
                 request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
                 service = request.waitforcard()
                 service.connection.connect()
-                uuid = bytes(service.connection.transmit(list(NFC_GET_UUID))[0])
+                uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
                 self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
