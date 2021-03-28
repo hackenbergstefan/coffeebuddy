@@ -52,6 +52,7 @@ class User(db.Model):
             db.session.query(db.func.Date(Drink.timestamp))
             .filter(self.id == Drink.userid)
             .distinct()
+            .order_by(Drink.timestamp)
         )
 
     def __repr__(self):
