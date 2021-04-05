@@ -78,3 +78,22 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 /* }}} */
+
+/* Autologout {{{ */
+
+#autologout-bar-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+}
+
+.autologout-bar-ruler {
+    height: 5px;
+    width: 5px;
+    background: var(--color-engineering);
+    border-radius: 50%;
+}
+
+
+/* }}} */

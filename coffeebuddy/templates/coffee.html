@@ -17,23 +17,12 @@
         <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/autologout.js') }}" defer></script>
         <script>
          $(() => {
              if (window.location.search.search('notimeout') == -1)
              {
-                 const autologout_time = 20;
-                 setTimeout(() => {
-                     window.location.href = '../';
-                 }, autologout_time * 1000);
-                 setInterval(() => {
-                     $('#autologout-bar-container').children()[0].remove();
-                 }, 1000);
-                 for (var i = 0; i < autologout_time; i++) {
-                     $("<div></div>")
-                         .appendTo('#autologout-bar-container')
-                         .addClass('autologout-bar-ruler')
-                         .css('width', $('#autologout-bar-container').width() / autologout_time - 2);
-                 }
+                 startAutologout();
              }
          });
         </script>
@@ -90,26 +79,6 @@
              color: var(--color-engineering-light);
              text-align: center;
              margin-bottom: 1rem;
-         }
-
-         #matrix {
-             position: absolute;
-             display: block;
-         }
-
-         #autologout-bar-container {
-             position: absolute;
-             bottom: 0;
-             left: 0;
-             width: 200px;
-         }
-
-         .autologout-bar-ruler {
-             height: 3px;
-             background: var(--color-engineering);
-             border-radius: 3px;
-             margin-left: 1px;
-             margin-right: 1px;
          }
 
          #matrix {
