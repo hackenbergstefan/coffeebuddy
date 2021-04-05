@@ -13,6 +13,15 @@
             });
          });
         </script>
+        <script src="{{ url_for('static', filename='js/autologout.js') }}" defer></script>
+        <script>
+         $(() => {
+             if (window.location.search.search('notimeout') == -1)
+             {
+                 startAutologout();
+             }
+         });
+        </script>
     </head>
     <body>
         <div class="d-flex flex-column justify-content-center text-center h-100">
@@ -20,6 +29,8 @@
             <code class="display-1">{{ uuid }}</code>
             <div class="d-flex justify-content-center text-center">
                 <button id="add-btn" class="px-5 py-4 btn-lg color-berry fas fa-user-plus"></button>
+            </div>
+            <div id="autologout-bar-container" class="d-flex flex-row">
             </div>
         </div>
     </body>

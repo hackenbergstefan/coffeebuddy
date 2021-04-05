@@ -6,25 +6,14 @@
         <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url_for('static', filename='plotly-1.58.4.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/autologout.js') }}" defer></script>
         <script>
-            $(() => {
-                if (window.location.search.search('notimeout') == -1)
-                {
-                    const autologout_time = 60;
-                    setTimeout(() => {
-                        window.location.href = '../';
-                    }, autologout_time * 1000);
-                    setInterval(() => {
-                        $('#autologout-bar-container').children()[0].remove();
-                    }, 3000);
-                    for (var i = 0; i < 20; i++) {
-                        $("<div></div>")
-                            .appendTo('#autologout-bar-container')
-                            .addClass('autologout-bar-ruler')
-                            .css('width', $('#autologout-bar-container').width() / 20 - 2);
-                    }
-                }
-            });
+         $(() => {
+             if (window.location.search.search('notimeout') == -1)
+             {
+                 startAutologout(autologoutTime = 60);
+             }
+         });
         </script>
         <style>
             .btnbar {
@@ -59,21 +48,6 @@
                 padding: 25px 40px 20px 40px;
                 border-radius: 15px;
                 color: var(--color-berry);
-            }
-
-            #autologout-bar-container {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 200px;
-            }
-
-            .autologout-bar-ruler {
-                height: 3px;
-                background: var(--color-engineering);
-                border-radius: 3px;
-                margin-left: 1px;
-                margin-right: 1px;
             }
          }
         </style>
