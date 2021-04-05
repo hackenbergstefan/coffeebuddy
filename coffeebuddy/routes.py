@@ -57,6 +57,8 @@ def init_routes(app, socketio):
         if request.method == 'POST':
             if 'coffee' in request.form:
                 return redirect(f'coffee.html?tag={request.args["tag"]}')
+            elif 'logout' in request.form:
+                return redirect('/')
 
         berry = Color(171, 55, 122)
 
