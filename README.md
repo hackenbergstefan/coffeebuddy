@@ -1,9 +1,9 @@
-![test](https://github.com/hackenbergstefan/coffeetag/workflows/test/badge.svg)
-![flake8](https://github.com/hackenbergstefan/coffeetag/workflows/flake8/badge.svg)
+![test](https://github.com/hackenbergstefan/coffeebuddy/workflows/test/badge.svg)
+![flake8](https://github.com/hackenbergstefan/coffeebuddy/workflows/flake8/badge.svg)
 
-# coffeetag
+# coffeebuddy
 
-Do you use a paper based tally sheet to count your team's coffee consumption? Throw it away and use `coffeetag`!
+Do you use a paper based tally sheet to count your team's coffee consumption? Throw it away and use `coffeebuddy`!
 
 ## Usage
 

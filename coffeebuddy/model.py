@@ -1,7 +1,7 @@
 import datetime
 from sqlalchemy import text
 
-from coffeetag import db
+from coffeebuddy import db
 
 
 class User(db.Model):
