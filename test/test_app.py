@@ -1,10 +1,10 @@
 import datetime
 
-from coffeetag.model import Drink, User, Pay
-from . import TestCoffeetag
+from coffeebuddy.model import Drink, User, Pay
+from . import TestCoffeebuddy
 
 
-class TestDatabase(TestCoffeetag):
+class TestDatabase(TestCoffeebuddy):
     def test_drink_coffee(self):
         user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
@@ -48,7 +48,7 @@ class TestDatabase(TestCoffeetag):
         self.assertEqual(user.unpayed, 30)
 
 
-class TestRouteEdituser(TestCoffeetag):
+class TestRouteEdituser(TestCoffeebuddy):
     def test_adduser(self):
         response = self.client.post('/edituser.html', data=dict(
             tag='01 02 03 04',
@@ -77,7 +77,7 @@ class TestRouteEdituser(TestCoffeetag):
         self.assertEqual(users[0].prename, 'Jane')
 
 
-class TestRouteCoffee(TestCoffeetag):
+class TestRouteCoffee(TestCoffeebuddy):
     def test_non_existing_user(self):
         response = self.client.get('/coffee.html?tag=00', follow_redirects=True)
         self.assertIn(b'Card not found', response.data)

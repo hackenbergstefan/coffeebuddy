@@ -2,8 +2,8 @@ import datetime
 
 from flask import render_template, request, redirect
 
-from coffeetag.model import User, Drink, Pay
-from coffeetag.card import PCSCCard, MRFC522Card
+from coffeebuddy.model import User, Drink, Pay
+from coffeebuddy.card import PCSCCard, MRFC522Card
 
 
 class Color:

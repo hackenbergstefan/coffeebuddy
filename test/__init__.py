@@ -1,16 +1,16 @@
 import unittest
 import flask
-import coffeetag
+import coffeebuddy
 
-from coffeetag.model import User
+from coffeebuddy.model import User
 
 
-class TestCoffeetag(unittest.TestCase):
+class TestCoffeebuddy(unittest.TestCase):
     def setUp(self):
-        self.app, _ = coffeetag.create_app({'TESTING': True})
+        self.app, _ = coffeebuddy.create_app({'TESTING': True})
         self.client = self.app.test_client().__enter__()
         self.ctx = self.app.app_context().__enter__()
-        self.db = flask.g.db = coffeetag.init_db(self.app)
+        self.db = flask.g.db = coffeebuddy.init_db(self.app)
 
     def tearDown(self):
         self.truncate_all()

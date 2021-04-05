@@ -10,13 +10,13 @@ app = None
 db = SQLAlchemy()
 socketio = None
 
-import coffeetag.model  # noqa: E402
-import coffeetag.routes  # noqa: E402
+import coffeebuddy.model  # noqa: E402
+import coffeebuddy.routes  # noqa: E402
 
 
 def create_app(config=None):
     global app, socketio
-    app = Flask('coffeetag')
+    app = Flask('coffeebuddy')
     socketio = SocketIO(app)
 
     app.config.from_object('config')
@@ -40,7 +40,7 @@ def create_app(config=None):
 
 def init_db(app):
     db.init_app(app)
-    coffeetag.routes.init_routes(app, socketio)
+    coffeebuddy.routes.init_routes(app, socketio)
 
     if app.config['ENV'] in ('development', 'prefilled') or app.testing:
         db.create_all()
@@ -57,7 +57,7 @@ def init_db(app):
 
     # Default database content
     if app.config['ENV'] == 'development':
-        db.session.add(coffeetag.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
+        db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
         db.session.commit()
     elif app.config['ENV'] == 'production':
         if not os.path.exists('coffee.db'):
@@ -80,13 +80,13 @@ def prefill(db):
         'Truck Duck',
     ]
     for idx, name in enumerate(demousers):
-        db.session.add(coffeetag.model.User(
+        db.session.add(coffeebuddy.model.User(
             tag=idx.to_bytes(1, 'big'),
             name=name.split(' ')[1],
             prename=name.split(' ')[0],
         ))
     for _ in range(1000):
-        db.session.add(coffeetag.model.Drink(
+        db.session.add(coffeebuddy.model.Drink(
             userid=random.randint(0, len(demousers)),
             price=app.config['PRICE'],
             timestamp=datetime.datetime.now() - datetime.timedelta(

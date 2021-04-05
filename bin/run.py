@@ -3,10 +3,10 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import coffeetag  # noqa: E402
+import coffeebuddy  # noqa: E402
 
 if __name__ == '__main__':
-    app, socketio = coffeetag.create_app()
+    app, socketio = coffeebuddy.create_app()
     with app.app_context():
-        coffeetag.init_db(app)
+        coffeebuddy.init_db(app)
     socketio.run(app)
