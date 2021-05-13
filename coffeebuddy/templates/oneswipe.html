@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.6.0-dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+        <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
+        <script>
+         $(() => {
+             const timeout = 5;
+             setTimeout(() => {
+                 $.post(window.location, data={"coffee": ""});
+                 window.location.href = '../';
+             }, timeout * 1000);
+             setInterval(() => {
+                 var width = $("#timeout-bar").width() / $("#timeout-bar").parent().width() * 100;
+                 $("#timeout-bar").css("width", width - 100 * 10 / (timeout * 1000) + "%");
+             }, 10);
+         });
+        </script>
+        <style>
+         #timeout-bar-container {
+             width: 400px;
+             align-self: center;
+         }
+
+         #timeout-bar {
+             width: 100%;
+             height: 10px;
+             border-radius: 3px;
+             background: var(--color-engineering-dark);
+         }
+        </style>
+    </head>
+    <body>
+        <div class="text-left m-5">
+            <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
+            <code class="h5">{{ hexstr(user.tag) }}</code>
+        </div>
+        <div class="d-flex flex-column text-center h-100">
+            <form method="post">
+                <button class="p-3" type="submit" name="">
+                    <div id="btn-coffee-icon" class="display-1 fas fa-undo-alt"></div>
+                    <div id="btn-coffee-text" class="h3">Undo</div>
+                </button>
+            </form>
+            <div id="timeout-bar-container" class="p-3">
+                <div id="timeout-bar"></div>
+            </div>
+        </div>
+    </body>
+</html>

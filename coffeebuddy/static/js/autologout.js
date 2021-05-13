@@ -13,6 +13,8 @@ function startAutologout(autologoutTime = 20,
         $("<div></div>")
             .appendTo(containerSelector)
             .addClass(logoutElementClass)
-            .css('margin-right', $(containerSelector).width() / elementCount - 5);
+            .css('margin-right',
+                 $(containerSelector).width() / elementCount -
+                 $("." + logoutElementClass).first().width());
     }
 }

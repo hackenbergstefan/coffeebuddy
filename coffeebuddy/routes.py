@@ -28,6 +28,8 @@ def init_routes(app, socketio):
         user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
         if user is None:
             return render_template('cardnotfound.html', uuid=request.args['tag'])
+        if request.method == 'GET' and user.option_oneswipe:
+            return render_template('oneswipe.html', user=user)
         if request.method == 'POST':
             if 'coffee' in request.form:
                 app.db.session.add(Drink(user=user, price=app.config['PRICE']))
@@ -100,12 +102,14 @@ def init_routes(app, socketio):
                     tag=bytes.fromhex(request.form['tag']),
                     name=request.form['last_name'],
                     prename=request.form['first_name'],
+                    option_oneswipe='oneswipe' in request.form,
                 ))
                 app.db.session.commit()
             else:
                 # Edit existing new user
                 user.name = request.form['last_name']
                 user.prename = request.form['first_name']
+                user.option_oneswipe = 'oneswipe' in request.form
                 app.db.session.commit()
             return redirect('/')
         elif request.method == 'GET':
@@ -113,6 +117,13 @@ def init_routes(app, socketio):
                 'tag': request.args['tag'],
             }
         return render_template('edituser.html', data=data, user=(user or User(name='', prename='')))
+
+    @app.route('/oneswipe.html', methods=['POST'])
+    def oneswipe():
+        user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
+        if 'coffee' in request.form:
+            app.db.session.add(Drink(user=user, price=app.config['PRICE']))
+            app.db.session.commit()
 
     if not app.testing:
         if app.config['CARD'] == 'MRFC522':

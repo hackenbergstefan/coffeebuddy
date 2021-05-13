@@ -72,18 +72,19 @@ def init_db(app):
 
 def prefill(db):
     demousers = [
-        'Donald Duck',
-        'Dagobert Duck',
-        'Gyro Gearloose',
-        'Tick Duck',
-        'Trick Duck',
-        'Truck Duck',
+        {'prename': 'Donald', 'postname': 'Duck', 'oneswipe': True},
+        {'prename': 'Dagobert', 'postname': 'Duck', 'oneswipe': False},
+        {'prename': 'Gyro', 'postname': ' Gearloose', 'oneswipe': False},
+        {'prename': 'Tick ', 'postname': 'Duck', 'oneswipe': False},
+        {'prename': 'Trick', 'postname': 'Duck', 'oneswipe': False},
+        {'prename': 'Truck', 'postname': 'Duck', 'oneswipe': False},
     ]
-    for idx, name in enumerate(demousers):
+    for idx, data in enumerate(demousers):
         db.session.add(coffeebuddy.model.User(
             tag=idx.to_bytes(1, 'big'),
-            name=name.split(' ')[1],
-            prename=name.split(' ')[0],
+            name=data['postname'],
+            prename=data['prename'],
+            option_oneswipe=data['oneswipe'],
         ))
     for _ in range(1000):
         db.session.add(coffeebuddy.model.Drink(

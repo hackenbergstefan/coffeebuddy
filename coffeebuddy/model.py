@@ -9,6 +9,7 @@ class User(db.Model):
     tag = db.Column(db.LargeBinary, nullable=False, unique=True)
     name = db.Column(db.String(50), nullable=False)
     prename = db.Column(db.String(50), nullable=False)
+    option_oneswipe = db.Column(db.Boolean)
 
     @property
     def coffees_today(self):

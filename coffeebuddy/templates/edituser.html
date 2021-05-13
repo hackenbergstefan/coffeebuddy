@@ -16,14 +16,22 @@
                     <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id" required value="{{ data['tag'] }}">
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or <code>01 02 03 04</code></small>
                 </div>
+                <h3>Name</h3>
                 <div class="form-group">
                     <label>First name</label>
                     <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required value="{{ user.prename }}">
                     <label>Last name</label>
                     <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required value="{{ user.name }}">
                 </div>
-                <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
-                <button type="submit" class="btn btn-primary">Ok</button>
+                <h3>Options</h3>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="oneswipe" {{ 'checked' if user.option_oneswipe }}>
+                    <label class="form-check-label">One swipe</label>
+                </div>
+                <div class="mt-3 text-right">
+                    <button type="submit" class="btn btn-primary">Ok</button>
+                    <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
+                </div>
             </form>
         </div>
     </body>
