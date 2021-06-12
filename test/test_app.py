@@ -54,6 +54,7 @@ class TestRouteEdituser(TestCoffeebuddy):
             tag='01 02 03 04',
             last_name='Mustermann',
             first_name='Max',
+            initial_bill=0,
         ))
         self.assertEqual(response.status_code, 302)
         users = User.query.all()
