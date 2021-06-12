@@ -37,3 +37,26 @@ Run tests with `python -m unittest test/test_app.py`
 ## Application
 
 The final application uses a Raspberry Pi attached to a 7" touchscreen. Thus, the HTML an CSS is optimized for a display with a resolution of 1024x600.
+
+### Configuration for Raspberry Pi
+
+At least I had to adjust the following settings:
+
+* Fix screen resolution
+  ```conf
+  hdmi_group=2
+  hdmi_mode=87
+  hdmi_cvt 1024 600 60 3 0 0 0
+  hdmi_drive=2
+  ```
+* If display has to be rotated by 180° adjust `/etc/X11/xorg.conf.d/40-libinput`
+  ```conf
+  Section "InputClass"
+      Identifier "libinput touchscreen catchall"
+      MatchIsTouchscreen "on"
+      MatchDevicePath "/dev/input/event*"
+      Driver "libinput"
+      Option "CalibrationMatrix" "-1 0 1 0 -1 1 0 0 1"
+  EndSection
+  ```
+* Disable translation option in chrome
