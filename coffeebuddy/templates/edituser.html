@@ -17,16 +17,33 @@
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or <code>01 02 03 04</code></small>
                 </div>
                 <h3>Name</h3>
-                <div class="form-group">
-                    <label>First name</label>
-                    <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required value="{{ user.prename }}">
-                    <label>Last name</label>
-                    <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required value="{{ user.name }}">
+                <div class="form-group row">
+                    <div class="col">
+                        <label>First name</label>
+                        <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required value="{{ user.prename }}" autocomplete="off">
+                    </div>
+                    <div class="col">
+                        <label>Last name</label>
+                        <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required value="{{ user.name }}" autocomplete="off">
+                    </div>
                 </div>
-                <h3>Options</h3>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="oneswipe" {{ 'checked' if user.option_oneswipe }}>
-                    <label class="form-check-label">One swipe</label>
+                <div class="row">
+                    <div class="col">
+                        <h3>Options</h3>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="oneswipe" {{ 'checked' if user.option_oneswipe }}>
+                            <label class="form-check-label">One swipe</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h3>Misc</h3>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">€</span>
+                            </div>
+                            <input class="form-control col-5" type="number" name="initial_bill" placeholder="Your initial bill in €" autocomplete="off">
+                        </div>
+                    </div>
                 </div>
                 <div class="mt-3 text-right">
                     <button type="submit" class="btn btn-primary">Ok</button>

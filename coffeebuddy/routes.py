@@ -1,4 +1,5 @@
 import datetime
+import math
 
 from flask import render_template, request, redirect
 
@@ -98,12 +99,19 @@ def init_routes(app, socketio):
             # TODO: Errorhandling
             if user is None:
                 # Add new user
-                app.db.session.add(User(
+                user = User(
                     tag=bytes.fromhex(request.form['tag']),
                     name=request.form['last_name'],
                     prename=request.form['first_name'],
                     option_oneswipe='oneswipe' in request.form,
-                ))
+                )
+                app.db.session.add(user)
+                try:
+                    bill = float(request.form['initial_bill'].replace(',', '.'))
+                    for _ in range(math.ceil(bill / app.config['PRICE'])):
+                        app.db.session.add(Drink(user=user, price=app.config['PRICE']))
+                except ValueError:
+                    pass
                 app.db.session.commit()
             else:
                 # Edit existing new user
