@@ -1,0 +1,6 @@
+# ~/.config/autostart/coffeebuddy.desktop
+
+[Desktop Entry]
+Name=Coffeebudddy
+Type=Application
+Exec=/home/pi/coffeebuddy/raspi/autostart.sh
