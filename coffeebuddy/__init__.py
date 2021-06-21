@@ -1,13 +1,18 @@
 import datetime
 import os
 import random
+import socket
 
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
 app = None
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={
+    "connect_args": {
+        'sslmode': 'verify-full'
+    },
+})
 socketio = None
 
 import coffeebuddy.model  # noqa: E402
@@ -27,7 +32,9 @@ def create_app(config=None):
     if app.config['ENV'] in ('development', 'prefilled') or app.testing:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coffee.db'
+        db_user = socket.gethostname()
+        db_host = 'database:5432'
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}@{db_host}/coffeebuddy'
 
     @app.teardown_appcontext
     def teardown_db(exception):

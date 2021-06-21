@@ -1,0 +1,25 @@
+services:
+    database:
+        build: database
+        restart: on-failure
+        healthcheck:
+            test: ["CMD", "psql", "-lqt"]
+            interval: 10s
+            timeout: 2s
+            retries: 10
+        expose:
+            - 5432
+    coffeebuddy01:
+        build: .
+        depends_on:
+            - database
+        restart: on-failure
+        healthcheck:
+            test: ["CMD", "curl", "127.0.0.1:5000"]
+            interval: 10s
+            timeout: 2s
+            retries: 10
+        hostname:
+            coffeebuddy01
+        ports:
+            - 5000:5000
