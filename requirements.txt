@@ -1,5 +1,7 @@
+config
 flask
 sqlalchemy
 flask-sqlalchemy
 flask-socketio
 pyscard
+psycopg2

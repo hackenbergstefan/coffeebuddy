@@ -9,4 +9,4 @@ if __name__ == '__main__':
     app, socketio = coffeebuddy.create_app()
     with app.app_context():
         coffeebuddy.init_db(app)
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0")
