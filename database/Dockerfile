@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.12
 
 RUN apk update && \
     apk add postgresql
@@ -11,8 +11,8 @@ COPY --chown=postgres:postgres \
     postgresql.conf \
     pg_hba.conf \
     certs/ca/root.crt \
-    certs/server_database/server.key \
-    certs/server_database/server.crt \
+    certs/server_coffeebuddydb/server.key \
+    certs/server_coffeebuddydb/server.crt \
     $PGDATA/
 
 RUN nohup ash -c "postgres &" && sleep 2 && \

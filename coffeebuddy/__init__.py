@@ -33,7 +33,7 @@ def create_app(config=None):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     else:
         db_user = socket.gethostname()
-        db_host = 'database:5432'
+        db_host = 'coffeebuddydb:5432'
         app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}@{db_host}/coffeebuddy'
 
     @app.teardown_appcontext
