@@ -5,6 +5,7 @@ import random
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+from sqlalchemy.exc import OperationalError
 
 app = None
 db = SQLAlchemy(engine_options={
@@ -51,8 +52,12 @@ def init_db(app):
     db.init_app(app)
     coffeebuddy.routes.init_routes(app, socketio)
 
-    if app.config['ENV'] in ('development', 'prefilled') or app.testing:
-        db.create_all()
+    if app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db'):
+        try:
+            db.create_all()
+        except OperationalError:
+            # probably cannot connect to or init database
+            os._exit(1)
 
     @app.context_processor
     def inject_globals():
@@ -68,9 +73,6 @@ def init_db(app):
     if app.config['ENV'] == 'development':
         db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
         db.session.commit()
-    elif app.config['ENV'] == 'production':
-        if not os.path.exists('coffee.db'):
-            db.create_all()
     elif app.config['ENV'] == 'prefilled':
         app.debug = True
         prefill(db)
