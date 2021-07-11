@@ -1,7 +1,6 @@
 import datetime
 import os
 import random
-import socket
 
 from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
@@ -31,10 +30,13 @@ def create_app(config=None):
 
     if app.config['ENV'] in ('development', 'prefilled') or app.testing:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    elif app.config['DB_BACKEND'] == 'sqlite':
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coffee.db'
     else:
-        db_user = socket.gethostname()
-        db_host = 'coffeebuddydb:5432'
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}@{db_host}/coffeebuddy'
+        host = app.config['DB_HOST']
+        port = app.config['DB_PORT']
+        user = app.config['DB_USER']
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{user}@{host}:{port}/coffeebuddy'
 
     @app.teardown_appcontext
     def teardown_db(exception):
