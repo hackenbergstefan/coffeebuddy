@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-    database:
+    coffeebuddydb:
         build: database
         restart: on-failure
         healthcheck:
@@ -13,7 +13,7 @@ services:
     coffeebuddy01:
         build: .
         depends_on:
-            - database
+            - coffeebuddydb
         restart: on-failure
         healthcheck:
             test: ["CMD", "curl", "127.0.0.1:5000"]
