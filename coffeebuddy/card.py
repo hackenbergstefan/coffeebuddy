@@ -41,3 +41,21 @@ class MRFC522Card(threading.Thread):
                 time.sleep(2)
             except:  # noqa: E722
                 continue
+
+
+class PIRC522Card(threading.Thread):
+    def __init__(self, socketio):
+        super().__init__()
+        self.socketio = socketio
+
+    def run(self):
+        import pirc522
+        reader = pirc522.RFID()
+        while True:
+            reader.wait_for_tag()
+            for _ in range(10):
+                (error, _) = reader.request()
+                if not error:
+                    (_, uid) = reader.anticoll()
+                    self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
+                    break

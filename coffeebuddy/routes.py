@@ -4,7 +4,7 @@ import math
 from flask import render_template, request, redirect
 
 from coffeebuddy.model import User, Drink, Pay
-from coffeebuddy.card import PCSCCard, MRFC522Card
+from coffeebuddy.card import PCSCCard, MRFC522Card, PIRC522Card
 
 
 class Color:
@@ -136,5 +136,7 @@ def init_routes(app, socketio):
     if not app.testing:
         if app.config['CARD'] == 'MRFC522':
             MRFC522Card(socketio=socketio).start()
-        else:
+        elif app.config['CARD'] == 'PCSC':
             PCSCCard(socketio=socketio).start()
+        elif app.config['CARD'] == 'PIRC522':
+            PIRC522Card(socketio=socketio).start()
