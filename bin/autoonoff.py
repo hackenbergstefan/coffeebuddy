@@ -19,7 +19,7 @@ def main():
         subprocess.run(['xset', 'dpms', 'force', 'off'])
 
     try:
-        GPIO.add_event_detect(SENSOR_PIN , GPIO.RISING, callback=callback)
+        GPIO.add_event_detect(SENSOR_PIN, GPIO.RISING, callback=callback)
         while True:
             time.sleep(100)
     except KeyboardInterrupt:
