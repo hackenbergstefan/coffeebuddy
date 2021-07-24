@@ -1,19 +1,46 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.6.0-dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.2-web/css/all.css') }}">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js" integrity="sha512-fB746S+jyTdN2LSWbYSGP2amFYId226wpOeV4ApumcDpIttPxvk1ZPOgnwqwQziRAtZkiFJVx9F64GLAtoIlCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-        <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='socket.io-client-4.0.0/dist/socket.io.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='plotly-1.58.4.js') }}"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js" integrity="sha512-94titNdENTKSvhQZbcdBcW6kMstfKZsWqGBRCAF0UUmzPx2DKYRHIsAxXJnXxiyvbBD3eMxwotX9rccAjgkVPg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
         <script>
          $(() => {
              var socket = io.connect(window.location.host);
              socket.on('card_connected', (msg) => {
                  window.location.href = `../coffee.html?tag=${msg['tag']}`;
              });
+         });
+         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
+             var data = [{
+                 x: {{ dataset|map(attribute=1)|list|tojson }},
+                 y: {{ dataset|map(attribute=0)|list|tojson }},
+                 type: "bar",
+                 mode: "lines",
+                 marker: {
+                     colorscale: [
+                         ["0.0", "#ab377a10"],
+                         ["1.0", "#ab377aff"],
+                     ],
+                     color: {{ dataset|map(attribute=0)|list|tojson }},
+                 },
+             }];
+             var layout = {
+                 showlegend: false,
+                 plot_bgcolor: "rgba(0,0,0,0)",
+                 paper_bgcolor: "rgba(0,0,0,0)",
+                 bargap: 0,
+                 margin: {
+                     t: "20",
+                 },
+                 autosize: true,
+             };
+             Plotly.newPlot("stats", data, layout);
          });
         </script>
     </head>
@@ -25,31 +52,5 @@
             </div>
             <div id="stats" class="flex-grow-1"></div>
         </div>
-        <script>
-         var data = [{
-             x: {{ dataset|map(attribute=1)|list|tojson }},
-             y: {{ dataset|map(attribute=0)|list|tojson }},
-             type: "bar",
-             mode: "lines",
-             marker: {
-                 colorscale: [
-                     ["0.0", "#ab377a10"],
-                     ["1.0", "#ab377aff"],
-                 ],
-                 color: {{ dataset|map(attribute=0)|list|tojson }},
-             },
-         }];
-         var layout = {
-             showlegend: false,
-             plot_bgcolor: "rgba(0,0,0,0)",
-             paper_bgcolor: "rgba(0,0,0,0)",
-             bargap: 0,
-             margin: {
-                 t: "20",
-             },
-             autosize: true,
-         };
-         Plotly.newPlot("stats", data, layout);
-        </script>
     </body>
 </html>
