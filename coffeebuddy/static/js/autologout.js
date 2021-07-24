@@ -1,4 +1,4 @@
-function startAutologout(autologoutTime = 20,
+function startAutologout(autologoutTime = 5,
                          containerSelector = "#autologout-bar-container",
                          logoutElementClass = "autologout-bar-ruler",
                          elementCount = 20)
