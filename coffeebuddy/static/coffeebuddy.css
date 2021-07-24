@@ -89,10 +89,10 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 .autologout-bar-ruler {
-    height: 5px;
-    width: 5px;
+    height: 8px;
+    width: 6px;
     background: var(--color-engineering);
-    border-radius: 50%;
+    border-radius: 30%;
 }
 
 
