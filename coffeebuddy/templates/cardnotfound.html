@@ -11,6 +11,9 @@
             $('#add-btn').click(() => {
                 window.location.href = '../edituser.html?tag={{ uuid }}';
             });
+            $('#btn-back').click(() => {
+                window.location.href = '..';
+            });
          });
         </script>
         <script src="{{ url_for('static', filename='js/autologout.js') }}" defer></script>
@@ -22,15 +25,43 @@
              }
          });
         </script>
+        <style>
+            .btnbar > * {
+                border: none;
+                border-bottom: 1px solid var(--color-engineering);
+                border-radius: 0;
+                padding: 1.5rem 0.3rem 1.5rem 1rem ;
+                font-size: 1.2rem;
+                width: 100%;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+            .btnbar > button:last-child {
+                margin-top: auto;
+                border-top: 1px solid var(--color-engineering);
+                border-bottom: none;
+            }
+        </style>
     </head>
     <body>
-        <div class="d-flex flex-column justify-content-center text-center h-100">
-            <h1 class="display-1">Card not found</h1>
-            <code class="display-1">{{ uuid }}</code>
-            <div class="d-flex justify-content-center text-center">
-                <button id="add-btn" class="px-5 py-4 btn-lg color-berry fas fa-user-plus"></button>
+        <div class="d-flex flex-row w-100 h-100">
+            <div class="d-flex flex-column justify-content-center text-center h-100 flex-grow-1">
+                <h1 class="display-1">Card not found</h1>
+                <code class="display-1">{{ uuid }}</code>
+                <div class="d-flex justify-content-center text-center">
+                    <button id="add-btn" class="px-5 py-4 btn-lg color-berry fas fa-user-plus"></button>
+                </div>
             </div>
-            <div id="autologout-bar-container" class="d-flex flex-row">
+        </div>
+        <div style="position: absolute; top: 0; width: 200px; height: 100%;">
+            <div class="d-flex flex-column h-100 btnbar">
+                <button id="btn-back" class="mb-2" type="submit" name="logout">
+                    <span class="btnbar-button-icon fas fa-backspace"></span>
+                    <span>Back</span>
+                    <div id="autologout-bar-container" class="d-flex flex-row">
+                    </div>
+                </button>
             </div>
         </div>
     </body>
