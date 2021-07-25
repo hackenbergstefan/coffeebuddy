@@ -43,8 +43,11 @@ class User(db.Model):
 
     @property
     def max_drinks_per_day(self):
-        _date, drinks = self.drinks_per_day.order_by(text("count_1"))[-1]
-        return drinks
+        try:
+            _date, drinks = self.drinks_per_day.order_by(text("count_1"))[-1]
+            return drinks
+        except IndexError:
+            return 0
 
     @property
     def drink_days(self):
