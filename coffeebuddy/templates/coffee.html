@@ -27,6 +27,16 @@
              }
          });
         </script>
+        <script>
+         $(() => {
+             {% if 'coffee' in referer %}
+             $("#modal-enjoy").modal("show");
+             window.setTimeout(() => {
+                 $("#modal-enjoy").modal("hide");
+             }, 1000);
+             {% endif %}
+         });
+        </script>
         <style>
          .btnbar {
              width: 200px;
@@ -92,6 +102,14 @@
              top: 0;
          }
 
+         .modal-dialog {
+             max-width: 300px;
+         }
+
+         #modal-enjoy .modal-content {
+             width: 300px;
+             height: 300px;
+         }
         </style>
     </head>
     <body>
@@ -137,7 +155,7 @@
                 </div>
                 <div class="my-auto">
                     <form method="post">
-                        <button type="submit" class="btn-coffee" name="coffee" value="coffee">
+                        <button id="btn-coffee" type="submit" class="btn-coffee" name="coffee" value="coffee">
                             <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
                             <div id="btn-coffee-text" class="h3">Take one coffee</div>
                         </button>
@@ -167,5 +185,17 @@
             </div>
         </div>
         <canvas id="matrix"></canvas>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal-enjoy" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content p-3">
+                    <h2 class="color-berry">Enjoy!</h2>
+                    <div class="d-flex flex-column justify-content-center text-center h-100">
+                        <div class="display-1 color-berry far fa-smile mb-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

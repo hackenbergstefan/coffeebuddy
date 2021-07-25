@@ -117,4 +117,9 @@ h1, h2, h3, h4, h5, h6, h7 {
     color: var(--color-berry) !important;
 }
 
+.modal-content {
+    background: var(--color-engineering-light) !important;
+    border-radius: 3ex;
+}
+
 /* }}} */

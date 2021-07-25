@@ -49,7 +49,11 @@ def init_routes(app, socketio):
                 return redirect(f'edituser.html?tag={request.args["tag"]}')
             elif 'stats' in request.form:
                 return redirect(f'stats.html?tag={request.args["tag"]}')
-        return render_template('coffee.html', user=user)
+        return render_template(
+            'coffee.html',
+            user=user,
+            referer=request.form if request.method == 'POST' else [],
+        )
 
     @app.route('/stats.html', methods=['GET', 'POST'])
     def chart():
