@@ -105,3 +105,16 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 /* }}} */
+
+/* Bootstrap adjustments {{{ */
+
+.nav-link.active {
+    color: white !important;
+    background: var(--color-berry) !important;
+}
+
+.nav-item a {
+    color: var(--color-berry) !important;
+}
+
+/* }}} */

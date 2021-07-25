@@ -3,7 +3,7 @@ import math
 
 from flask import render_template, request, redirect
 
-from coffeebuddy.model import User, Drink, Pay
+from coffeebuddy.model import User, Drink, Pay, db
 from coffeebuddy.card import PCSCCard, MRFC522Card, PIRC522Card
 
 
@@ -140,3 +140,19 @@ def init_routes(app, socketio):
             PCSCCard(socketio=socketio).start()
         elif app.config['CARD'] == 'PIRC522':
             PIRC522Card(socketio=socketio).start()
+
+    @app.route('/tables.html')
+    def tables():
+        return render_template(
+            'tables.html',
+            bills=[
+                (user.name, user.prename, user.tag.hex(), round(user.unpayed, 2))
+                for user in User.query.all()
+            ],
+            drinks=[
+                (str(drink.timestamp), drink.user.name, drink.user.prename, drink.price)
+                for drink in
+                Drink.query.filter(db.func.Date(Drink.timestamp) >= datetime.date.today() - datetime.timedelta(days=30))
+                if drink.user
+            ]
+        )
