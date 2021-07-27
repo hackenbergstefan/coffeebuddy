@@ -1,0 +1,45 @@
+name: test-backends
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libpcsclite-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Test backend sqlite
+      run: |
+        sed -i 's/^DB_BACKEND.*/DB_BACKEND = "sqlite"/' config.py
+        ./bin/run.py &
+        pid=$!
+        sleep 1
+        ps | grep -c $pid || wait $pid
+        kill -SIGTERM $pid
+    - name: Test backend postgresql
+      run: |
+        sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
+        ./bin/run.py &
+        pid=$!
+        sleep 1
+        ps | grep -c $pid || wait $pid
+        kill -SIGTERM $pid
+    - name: Test backend testing
+      run: |
+        sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
+        export FLASK_ENV=prefilled
+        export FLASK_DEBUG=true
+        ./bin/run.py &
+        pid=$!
+        sleep 1
+        ps | grep -c $pid || wait $pid
+        kill -SIGTERM $pid
