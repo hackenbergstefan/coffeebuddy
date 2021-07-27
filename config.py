@@ -8,6 +8,12 @@ PAY = 10
 CARD = 'PCSC'
 # Database connection details
 DB_BACKEND = 'postgres'
-DB_HOST = 'coffeebuddydb'
-DB_PORT = 5432
-DB_USER = socket.gethostname()
+if DB_BACKEND == 'postgres':
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{socket.gethostname()}@coffeebuddydb:5432/coffeebuddy'
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'connect_args': {
+            'sslmode': 'verify-full'
+        }
+    }
+elif DB_BACKEND == 'sqlite':
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///coffee.db'

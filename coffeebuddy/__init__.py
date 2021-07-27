@@ -8,11 +8,7 @@ from flask_socketio import SocketIO
 from sqlalchemy.exc import OperationalError
 
 app = None
-db = SQLAlchemy(engine_options={
-    "connect_args": {
-        'sslmode': 'verify-full'
-    },
-})
+db = SQLAlchemy()
 socketio = None
 
 import coffeebuddy.model  # noqa: E402
@@ -31,13 +27,8 @@ def create_app(config=None):
 
     if app.config['ENV'] in ('development', 'prefilled') or app.testing:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    elif app.config['DB_BACKEND'] == 'sqlite':
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coffee.db'
-    else:
-        host = app.config['DB_HOST']
-        port = app.config['DB_PORT']
-        user = app.config['DB_USER']
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{user}@{host}:{port}/coffeebuddy'
+        del app.config['SQLALCHEMY_DATABASE_URI']
+        del app.config['SQLALCHEMY_ENGINE_OPTIONS']
 
     @app.teardown_appcontext
     def teardown_db(exception):
@@ -52,7 +43,9 @@ def init_db(app):
     db.init_app(app)
     coffeebuddy.routes.init_routes(app, socketio)
 
-    if app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db'):
+    if (app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db')) or \
+       app.config['ENV'] in ('development', 'prefilled') or \
+       app.testing:
         try:
             db.create_all()
         except OperationalError:
