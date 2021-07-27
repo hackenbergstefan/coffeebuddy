@@ -1,0 +1,24 @@
+name: Test docker-compose database
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup certificates
+      run: |
+        cd database
+        echo -e "1\nn" | ./gen_certs.sh
+        echo -e "2\ncoffeebuddydb" | ./gen_certs.sh
+    - name: Call docker-compose
+      run: |
+        cd database
+        ./../.github/workflows/test_dockerdb.sh
+    - name: Stop containers
+      if: always()
+      run: |
+        cd database
+        docker-compose down

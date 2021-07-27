@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+    coffeebuddydb:
+      image: postgres
+      command: |
+        -c ssl=on
+        -c ssl_ca_file=/var/lib/postgresql/data/root.crt
+        -c ssl_cert_file=/var/lib/postgresql/data/server.crt
+        -c ssl_key_file=/var/lib/postgresql/data/server.key
+      restart: on-failure
+      ports:
+        - 5432:5432
+      environment:
+        POSTGRES_DB: coffeebuddy
+        POSTGRES_PASSWORD: example
+        PGDATA: /var/lib/postgresql/data/pgdata
+      user: "${USERID}:${GROUPID}"
+      volumes:
+        - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+        - ./certs/ca/root.crt:/var/lib/postgresql/data/root.crt
+        - ./certs/server_coffeebuddydb/server.crt:/var/lib/postgresql/data/server.crt
+        - ./certs/server_coffeebuddydb/server.key:/var/lib/postgresql/data/server.key
