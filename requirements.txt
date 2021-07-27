@@ -4,4 +4,4 @@ sqlalchemy
 flask-sqlalchemy
 flask-socketio
 pyscard
-psycopg2
+psycopg2-binary
