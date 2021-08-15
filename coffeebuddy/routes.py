@@ -2,9 +2,11 @@ import datetime
 import math
 
 from flask import render_template, request, redirect
+from flask.ctx import after_this_request
 
 from coffeebuddy.model import User, Drink, Pay, db
 from coffeebuddy.card import PCSCCard, MRFC522Card, PIRC522Card
+from coffeebuddy import facerecognition
 
 
 class Color:
@@ -24,6 +26,13 @@ class Color:
 
 
 def init_routes(app, socketio):
+    @app.after_request
+    def after_request(response):
+        if response.status_code == 200 and request.base_url != request.host_url:
+            facerecognition.pause()
+            print('pause')
+        return response
+
     @app.route('/coffee.html', methods=['GET', 'POST'])
     def coffee():
         user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
@@ -49,6 +58,11 @@ def init_routes(app, socketio):
                 return redirect(f'edituser.html?tag={request.args["tag"]}')
             elif 'stats' in request.form:
                 return redirect(f'stats.html?tag={request.args["tag"]}')
+            elif 'capture' in request.form:
+                if 'notimeout' in request.args:
+                    facerecognition.capture_locked(user.tag)
+                return redirect(f'{request.url}&notimeout')
+
         return render_template(
             'coffee.html',
             user=user,
@@ -89,6 +103,8 @@ def init_routes(app, socketio):
 
     @app.route('/')
     def welcome():
+        if not app.testing:
+            facerecognition.listen()
         return render_template(
             'welcome.html',
             dataset=Drink.drinks_vs_days(datetime.timedelta(weeks=12))
@@ -137,14 +153,6 @@ def init_routes(app, socketio):
             app.db.session.add(Drink(user=user, price=app.config['PRICE']))
             app.db.session.commit()
 
-    if not app.testing:
-        if app.config['CARD'] == 'MRFC522':
-            MRFC522Card(socketio=socketio).start()
-        elif app.config['CARD'] == 'PCSC':
-            PCSCCard(socketio=socketio).start()
-        elif app.config['CARD'] == 'PIRC522':
-            PIRC522Card(socketio=socketio).start()
-
     @app.route('/tables.html')
     def tables():
         return render_template(
@@ -160,3 +168,12 @@ def init_routes(app, socketio):
                 if drink.user
             ]
         )
+
+    if not app.testing:
+        if app.config['CARD'] == 'MRFC522':
+            MRFC522Card(socketio=socketio).start()
+        elif app.config['CARD'] == 'PCSC':
+            PCSCCard(socketio=socketio).start()
+        elif app.config['CARD'] == 'PIRC522':
+            PIRC522Card(socketio=socketio).start()
+        facerecognition.start(socketio)
