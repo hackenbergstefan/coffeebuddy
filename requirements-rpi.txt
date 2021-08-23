@@ -1,2 +1,4 @@
 -r requirements.txt
 mfrc522
+face-recognition
+opencv-python
