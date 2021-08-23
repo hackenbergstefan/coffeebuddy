@@ -2,6 +2,11 @@ import logging
 import threading
 import time
 
+try:
+    import RPi.GPIO as GPIO
+except ModuleNotFoundError:
+    pass
+
 
 class PCSCCard(threading.Thread):
     PCSC_GET_UUID_APDU = bytes.fromhex('ff ca 00 00 00')
@@ -51,7 +56,7 @@ class PIRC522Card(threading.Thread):
 
     def run(self):
         import pirc522
-        reader = pirc522.RFID()
+        reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
         while True:
             reader.wait_for_tag()
             for _ in range(10):
