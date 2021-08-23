@@ -32,9 +32,10 @@ def color(r, g, b):
         r /= 255
         g /= 255
         b /= 255
-    pwms[0].ChangeDutyCycle(100 * r)
-    pwms[1].ChangeDutyCycle(100 * g)
-    pwms[2].ChangeDutyCycle(100 * b)
+    if pwms:
+        pwms[0].ChangeDutyCycle(100 * r)
+        pwms[1].ChangeDutyCycle(100 * g)
+        pwms[2].ChangeDutyCycle(100 * b)
 
 
 def color_named(name):

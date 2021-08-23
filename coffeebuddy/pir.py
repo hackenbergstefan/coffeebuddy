@@ -44,10 +44,12 @@ def start(*args, **kwargs):
 
 
 def resume():
-    logging.getLogger(__name__).info('ThreadedFaceRecognition resumed.')
-    thread.running = True
+    if thread:
+        logging.getLogger(__name__).info('ThreadedFaceRecognition resumed.')
+        thread.running = True
 
 
 def pause():
-    logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
-    thread.running = False
+    if thread:
+        logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
+        thread.running = False
