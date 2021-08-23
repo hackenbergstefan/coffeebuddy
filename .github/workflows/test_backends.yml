@@ -19,6 +19,7 @@ jobs:
         pip install -r requirements.txt
     - name: Test backend sqlite
       run: |
+        sed -i 's/^CARD.*/CARD = ""/' config.py
         sed -i 's/^DB_BACKEND.*/DB_BACKEND = "sqlite"/' config.py
         ./bin/run.py &
         pid=$!
@@ -27,6 +28,7 @@ jobs:
         kill -SIGTERM $pid
     - name: Test backend postgresql
       run: |
+        sed -i 's/^CARD.*/CARD = ""/' config.py
         sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
         ./bin/run.py &
         pid=$!
@@ -35,6 +37,7 @@ jobs:
         kill -SIGTERM $pid
     - name: Test backend testing
       run: |
+        sed -i 's/^CARD.*/CARD = ""/' config.py
         sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
         export FLASK_ENV=prefilled
         export FLASK_DEBUG=true
