@@ -40,6 +40,8 @@ The final application uses a Raspberry Pi attached to a 7" touchscreen. Thus, th
 
 ### Configuration for Raspberry Pi
 
+#### Misc
+
 At least I had to adjust the following settings:
 
 * Fix screen resolution
@@ -60,3 +62,9 @@ At least I had to adjust the following settings:
   EndSection
   ```
 * Disable translation option in chrome
+
+#### Card reader
+
+Coffeebuddy works with PCSC reader and with SPI RFID module "RC522". Latter is supported on Raspi by several python modules. Although [mrfc522](https://github.com/pimylifeup/MFRC522-python) is widely used it leads to a high CPU consumption when polling for card. [pi-rc522](https://github.com/ondryaso/pi-rc522) uses interrupt based SPI communication.
+
+Both modules can be used and selected in [config.py](./config.py).
