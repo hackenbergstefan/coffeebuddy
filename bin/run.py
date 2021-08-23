@@ -6,6 +6,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import coffeebuddy  # noqa: E402
 
+try:
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+except ModuleNotFoundError:
+    pass
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

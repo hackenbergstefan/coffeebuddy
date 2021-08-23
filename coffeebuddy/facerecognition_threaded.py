@@ -18,16 +18,16 @@ class ThreadedFaceRecognition(threading.Thread, facerecognition.FaceRecognizer):
             if not facelock.empty():
                 facelock.join()
             tag = self.recognize_once()
-            logging.getLogger(__name__).info(f'ThreadedFaceRecognition recognized {tag}.')
             if tag:
+                logging.getLogger(__name__).info(f'ThreadedFaceRecognition recognized {tag}.')
                 self.socketio.emit('card_connected', data=dict(tag=tag.hex()))
 
 
-def start(socketio):
+def start(*args):
     logging.getLogger(__name__).info('ThreadedFaceRecognition started.')
     global thread
     facelock.put(True)
-    thread = ThreadedFaceRecognition(socketio)
+    thread = ThreadedFaceRecognition(*args)
     thread.start()
 
 

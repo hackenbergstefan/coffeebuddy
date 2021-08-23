@@ -1,3 +1,4 @@
+from coffeebuddy import illumination
 import socket
 
 # Price per cup in €
@@ -20,3 +21,9 @@ elif DB_BACKEND == 'sqlite':
 
 # Enable facerecognition
 FACERECOGNITION = True
+
+# Polyelectric sensor
+PIR = True
+
+# Illumination
+ILLUMINATION = True
