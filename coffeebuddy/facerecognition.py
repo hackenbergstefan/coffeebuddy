@@ -1,3 +1,4 @@
+import logging
 import os
 import pickle
 import threading
@@ -130,7 +131,9 @@ class FaceCapturer:
             return
         
         encoded_face = encode_face(img)
+        logging.getLogger(__name__).info(f'Encoded face: {encoded_face}')
         if encoded_face is not None:
+            logging.getLogger(__name__).info(f'Save face: {self.tag} {self.name} {self.prename} {encoded_face}')
             add_face_data(self.tag, self.name, self.prename, encoded_face)
             self.capturing = False
 
@@ -138,7 +141,7 @@ class FaceCapturer:
 class FaceRecognizer:
     flipped = True
 
-    def recognize(self):
+    def recognize_guiloop(self):
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
         cap.set(4, 480) 
@@ -168,6 +171,24 @@ class FaceRecognizer:
         cap.release()
         cv2.destroyAllWindows()
 
+    def recognize_once(self):
+        tag = None
+        cap = cv2.VideoCapture(0)
+        cap.set(3, 640)
+        cap.set(4, 480) 
+        _, img = cap.read()
+        # Rotate image if needed
+        if self.flipped:
+            img = cv2.flip(img, -1)
+        # Use fast detection for boxes
+        detected_faces = detect_faces(img)
+        if len(detected_faces) > 0:
+            # Recognize
+            encoding = encode_face(img)
+            if encoding is not None:
+                tag, _, _ = recognize_face(encoding)
+        cap.release()
+        return tag
 
 def main():
     import argparse
@@ -184,7 +205,7 @@ def main():
         name = args.data[2]
         FaceCapturer(tag, name, prename).capture()
     elif args.function == 'recognize':
-        FaceRecognizer().recognize()
+        FaceRecognizer().recognize_guiloop()
 
 
 if __name__ == '__main__':

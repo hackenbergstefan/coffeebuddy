@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 
@@ -57,5 +58,6 @@ class PIRC522Card(threading.Thread):
                 (error, _) = reader.request()
                 if not error:
                     (_, uid) = reader.anticoll()
+                    logging.getLogger(__name__).info(f'Card {uid} connected.')
                     self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break

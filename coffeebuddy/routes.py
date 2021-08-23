@@ -6,7 +6,7 @@ from flask.ctx import after_this_request
 
 from coffeebuddy.model import User, Drink, Pay, db
 from coffeebuddy.card import PCSCCard, MRFC522Card, PIRC522Card
-from coffeebuddy import facerecognition
+from coffeebuddy import facerecognition, facerecognition_threaded
 
 
 class Color:
@@ -24,13 +24,16 @@ class Color:
         b = self.b + (255 - self.b) * factor
         return Color(r, g, b)
 
-
 def init_routes(app, socketio):
     @app.after_request
     def after_request(response):
-        if response.status_code == 200 and request.base_url != request.host_url:
-            facerecognition.pause()
-            print('pause')
+        if app.config['FACERECOGNITION'] is True and request.endpoint:
+            if request.endpoint == 'welcome':
+                print(request.base_url, request.path, request.values, request.args, request.endpoint)
+                facerecognition_threaded.resume()
+            elif request.endpoint != 'static':
+                print(request.base_url, request.path, request.values, request.args, request.endpoint)
+                facerecognition_threaded.pause()
         return response
 
     @app.route('/coffee.html', methods=['GET', 'POST'])
@@ -60,7 +63,9 @@ def init_routes(app, socketio):
                 return redirect(f'stats.html?tag={request.args["tag"]}')
             elif 'capture' in request.form:
                 if 'notimeout' in request.args:
-                    facerecognition.capture_locked(user.tag)
+                    if app.config['FACERECOGNITION'] is True:
+                        facerecognition_threaded.pause()
+                        facerecognition.FaceCapturer(user.tag, user.name, user.prename).capture()
                 return redirect(f'{request.url}&notimeout')
 
         return render_template(
@@ -103,8 +108,6 @@ def init_routes(app, socketio):
 
     @app.route('/')
     def welcome():
-        if not app.testing:
-            facerecognition.listen()
         return render_template(
             'welcome.html',
             dataset=Drink.drinks_vs_days(datetime.timedelta(weeks=12))
@@ -176,4 +179,6 @@ def init_routes(app, socketio):
             PCSCCard(socketio=socketio).start()
         elif app.config['CARD'] == 'PIRC522':
             PIRC522Card(socketio=socketio).start()
-        facerecognition.start(socketio)
+
+        if app.config['FACERECOGNITION'] is True:
+            facerecognition_threaded.start(socketio)

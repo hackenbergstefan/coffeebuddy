@@ -1,11 +1,14 @@
 #!/usr/bin/env python
+import logging
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import coffeebuddy  # noqa: E402
 
+
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     app, socketio = coffeebuddy.create_app()
     try:
         with app.app_context():

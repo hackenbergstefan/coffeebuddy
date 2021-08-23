@@ -1,3 +1,4 @@
+import logging
 import queue
 import threading
 
@@ -17,11 +18,13 @@ class ThreadedFaceRecognition(threading.Thread, facerecognition.FaceRecognizer):
             if not facelock.empty():
                 facelock.join()
             tag = self.recognize_once()
+            logging.getLogger(__name__).info(f'ThreadedFaceRecognition recognized {tag}.')
             if tag:
                 self.socketio.emit('card_connected', data=dict(tag=tag.hex()))
 
 
 def start(socketio):
+    logging.getLogger(__name__).info('ThreadedFaceRecognition started.')
     global thread
     facelock.put(True)
     thread = ThreadedFaceRecognition(socketio)
@@ -29,11 +32,13 @@ def start(socketio):
 
 
 def resume():
+    logging.getLogger(__name__).info('ThreadedFaceRecognition resumed.')
     if not facelock.empty():
         facelock.get()
         facelock.task_done()
 
 
 def pause():
+    logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
     if facelock.empty():
         facelock.put(True)
