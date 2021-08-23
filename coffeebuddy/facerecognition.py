@@ -1,24 +1,25 @@
 import logging
 import os
 import pickle
-import threading
 
-import cv2
-import face_recognition
-
-
-face_cascade = cv2.CascadeClassifier(
-    os.path.join(os.path.dirname(cv2.__file__), 'data', 'haarcascade_frontalface_default.xml')
-)
-"""OpenCV cascade for frontal face detection. Used for fast face detection."""
-
-face_data_path = os.path.join(os.path.dirname(__file__), 'face_encodings.pickle')
-"""Path to binary face data."""
 try:
-    face_data = pickle.loads(open(face_data_path, 'rb').read())
-    """Binary data of captured faces."""
-except:
-    face_data = {}
+    import cv2
+    import face_recognition
+
+    face_cascade = cv2.CascadeClassifier(
+        os.path.join(os.path.dirname(cv2.__file__), 'data', 'haarcascade_frontalface_default.xml')
+    )
+    """OpenCV cascade for frontal face detection. Used for fast face detection."""
+
+    face_data_path = os.path.join(os.path.dirname(__file__), 'face_encodings.pickle')
+    """Path to binary face data."""
+    try:
+        face_data = pickle.loads(open(face_data_path, 'rb').read())
+        """Binary data of captured faces."""
+    except FileNotFoundError:
+        face_data = {}
+except ModuleNotFoundError:
+    pass
 
 
 def save_face_data():
@@ -102,7 +103,7 @@ class FaceCapturer:
     def capture(self):
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
-        cap.set(4, 480) 
+        cap.set(4, 480)
 
         self.capturing = True
         detected_faces = []
@@ -129,7 +130,7 @@ class FaceCapturer:
         """Encode and save captured face on click/touch event."""
         if not self.capturing:
             return
-        
+
         encoded_face = encode_face(img)
         logging.getLogger(__name__).info(f'Encoded face: {encoded_face}')
         if encoded_face is not None:
@@ -144,7 +145,7 @@ class FaceRecognizer:
     def recognize_guiloop(self):
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
-        cap.set(4, 480) 
+        cap.set(4, 480)
 
         detected_faces = []
         detected_name = None
@@ -175,7 +176,7 @@ class FaceRecognizer:
         tag = None
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
-        cap.set(4, 480) 
+        cap.set(4, 480)
         _, img = cap.read()
         # Rotate image if needed
         if self.flipped:
@@ -189,6 +190,7 @@ class FaceRecognizer:
                 tag, _, _ = recognize_face(encoding)
         cap.release()
         return tag
+
 
 def main():
     import argparse

@@ -2,7 +2,6 @@ import datetime
 import math
 
 from flask import render_template, request, redirect
-from flask.ctx import after_this_request
 
 from coffeebuddy.model import User, Drink, Pay, db
 from coffeebuddy.card import PCSCCard, MRFC522Card, PIRC522Card
@@ -23,6 +22,7 @@ class Color:
         g = self.g + (255 - self.g) * factor
         b = self.b + (255 - self.b) * factor
         return Color(r, g, b)
+
 
 def init_routes(app, socketio):
     @app.after_request
