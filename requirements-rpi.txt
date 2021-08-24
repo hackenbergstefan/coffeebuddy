@@ -1,5 +1,3 @@
 -r requirements.txt
 mfrc522
 pi-rc522
-face-recognition
-opencv-python
