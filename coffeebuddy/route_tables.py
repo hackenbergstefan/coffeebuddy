@@ -1,7 +1,6 @@
 import datetime
 
 import flask
-from flask import render_template
 
 from coffeebuddy.model import User, Drink
 
@@ -9,7 +8,7 @@ from coffeebuddy.model import User, Drink
 def init():
     @flask.g.app.route('/tables.html')
     def tables():
-        return render_template(
+        return flask.render_template(
             'tables.html',
             bills=[
                 (user.name, user.prename, user.tag.hex(), round(user.unpayed, 2))

@@ -1,5 +1,4 @@
 import flask
-from flask import request, render_template, redirect
 
 from coffeebuddy.model import User
 
@@ -23,15 +22,15 @@ class Color:
 def init():
     @flask.g.app.route('/stats.html', methods=['GET', 'POST'])
     def chart():
-        user = User.query.filter(User.tag == bytes.fromhex(request.args['tag'])).first()
+        user = User.query.filter(User.tag == bytes.fromhex(flask.request.args['tag'])).first()
         if user is None:
-            return render_template('cardnotfound.html', uuid=request.args['tag'])
+            return flask.render_template('cardnotfound.html', uuid=flask.request.args['tag'])
 
-        if request.method == 'POST':
-            if 'coffee' in request.form:
-                return redirect(f'coffee.html?tag={request.args["tag"]}')
-            elif 'logout' in request.form:
-                return redirect('/')
+        if flask.request.method == 'POST':
+            if 'coffee' in flask.request.form:
+                return flask.redirect(f'coffee.html?tag={flask.request.args["tag"]}')
+            elif 'logout' in flask.request.form:
+                return flask.redirect('/')
 
         berry = Color(171, 55, 122)
 
@@ -51,4 +50,4 @@ def init():
             } for i in range(n, 0, -1)
         ]
 
-        return render_template('stats.html', user=user, datasets=datasets)
+        return flask.render_template('stats.html', user=user, datasets=datasets)
