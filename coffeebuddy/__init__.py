@@ -2,21 +2,19 @@ import datetime
 import os
 import random
 
-from flask import Flask, g
+import flask
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from sqlalchemy.exc import OperationalError
 
-app = None
 db = SQLAlchemy()
-socketio = None
 
 import coffeebuddy.model  # noqa: E402
 import coffeebuddy.routes  # noqa: E402
 
 
 def create_app(config=None):
-    global app, socketio
     app = Flask('coffeebuddy')
     socketio = SocketIO(app)
 
@@ -32,7 +30,7 @@ def create_app(config=None):
 
     @app.teardown_appcontext
     def teardown_db(exception):
-        db = g.pop('db', None)
+        db = flask.g.pop('db', None)
         if db is not None:
             db.session.close()
 
@@ -41,7 +39,6 @@ def create_app(config=None):
 
 def init_db(app):
     db.init_app(app)
-    coffeebuddy.routes.init_routes(app, socketio)
 
     if (app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db')) or \
        app.config['ENV'] in ('development', 'prefilled') or \
@@ -52,6 +49,21 @@ def init_db(app):
             # probably cannot connect to or init database
             os._exit(1)
 
+    # Default database content
+    if app.config['ENV'] == 'development':
+        db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
+        db.session.commit()
+    elif app.config['ENV'] == 'prefilled':
+        app.debug = True
+        prefill(db)
+
+    flask.g.db = db
+    return db
+
+
+def init_routes(app, socketio):
+    flask.g.app = app
+    flask.g.socketio = socketio
     @app.context_processor
     def inject_globals():
         return {
@@ -61,17 +73,7 @@ def init_db(app):
             'min': min,
             'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data),
         }
-
-    # Default database content
-    if app.config['ENV'] == 'development':
-        db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
-        db.session.commit()
-    elif app.config['ENV'] == 'prefilled':
-        app.debug = True
-        prefill(db)
-
-    app.db = db
-    return db
+    coffeebuddy.routes.init_routes(app, socketio)
 
 
 def prefill(db):
