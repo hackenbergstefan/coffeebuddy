@@ -10,4 +10,4 @@ def init():
         if 'coffee' in flask.request.form:
             flask.g.db.session.add(Drink(user=user, price=flask.g.app.config['PRICE']))
             flask.g.db.session.commit()
-        return flask.abort(404)
+        return ''

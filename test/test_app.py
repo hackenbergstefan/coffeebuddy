@@ -105,3 +105,17 @@ class TestRouteCoffee(TestCoffeebuddy):
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user.pays), 0)
+
+
+class TestRouteOneSwipe(TestCoffeebuddy):
+    def test(self):
+        user, _ = self.add_default_user()
+        response = self.client.post(f'/oneswipe.html?tag={user.tag.hex()}', data=dict(coffee=True))
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(list(user.drinks())), 0)
+
+
+class TestRouteWelcome(TestCoffeebuddy):
+    def test(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
