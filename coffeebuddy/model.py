@@ -66,7 +66,7 @@ class User(db.Model):
 class Drink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('coffees', lazy=True))
 
@@ -96,7 +96,7 @@ class Pay(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('pays', lazy=True))
-    amount = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
