@@ -57,7 +57,7 @@ def init():
     flask.current_app.events.register('camera_motion_detected', lambda: color_named('pink'))
     flask.current_app.events.register('camera_motion_lost', lambda: color_named('lightblue'))
     flask.current_app.events.register('route_coffee', lambda: color_named('green'))
-    flask.current_app.events.register('facerecognition_face_detected', lambda: color_named('red'))
+    flask.current_app.events.register('facerecognition_face_detected', lambda: color_named('violet'))
     flask.current_app.events.register('facerecognition_face_lost', lambda: color_named('pink'))
 
 

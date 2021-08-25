@@ -102,6 +102,7 @@ class FaceCapturer:
         self.name = name
         self.prename = prename
         self.capturing = False
+        self.app_config = flask.current_app.config
 
     def capture(self):
         cap = cv2.VideoCapture(0)
@@ -112,9 +113,8 @@ class FaceCapturer:
         detected_faces = []
         for nth in every_nth(4):
             _, img = cap.read()
-            # Rotate image if needed
-            if self.flipped:
-                img = cv2.flip(img, -1)
+            if self.app_config['CAMERA_ROTATION'] is not None:
+                img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
             if nth:
                 # Detect faces only every nth frame
                 detected_faces = detect_faces(img)
@@ -147,6 +147,7 @@ class FaceRecognizer:
 
     def __init__(self):
         self.events = flask.current_app.events
+        self.app_config = flask.current_app.config
 
     def recognize_guiloop(self):
         cap = cv2.VideoCapture(0)
@@ -157,9 +158,8 @@ class FaceRecognizer:
         detected_name = None
         for nth in every_nth(32):
             _, img = cap.read()
-            # Rotate image if needed
-            if self.flipped:
-                img = cv2.flip(img, -1)
+            if self.app_config['CAMERA_ROTATION'] is not None:
+                img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
             if nth:
                 # Use fast detection for boxes
                 detected_faces = detect_faces(img)
@@ -184,9 +184,8 @@ class FaceRecognizer:
         cap.set(3, 640)
         cap.set(4, 480)
         _, img = cap.read()
-        # Rotate image if needed
-        if self.flipped:
-            img = cv2.flip(img, -1)
+        if self.app_config['CAMERA_ROTATION'] is not None:
+            img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
         # Use fast detection for boxes
         detected_faces = detect_faces(img)
         if len(detected_faces) > 0:

@@ -80,11 +80,22 @@ def init():
         return
 
     if flask.current_app.config['CAMERA'] is True:
+        import cv2
         logging.getLogger(__name__).info('Camera init.')
         if 'CAMERA_MOTION_WAIT' not in flask.current_app.config:
             flask.current_app.config['CAMERA_MOTION_WAIT'] = 10
         if 'CAMERA_MOTION_DELTA' not in flask.current_app.config:
             flask.current_app.config['CAMERA_MOTION_DELTA'] = 2
+
+        if 'CAMERA_ROTATION' in flask.current_app.config:
+            if flask.current_app.config['CAMERA_ROTATION'] == 90:
+                flask.current_app.config['CAMERA_ROTATION'] = cv2.ROTATE_90_CLOCKWISE
+            elif flask.current_app.config['CAMERA_ROTATION'] == 180:
+                flask.current_app.config['CAMERA_ROTATION'] = cv2.ROTATE_180
+            elif flask.current_app.config['CAMERA_ROTATION'] == 270:
+                flask.current_app.config['CAMERA_ROTATION'] = cv2.ROTATE_90_COUNTERCLOCKWISE
+        else:
+            flask.current_app.config['CAMERA_ROTATION'] = None
 
         flask.current_app.events.register('route_welcome', resume)
         flask.current_app.events.register('route_notwelcome', pause)
