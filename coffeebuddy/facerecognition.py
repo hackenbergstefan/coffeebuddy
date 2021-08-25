@@ -90,7 +90,7 @@ def recognize_face(encoding):
     matches = face_recognition.compare_faces(list(face_data.values()), encoding)
     if True in matches:
         return list(face_data.keys())[matches.index(True)]
-    return None
+    return None, None, None
 
 
 class FaceCapturer:
