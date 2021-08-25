@@ -1,5 +1,6 @@
 import flask
 
+
 def init():
     if flask.g.app.testing:
         return

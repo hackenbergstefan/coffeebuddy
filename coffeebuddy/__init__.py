@@ -10,13 +10,13 @@ from sqlalchemy.exc import OperationalError
 
 db = SQLAlchemy()
 
-import coffeebuddy.events
+import coffeebuddy.events  # noqa: E402
 import coffeebuddy.model  # noqa: E402
-import coffeebuddy.routes
-import coffeebuddy.attachments
-import coffeebuddy.card
-import coffeebuddy.facerecognition
-import coffeebuddy.facerecognition_threaded
+import coffeebuddy.routes  # noqa: E402
+import coffeebuddy.attachments  # noqa: E402
+import coffeebuddy.card  # noqa: E402
+import coffeebuddy.facerecognition  # noqa: E402
+import coffeebuddy.facerecognition_threaded  # noqa: E402
 
 
 def create_app(config=None):
