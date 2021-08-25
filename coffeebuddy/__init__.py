@@ -71,8 +71,8 @@ def init_app_context():
     coffeebuddy.attachments.init()
     import coffeebuddy.card
     coffeebuddy.card.init()
-    import coffeebuddy.facerecognition_threaded
-    coffeebuddy.facerecognition_threaded.init()
+    import coffeebuddy.camera
+    coffeebuddy.camera.init()
     import coffeebuddy.facerecognition
     coffeebuddy.facerecognition.init()
 

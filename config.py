@@ -18,11 +18,8 @@ if DB_BACKEND == 'postgres':
 elif DB_BACKEND == 'sqlite':
     SQLALCHEMY_DATABASE_URI = 'sqlite:///coffee.db'
 
-# Enable facerecognition
-FACERECOGNITION = True
-
-# Polyelectric sensor
-PIR = False
+# Enable camera
+CAMERA = True
 
 # Illumination
 ILLUMINATION = False

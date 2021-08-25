@@ -196,7 +196,7 @@ class FaceRecognizer:
 
 
 def capture(user):
-    flask.current_app.events.fire('facerecognition_threaded_pause')
+    flask.current_app.events.fire('facerecognition_capture')
     FaceCapturer(user.tag, user.name, user.prename).capture()
 
 
