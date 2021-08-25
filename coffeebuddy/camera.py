@@ -52,13 +52,12 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
                     logging.getLogger(__name__).info(f'Face recognized {tag}.')
                     self.socketio.emit('card_connected', data=dict(tag=tag.hex()))
             elif self.motiondetected():
-                motion_lost = False
                 last_motion_detected = datetime.datetime.now()
+                self.events.fire_reset('camera_motion_lost')
                 self.events.fire('camera_motion_detected')
                 logging.getLogger(__name__).info(f'Motion detected {last_motion_detected}.')
-            elif motion_lost is False:
-                motion_lost = True
-                self.events.fire('camera_motion_lost')
+            else:
+                self.events.fire_once('camera_motion_lost')
             time.sleep(0.05)
 
 

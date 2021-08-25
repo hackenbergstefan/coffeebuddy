@@ -145,6 +145,9 @@ class FaceCapturer:
 class FaceRecognizer:
     flipped = True
 
+    def __init__(self):
+        self.events = flask.current_app.events
+
     def recognize_guiloop(self):
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
@@ -188,10 +191,15 @@ class FaceRecognizer:
         detected_faces = detect_faces(img)
         if len(detected_faces) > 0:
             logging.getLogger(__name__).info('Face detected.')
+            self.events.fire_reset('facerecognition_face_lost')
+            self.events.fire_once('facerecognition_face_detected')
             # Recognize
             encoding = encode_face(img)
             if encoding is not None:
                 tag, _, _ = recognize_face(encoding)
+        else:
+            self.events.fire_once('facerecognition_face_lost')
+            self.events.fire_reset('facerecognition_face_detected')
         cap.release()
         return tag
 
