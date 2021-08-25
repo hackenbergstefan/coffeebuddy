@@ -14,20 +14,20 @@ def handle_post(user):
             prename=flask.request.form['first_name'],
             option_oneswipe='oneswipe' in flask.request.form,
         )
-        flask.g.db.session.add(user)
+        flask.current_app.db.session.add(user)
         try:
             bill = float(flask.request.form['initial_bill'].replace(',', '.'))
-            for _ in range(math.ceil(bill / flask.g.app.config['PRICE'])):
-                flask.g.db.session.add(Drink(user=user, price=flask.g.app.config['PRICE']))
+            for _ in range(math.ceil(bill / flask.current_app.config['PRICE'])):
+                flask.current_app.db.session.add(Drink(user=user, price=flask.current_app.config['PRICE']))
         except ValueError:
             pass
-        flask.g.db.session.commit()
+        flask.current_app.db.session.commit()
     else:
         # Edit existing new user
         user.name = flask.request.form['last_name']
         user.prename = flask.request.form['first_name']
         user.option_oneswipe = 'oneswipe' in flask.request.form
-        flask.g.db.session.commit()
+        flask.current_app.db.session.commit()
     return flask.redirect('/')
 
 
@@ -39,7 +39,7 @@ def handle_get(user):
 
 
 def init():
-    @flask.g.app.route('/edituser.html', methods=['GET', 'POST'])
+    @flask.current_app.route('/edituser.html', methods=['GET', 'POST'])
     def edit_user():
         tag = bytes.fromhex(flask.request.args['tag']) if 'tag' in flask.request.args else None
         user = User.query.filter(User.tag == tag).first()

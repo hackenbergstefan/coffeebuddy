@@ -4,6 +4,7 @@ import pickle
 
 import flask
 
+
 try:
     import cv2
     import face_recognition
@@ -195,15 +196,15 @@ class FaceRecognizer:
 
 
 def capture(user):
-    flask.g.events.fire('facerecognition_threaded_pause')
+    flask.current_app.events.fire('facerecognition_threaded_pause')
     FaceCapturer(user.tag, user.name, user.prename).capture()
 
 
 def init():
-    if flask.g.app.testing:
+    if flask.current_app.testing:
         return
 
-    flask.g.events.register('route_coffee_capture', capture)
+    flask.current_app.events.register('route_coffee_capture', capture)
 
 
 def main():

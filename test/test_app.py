@@ -1,11 +1,11 @@
 import datetime
 
-from coffeebuddy.model import Drink, User, Pay
 from . import TestCoffeebuddy
 
 
 class TestDatabase(TestCoffeebuddy):
     def test_drink_coffee(self):
+        from coffeebuddy.model import User
         user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
@@ -20,6 +20,7 @@ class TestDatabase(TestCoffeebuddy):
         self.assertEqual(len(user2.coffees), 1)
 
     def test_drinks_today(self):
+        from coffeebuddy.model import Drink, User
         user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
@@ -35,6 +36,7 @@ class TestDatabase(TestCoffeebuddy):
         self.assertEqual(len(user2.coffees), 1)
 
     def test_pay(self):
+        from coffeebuddy.model import Drink, User, Pay
         user = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         self.db.session.add(user)
         self.db.session.commit()
@@ -50,6 +52,7 @@ class TestDatabase(TestCoffeebuddy):
 
 class TestRouteEdituser(TestCoffeebuddy):
     def test_adduser(self):
+        from coffeebuddy.model import User
         response = self.client.post('/edituser.html', data=dict(
             tag='01 02 03 04',
             last_name='Mustermann',
@@ -64,6 +67,7 @@ class TestRouteEdituser(TestCoffeebuddy):
         self.assertEqual(users[0].prename, 'Max')
 
     def test_edituser(self):
+        from coffeebuddy.model import User
         self.db.session.add(User(tag=b'\x01\x02\x03\x04', name='Mustermann', prename='Max'))
         response = self.client.post('/edituser.html?tag=01020304', data=dict(
             tag='01 02 03 04',
@@ -94,6 +98,7 @@ class TestRouteCoffee(TestCoffeebuddy):
         self.assertEqual(response.status_code, 302)
 
     def test_undopay(self):
+        from coffeebuddy.model import Pay
         user, _ = self.add_default_user()
         user.pays.append(Pay(amount=10))
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))

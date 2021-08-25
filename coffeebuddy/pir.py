@@ -3,8 +3,9 @@ import threading
 import time
 import subprocess
 
-import flask
 import RPi.GPIO as GPIO
+
+from coffeebuddy import app
 
 
 thread = None
@@ -22,14 +23,14 @@ class PirThread(threading.Thread):
 
     def run(self):
         if GPIO.input(self.sensor_pin) == GPIO.LOW:
-            flask.g.events.fire('pir_motion_paused')
+            app.events.fire('pir_motion_paused')
         while True:
             if self.running:
                 if GPIO.input(self.sensor_pin) == GPIO.HIGH:
-                    flask.g.events.fire('pir_motion_detected')
+                    app.events.fire('pir_motion_detected')
                     time.sleep(self.timedelta)
                     if GPIO.input(self.sensor_pin) == GPIO.LOW:
-                        flask.g.events.fire('pir_motion_paused')
+                        app.events.fire('pir_motion_paused')
             time.sleep(0.1)
 
 
@@ -46,10 +47,10 @@ def pause():
 
 
 def init():
-    flask.g.events.register('route_welcome', resume)
-    flask.g.events.register('route_notwelcome', pause)
-    flask.g.events.register('pir_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
-    flask.g.events.register('pir_motion_paused', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
+    app.events.register('route_welcome', resume)
+    app.events.register('route_notwelcome', pause)
+    app.events.register('pir_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
+    app.events.register('pir_motion_paused', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
 
     global thread
     thread = PirThread()

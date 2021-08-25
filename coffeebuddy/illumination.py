@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import flask
-
 import RPi.GPIO as GPIO
 
 
@@ -52,9 +51,9 @@ def color_named(name):
 def init():
     setup()
 
-    flask.g.events.register('pir_motion_detected', lambda: color_named('pink'))
-    flask.g.events.register('pir_motion_lost', lambda: color_named('lightblue'))
-    flask.g.events.register('route_coffee', lambda: color_named('green'))
+    flask.current_app.events.register('pir_motion_detected', lambda: color_named('pink'))
+    flask.current_app.events.register('pir_motion_lost', lambda: color_named('lightblue'))
+    flask.current_app.events.register('route_coffee', lambda: color_named('green'))
 
 
 if __name__ == '__main__':

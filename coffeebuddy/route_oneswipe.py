@@ -4,10 +4,10 @@ from coffeebuddy.model import User, Drink
 
 
 def init():
-    @flask.g.app.route('/oneswipe.html', methods=['POST'])
+    @flask.current_app.route('/oneswipe.html', methods=['POST'])
     def oneswipe():
         user = User.query.filter(User.tag == bytes.fromhex(flask.request.args['tag'])).first()
         if 'coffee' in flask.request.form:
-            flask.g.db.session.add(Drink(user=user, price=flask.g.app.config['PRICE']))
-            flask.g.db.session.commit()
+            flask.current_app.db.session.add(Drink(user=user, price=flask.current_app.config['PRICE']))
+            flask.current_app.db.session.commit()
         return ''

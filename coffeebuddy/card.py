@@ -2,15 +2,11 @@ import logging
 import threading
 import time
 
-import flask
+from coffeebuddy import app
 
 
 class PCSCCard(threading.Thread):
     PCSC_GET_UUID_APDU = bytes.fromhex('ff ca 00 00 00')
-
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
 
     def run(self):
         import smartcard
@@ -21,7 +17,7 @@ class PCSCCard(threading.Thread):
                 service = request.waitforcard()
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
-                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
             except:  # noqa: E722
@@ -29,10 +25,6 @@ class PCSCCard(threading.Thread):
 
 
 class MRFC522Card(threading.Thread):
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
-
     def run(self):
         import mfrc522
         reader = mfrc522.SimpleMFRC522()
@@ -40,17 +32,13 @@ class MRFC522Card(threading.Thread):
             try:
                 uuid, _ = reader.read()
                 uuid = (uuid >> 8).to_bytes(4, 'big')
-                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
             except:  # noqa: E722
                 continue
 
 
 class PIRC522Card(threading.Thread):
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
-
     def run(self):
         import RPi.GPIO as GPIO
         import pirc522
@@ -62,17 +50,17 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f'Card {uid} connected.')
-                    self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
+                    app.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break
 
 
 def init():
-    if flask.g.app.testing:
+    if app.testing:
         return
 
-    if flask.g.app.config['CARD'] == 'MRFC522':
-        MRFC522Card(socketio=flask.g.socketio).start()
-    elif flask.g.app.config['CARD'] == 'PCSC':
-        PCSCCard(socketio=flask.g.socketio).start()
-    elif flask.g.app.config['CARD'] == 'PIRC522':
-        PIRC522Card(socketio=flask.g.socketio).start()
+    if app.config['CARD'] == 'MRFC522':
+        MRFC522Card().start()
+    elif app.config['CARD'] == 'PCSC':
+        PCSCCard().start()
+    elif app.config['CARD'] == 'PIRC522':
+        PIRC522Card().start()

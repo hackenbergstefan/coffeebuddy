@@ -2,15 +2,15 @@ import logging
 import queue
 import threading
 
-import flask
+import coffeebuddy.facerecognition
+from coffeebuddy import app
 
-from coffeebuddy import facerecognition
 
 facelock = queue.Queue(maxsize=1)
 thread = None
 
 
-class ThreadedFaceRecognition(threading.Thread, facerecognition.FaceRecognizer):
+class ThreadedFaceRecognition(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer):
     def __init__(self, socketio):
         super().__init__()
         self.socketio = socketio
@@ -33,29 +33,29 @@ def start(*args):
     thread.start()
 
 
-def resume():
+def resume(**kwargs):
     logging.getLogger(__name__).info('ThreadedFaceRecognition resumed.')
     if not facelock.empty():
         facelock.get()
         facelock.task_done()
 
 
-def pause():
+def pause(**kwargs):
     logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
     if facelock.empty():
         facelock.put(True)
 
 
 def init():
-    if flask.g.app.testing:
+    if app.testing:
         return
 
-    if flask.g.app.config['FACERECOGNITION'] is True:
-        start(flask.g.socketio)
-        flask.g.events.register('pir_motion_detected', resume)
-        flask.g.events.register('pir_motion_paused', pause)
-        flask.g.events.register('route_welcome', resume)
-        flask.g.events.register('route_notwelcome', pause)
-        flask.g.events.register('route_coffee_capture', pause)
-        flask.g.events.register('facerecognition_threaded_pause', pause)
-        flask.g.events.register('facerecognition_threaded_resume', resume)
+    if app.config['FACERECOGNITION'] is True:
+        start(app.socketio)
+        app.events.register('pir_motion_detected', resume)
+        app.events.register('pir_motion_paused', pause)
+        app.events.register('route_welcome', resume)
+        app.events.register('route_notwelcome', pause)
+        app.events.register('route_coffee_capture', pause)
+        app.events.register('facerecognition_threaded_pause', pause)
+        app.events.register('facerecognition_threaded_resume', resume)

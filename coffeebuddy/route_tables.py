@@ -6,7 +6,7 @@ from coffeebuddy.model import User, Drink
 
 
 def init():
-    @flask.g.app.route('/tables.html')
+    @flask.current_app.route('/tables.html')
     def tables():
         return flask.render_template(
             'tables.html',
@@ -17,7 +17,7 @@ def init():
             drinks=[
                 (str(drink.timestamp), drink.user.name, drink.user.prename, drink.price)
                 for drink in
-                Drink.query.filter(flask.g.db.func.Date(Drink.timestamp) >= datetime.date.today() - datetime.timedelta(days=30))
+                Drink.query.filter(flask.current_app.db.func.Date(Drink.timestamp) >= datetime.date.today() - datetime.timedelta(days=30))
                 if drink.user
             ]
         )

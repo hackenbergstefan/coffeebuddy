@@ -20,7 +20,7 @@ class Color:
 
 
 def init():
-    @flask.g.app.route('/stats.html', methods=['GET', 'POST'])
+    @flask.current_app.route('/stats.html', methods=['GET', 'POST'])
     def chart():
         user = User.query.filter(User.tag == bytes.fromhex(flask.request.args['tag'])).first()
         if user is None:
