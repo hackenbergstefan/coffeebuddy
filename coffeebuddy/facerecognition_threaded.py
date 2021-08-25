@@ -2,6 +2,8 @@ import logging
 import queue
 import threading
 
+import flask
+
 from coffeebuddy import facerecognition
 
 facelock = queue.Queue(maxsize=1)
@@ -42,3 +44,18 @@ def pause():
     logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
     if facelock.empty():
         facelock.put(True)
+
+
+def init():
+    if flask.g.app.testing:
+        return
+
+    if flask.g.app.config['FACERECOGNITION'] is True:
+        start(flask.g.socketio)
+        flask.g.events.register('pir_motion_detected', resume)
+        flask.g.events.register('pir_motion_paused', pause)
+        flask.g.events.register('route_welcome', resume)
+        flask.g.events.register('route_notwelcome', pause)
+        flask.g.events.register('route_coffee_capture', pause)
+        flask.g.events.register('facerecognition_threaded_pause', pause)
+        flask.g.events.register('facerecognition_threaded_resume', resume)

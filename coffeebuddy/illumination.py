@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-try:
-    import RPi.GPIO as GPIO
-except ModuleNotFoundError:
-    pass
+import flask
+
+import RPi.GPIO as GPIO
 
 
 PIN_GREEN = 16
@@ -48,6 +47,14 @@ def color_named(name):
         'lightblue': (0, 0.2, 0.1),
     }
     color(*names[name])
+
+
+def init():
+    setup()
+
+    flask.g.events.register('pir_motion_detected', lambda: color_named('pink'))
+    flask.g.events.register('pir_motion_lost', lambda: color_named('lightblue'))
+    flask.g.events.register('route_coffee', lambda: color_named('green'))
 
 
 if __name__ == '__main__':

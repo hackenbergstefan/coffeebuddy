@@ -2,10 +2,7 @@ import logging
 import threading
 import time
 
-try:
-    import RPi.GPIO as GPIO
-except ModuleNotFoundError:
-    pass
+import flask
 
 
 class PCSCCard(threading.Thread):
@@ -55,6 +52,7 @@ class PIRC522Card(threading.Thread):
         self.socketio = socketio
 
     def run(self):
+        import RPi.GPIO as GPIO
         import pirc522
         reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
         while True:
@@ -66,3 +64,15 @@ class PIRC522Card(threading.Thread):
                     logging.getLogger(__name__).info(f'Card {uid} connected.')
                     self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break
+
+
+def init():
+    if flask.g.app.testing:
+        return
+
+    if flask.g.app.config['CARD'] == 'MRFC522':
+        MRFC522Card(socketio=flask.g.socketio).start()
+    elif flask.g.app.config['CARD'] == 'PCSC':
+        PCSCCard(socketio=flask.g.socketio).start()
+    elif flask.g.app.config['CARD'] == 'PIRC522':
+        PIRC522Card(socketio=flask.g.socketio).start()

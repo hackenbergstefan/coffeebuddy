@@ -6,7 +6,7 @@ from coffeebuddy.model import Drink, User, Pay
 def init():
     @flask.g.app.route('/coffee.html', methods=['GET', 'POST'])
     def coffee():
-        # illumination.color_named('green')
+        flask.g.events.fire('route_coffee')
         user = User.query.filter(User.tag == bytes.fromhex(flask.request.args['tag'])).first()
         if user is None:
             return flask.render_template('cardnotfound.html', uuid=flask.request.args['tag'])
@@ -31,10 +31,8 @@ def init():
             elif 'stats' in flask.request.form:
                 return flask.redirect(f'stats.html?tag={flask.request.args["tag"]}')
             elif 'capture' in flask.request.form:
-                # if 'notimeout' in request.args:
-                    # if app.config['FACERECOGNITION'] is True:
-                    #     facerecognition_threaded.pause()
-                    #     facerecognition.FaceCapturer(user.tag, user.name, user.prename).capture()
+                if 'notimeout' in flask.request.args:
+                    flask.g.events.fire('route_coffee_capture', user)
                 return flask.redirect(f'{flask.request.url}&notimeout')
 
         return flask.render_template(

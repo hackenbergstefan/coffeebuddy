@@ -10,8 +10,13 @@ from sqlalchemy.exc import OperationalError
 
 db = SQLAlchemy()
 
+import coffeebuddy.events
 import coffeebuddy.model  # noqa: E402
-import coffeebuddy.routes  # noqa: E402
+import coffeebuddy.routes
+import coffeebuddy.attachments
+import coffeebuddy.card
+import coffeebuddy.facerecognition
+import coffeebuddy.facerecognition_threaded
 
 
 def create_app(config=None):
@@ -37,12 +42,12 @@ def create_app(config=None):
     return app, socketio
 
 
-def init_db(app):
-    db.init_app(app)
+def init_db():
+    db.init_app(flask.g.app)
 
-    if (app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db')) or \
-       app.config['ENV'] in ('development', 'prefilled') or \
-       app.testing:
+    if (flask.g.app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db')) or \
+       flask.g.app.config['ENV'] in ('development', 'prefilled') or \
+       flask.g.app.testing:
         try:
             db.create_all()
         except OperationalError:
@@ -50,21 +55,18 @@ def init_db(app):
             os._exit(1)
 
     # Default database content
-    if app.config['ENV'] == 'development':
+    if flask.g.app.config['ENV'] == 'development':
         db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
         db.session.commit()
-    elif app.config['ENV'] == 'prefilled':
-        app.debug = True
+    elif flask.g.app.config['ENV'] == 'prefilled':
+        flask.g.app.debug = True
         prefill(db)
 
-    flask.g.db = db
     return db
 
 
-def init_routes(app, socketio):
-    flask.g.app = app
-    flask.g.socketio = socketio
-    @app.context_processor
+def init_routes():
+    @flask.g.app.context_processor
     def inject_globals():
         return {
             'len': len,
@@ -73,7 +75,20 @@ def init_routes(app, socketio):
             'min': min,
             'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data),
         }
-    coffeebuddy.routes.init_routes(app, socketio)
+    coffeebuddy.routes.init()
+
+
+def init_app_context(app, socketio):
+    flask.g.events = coffeebuddy.events.EventManager()
+    flask.g.db = db
+    flask.g.app = app
+    flask.g.socketio = socketio
+    init_db()
+    init_routes()
+    coffeebuddy.attachments.init()
+    coffeebuddy.card.init()
+    coffeebuddy.facerecognition_threaded.init()
+    coffeebuddy.facerecognition.init()
 
 
 def prefill(db):
@@ -95,7 +110,7 @@ def prefill(db):
     for _ in range(1000):
         db.session.add(coffeebuddy.model.Drink(
             userid=random.randint(0, len(demousers)),
-            price=app.config['PRICE'],
+            price=flask.g.app.config['PRICE'],
             timestamp=datetime.datetime.now() - datetime.timedelta(
                 seconds=random.randint(0, 365 * 24 * 60 * 60)
             )

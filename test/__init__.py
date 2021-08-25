@@ -10,8 +10,8 @@ class TestCoffeebuddy(unittest.TestCase):
         self.app, _ = coffeebuddy.create_app({'TESTING': True})
         self.client = self.app.test_client().__enter__()
         self.ctx = self.app.app_context().__enter__()
-        self.db = flask.g.db = coffeebuddy.init_db(self.app)
-        coffeebuddy.init_routes(self.app, None)
+        coffeebuddy.init_app_context(self.app, None)
+        self.db = flask.g.db
 
     def tearDown(self):
         self.truncate_all()

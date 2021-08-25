@@ -18,8 +18,7 @@ if __name__ == '__main__':
     app, socketio = coffeebuddy.create_app()
     try:
         with app.app_context():
-            coffeebuddy.init_db(app)
-            coffeebuddy.init_routes(app, socketio)
+            coffeebuddy.init_app_context(app, socketio)
     except:  # noqa: E722
-        os._exit(-1)
+        raise
     socketio.run(app, host="0.0.0.0")
