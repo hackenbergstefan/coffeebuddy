@@ -187,6 +187,7 @@ class FaceRecognizer:
         # Use fast detection for boxes
         detected_faces = detect_faces(img)
         if len(detected_faces) > 0:
+            logging.getLogger(__name__).info('Face detected.')
             # Recognize
             encoding = encode_face(img)
             if encoding is not None:

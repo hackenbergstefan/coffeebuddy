@@ -21,5 +21,8 @@ elif DB_BACKEND == 'sqlite':
 # Enable camera
 CAMERA = True
 
+# Switch display on and off by camera motion detection
+CAMERA_MOTION_CONTROL_DISPLAY = True
+
 # Illumination
 ILLUMINATION = True
