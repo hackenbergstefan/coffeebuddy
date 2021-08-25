@@ -17,9 +17,9 @@ def setup():
     GPIO.setup(PIN_BLUE, GPIO.OUT)
 
     pwms = [
-        GPIO.PWM(PIN_RED, 50),
-        GPIO.PWM(PIN_GREEN, 50),
-        GPIO.PWM(PIN_BLUE, 50),
+        GPIO.PWM(PIN_RED, 100),
+        GPIO.PWM(PIN_GREEN, 100),
+        GPIO.PWM(PIN_BLUE, 100),
     ]
     for p in pwms:
         p.start(1)
