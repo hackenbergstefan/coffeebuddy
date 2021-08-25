@@ -1,10 +1,8 @@
 import flask
 
-from coffeebuddy import app
-
 
 def init():
-    if app.testing:
+    if flask.current_app.testing:
         return
 
     if flask.current_app.config['PIR'] is True:

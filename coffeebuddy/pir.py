@@ -3,9 +3,8 @@ import threading
 import time
 import subprocess
 
+import flask
 import RPi.GPIO as GPIO
-
-from coffeebuddy import app
 
 
 thread = None
@@ -18,39 +17,40 @@ class PirThread(threading.Thread):
         super().__init__()
         self.timedelta = timedelta
         self.running = True
+        self.events = flask.current_app.events
 
         GPIO.setup(self.sensor_pin, GPIO.IN)
 
     def run(self):
         if GPIO.input(self.sensor_pin) == GPIO.LOW:
-            app.events.fire('pir_motion_paused')
+            self.events.fire('pir_motion_paused')
         while True:
             if self.running:
                 if GPIO.input(self.sensor_pin) == GPIO.HIGH:
-                    app.events.fire('pir_motion_detected')
+                    self.events.fire('pir_motion_detected')
                     time.sleep(self.timedelta)
-                    if GPIO.input(self.sensor_pin) == GPIO.LOW:
-                        app.events.fire('pir_motion_paused')
+                    if self.running and GPIO.input(self.sensor_pin) == GPIO.LOW:
+                        self.events.fire('pir_motion_paused')
             time.sleep(0.1)
 
 
 def resume():
     if thread:
-        logging.getLogger(__name__).info('ThreadedFaceRecognition resumed.')
+        logging.getLogger(__name__).info('PIR resumed.')
         thread.running = True
 
 
 def pause():
     if thread:
-        logging.getLogger(__name__).info('ThreadedFaceRecognition paused.')
+        logging.getLogger(__name__).info('PIR paused.')
         thread.running = False
 
 
 def init():
-    app.events.register('route_welcome', resume)
-    app.events.register('route_notwelcome', pause)
-    app.events.register('pir_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
-    app.events.register('pir_motion_paused', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
+    flask.current_app.events.register('route_welcome', resume)
+    flask.current_app.events.register('route_notwelcome', pause)
+    flask.current_app.events.register('pir_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
+    flask.current_app.events.register('pir_motion_paused', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
 
     global thread
     thread = PirThread()

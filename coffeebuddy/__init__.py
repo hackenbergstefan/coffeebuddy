@@ -38,7 +38,7 @@ def init_db():
 
     flask.current_app.db.init_app(flask.current_app)
 
-    if (flask.current_app.config['ENV'] == 'sqlite' and not os.path.exists('coffee.db')) or \
+    if (flask.current_app.config['DB_BACKEND'] == 'sqlite' and not os.path.exists('coffee.db')) or \
        flask.current_app.config['ENV'] in ('development', 'prefilled') or \
        flask.current_app.testing:
         try:
@@ -67,14 +67,14 @@ def init_app_context():
     import coffeebuddy.routes
     coffeebuddy.routes.init()
 
-    # import coffeebuddy.attachments
-    # coffeebuddy.attachments.init()
-    # import coffeebuddy.card
-    # coffeebuddy.card.init()
-    # import coffeebuddy.facerecognition_threaded
-    # coffeebuddy.facerecognition_threaded.init()
-    # import coffeebuddy.facerecognition
-    # coffeebuddy.facerecognition.init()
+    import coffeebuddy.attachments
+    coffeebuddy.attachments.init()
+    import coffeebuddy.card
+    coffeebuddy.card.init()
+    import coffeebuddy.facerecognition_threaded
+    coffeebuddy.facerecognition_threaded.init()
+    import coffeebuddy.facerecognition
+    coffeebuddy.facerecognition.init()
 
 
 def prefill():

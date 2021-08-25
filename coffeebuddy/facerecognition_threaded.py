@@ -2,8 +2,8 @@ import logging
 import queue
 import threading
 
+import flask
 import coffeebuddy.facerecognition
-from coffeebuddy import app
 
 
 facelock = queue.Queue(maxsize=1)
@@ -14,6 +14,7 @@ class ThreadedFaceRecognition(threading.Thread, coffeebuddy.facerecognition.Face
     def __init__(self, socketio):
         super().__init__()
         self.socketio = socketio
+        self.app = flask.current_app
 
     def run(self):
         while True:
@@ -47,15 +48,15 @@ def pause(**kwargs):
 
 
 def init():
-    if app.testing:
+    if flask.current_app.testing:
         return
 
-    if app.config['FACERECOGNITION'] is True:
-        start(app.socketio)
-        app.events.register('pir_motion_detected', resume)
-        app.events.register('pir_motion_paused', pause)
-        app.events.register('route_welcome', resume)
-        app.events.register('route_notwelcome', pause)
-        app.events.register('route_coffee_capture', pause)
-        app.events.register('facerecognition_threaded_pause', pause)
-        app.events.register('facerecognition_threaded_resume', resume)
+    if flask.current_app.config['FACERECOGNITION'] is True:
+        start(flask.current_app.socketio)
+        flask.current_app.events.register('pir_motion_detected', resume)
+        flask.current_app.events.register('pir_motion_paused', pause)
+        flask.current_app.events.register('route_welcome', resume)
+        flask.current_app.events.register('route_notwelcome', pause)
+        flask.current_app.events.register('route_coffee_capture', pause)
+        flask.current_app.events.register('facerecognition_threaded_pause', pause)
+        flask.current_app.events.register('facerecognition_threaded_resume', resume)

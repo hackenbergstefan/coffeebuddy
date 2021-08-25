@@ -2,7 +2,7 @@ import logging
 import threading
 import time
 
-from coffeebuddy import app
+import flask
 
 
 class PCSCCard(threading.Thread):
@@ -17,7 +17,7 @@ class PCSCCard(threading.Thread):
                 service = request.waitforcard()
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
-                app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
             except:  # noqa: E722
@@ -32,7 +32,7 @@ class MRFC522Card(threading.Thread):
             try:
                 uuid, _ = reader.read()
                 uuid = (uuid >> 8).to_bytes(4, 'big')
-                app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
             except:  # noqa: E722
                 continue
@@ -50,17 +50,17 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f'Card {uid} connected.')
-                    app.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
+                    flask.current_app.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break
 
 
 def init():
-    if app.testing:
+    if flask.current_app.testing:
         return
 
-    if app.config['CARD'] == 'MRFC522':
+    if flask.current_app.config['CARD'] == 'MRFC522':
         MRFC522Card().start()
-    elif app.config['CARD'] == 'PCSC':
+    elif flask.current_app.config['CARD'] == 'PCSC':
         PCSCCard().start()
-    elif app.config['CARD'] == 'PIRC522':
+    elif flask.current_app.config['CARD'] == 'PIRC522':
         PIRC522Card().start()
