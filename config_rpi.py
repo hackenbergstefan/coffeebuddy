@@ -5,7 +5,7 @@ PRICE = 0.30
 # Amount in € to pay by one pay
 PAY = 10
 # Card type (PCSC, MRFC522, PIRC522)
-CARD = 'PCSC'
+CARD = 'PIRC522'
 # Database connection details
 DB_BACKEND = 'sqlite'
 if DB_BACKEND == 'postgres':
@@ -22,7 +22,7 @@ elif DB_BACKEND == 'sqlite':
 FACERECOGNITION = True
 
 # Polyelectric sensor
-PIR = False
+PIR = True
 
 # Illumination
-ILLUMINATION = False
+ILLUMINATION = True

@@ -2,18 +2,11 @@ import logging
 import threading
 import time
 
-try:
-    import RPi.GPIO as GPIO
-except ModuleNotFoundError:
-    pass
+import flask
 
 
 class PCSCCard(threading.Thread):
     PCSC_GET_UUID_APDU = bytes.fromhex('ff ca 00 00 00')
-
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
 
     def run(self):
         import smartcard
@@ -24,7 +17,7 @@ class PCSCCard(threading.Thread):
                 service = request.waitforcard()
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
-                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
             except:  # noqa: E722
@@ -32,10 +25,6 @@ class PCSCCard(threading.Thread):
 
 
 class MRFC522Card(threading.Thread):
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
-
     def run(self):
         import mfrc522
         reader = mfrc522.SimpleMFRC522()
@@ -43,18 +32,15 @@ class MRFC522Card(threading.Thread):
             try:
                 uuid, _ = reader.read()
                 uuid = (uuid >> 8).to_bytes(4, 'big')
-                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
             except:  # noqa: E722
                 continue
 
 
 class PIRC522Card(threading.Thread):
-    def __init__(self, socketio):
-        super().__init__()
-        self.socketio = socketio
-
     def run(self):
+        import RPi.GPIO as GPIO
         import pirc522
         reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
         while True:
@@ -64,5 +50,17 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f'Card {uid} connected.')
-                    self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
+                    flask.current_app.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break
+
+
+def init():
+    if flask.current_app.testing:
+        return
+
+    if flask.current_app.config['CARD'] == 'MRFC522':
+        MRFC522Card().start()
+    elif flask.current_app.config['CARD'] == 'PCSC':
+        PCSCCard().start()
+    elif flask.current_app.config['CARD'] == 'PIRC522':
+        PIRC522Card().start()

@@ -15,10 +15,10 @@ except ModuleNotFoundError:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    app, socketio = coffeebuddy.create_app()
+    app = coffeebuddy.create_app()
     try:
         with app.app_context():
-            coffeebuddy.init_db(app)
+            coffeebuddy.init_app_context()
     except:  # noqa: E722
-        os._exit(-1)
-    socketio.run(app, host="0.0.0.0")
+        raise
+    app.socketio.run(app, use_reloader=False)

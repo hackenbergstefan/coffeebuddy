@@ -1,21 +1,21 @@
 import datetime
+
+import flask
 from sqlalchemy import text
 
-from coffeebuddy import db
 
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tag = db.Column(db.LargeBinary, nullable=False, unique=True)
-    name = db.Column(db.String(50), nullable=False)
-    prename = db.Column(db.String(50), nullable=False)
-    option_oneswipe = db.Column(db.Boolean)
+class User(flask.current_app.db.Model):
+    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
+    tag = flask.current_app.db.Column(flask.current_app.db.LargeBinary, nullable=False, unique=True)
+    name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
+    prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
+    option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean)
 
     @property
     def coffees_today(self):
         return Drink.query.filter(
             self.id == Drink.userid,
-            db.func.Date(Drink.timestamp) == datetime.date.today()
+            flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today()
         ).all()
 
     @property
@@ -26,7 +26,7 @@ class User(db.Model):
     def drinks(self, date=None):
         drinks = Drink.query.filter(self.id == Drink.userid)
         if date is not None:
-            drinks = drinks.filter(db.func.Date(Drink.timestamp) == date)
+            drinks = drinks.filter(flask.current_app.db.func.Date(Drink.timestamp) == date)
         drinks = drinks.order_by(Drink.timestamp)
         return drinks
 
@@ -36,9 +36,9 @@ class User(db.Model):
     @property
     def drinks_per_day(self):
         return (
-            db.session.query(db.func.Date(Drink.timestamp), db.func.count(db.func.Date(Drink.timestamp)))
+            flask.current_app.db.session.query(flask.current_app.db.func.Date(Drink.timestamp), flask.current_app.db.func.count(flask.current_app.db.func.Date(Drink.timestamp)))
             .filter(self.id == Drink.userid)
-            .group_by(db.func.Date(Drink.timestamp))
+            .group_by(flask.current_app.db.func.Date(Drink.timestamp))
         )
 
     @property
@@ -53,7 +53,7 @@ class User(db.Model):
     def drink_days(self):
         return (
             tup[0] for tup in
-            db.session.query(db.func.Date(Drink.timestamp))
+            flask.current_app.db.session.query(flask.current_app.db.func.Date(Drink.timestamp))
             .filter(self.id == Drink.userid)
             .distinct()
             .order_by(Drink.timestamp)
@@ -63,12 +63,12 @@ class User(db.Model):
         return f'<User tag={self.tag} name={self.name} prename={self.prename}>'
 
 
-class Drink(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime)
-    price = db.Column(db.Float, nullable=False)
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('coffees', lazy=True))
+class Drink(flask.current_app.db.Model):
+    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
+    timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime)
+    price = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
+    userid = flask.current_app.db.Column(flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False)
+    user = flask.current_app.db.relationship('User', backref=flask.current_app.db.backref('coffees', lazy=True))
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
@@ -76,27 +76,27 @@ class Drink(db.Model):
         super().__init__(*args, **kwargs)
 
     def by_date(date):
-        return Drink.query.filter(db.func.Date(Drink.timestamp) == date)
+        return Drink.query.filter(flask.current_app.db.func.Date(Drink.timestamp) == date)
 
     @staticmethod
     def drinks_vs_days(timedelta):
         return (
-            db.session.query(
-                db.func.count(db.func.Date(Drink.timestamp)),
-                db.func.Date(Drink.timestamp),
+            flask.current_app.db.session.query(
+                flask.current_app.db.func.count(flask.current_app.db.func.Date(Drink.timestamp)),
+                flask.current_app.db.func.Date(Drink.timestamp),
             )
             .filter(Drink.timestamp > datetime.datetime.now() - timedelta)
-            .group_by(db.func.Date(Drink.timestamp))
+            .group_by(flask.current_app.db.func.Date(Drink.timestamp))
             .all()
         )
 
 
-class Pay(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=False)
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('pays', lazy=True))
-    amount = db.Column(db.Float, nullable=False)
+class Pay(flask.current_app.db.Model):
+    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
+    timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime, nullable=False)
+    userid = flask.current_app.db.Column(flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False)
+    user = flask.current_app.db.relationship('User', backref=flask.current_app.db.backref('pays', lazy=True))
+    amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
