@@ -1,6 +1,8 @@
 import datetime
+import logging
 import os
 import random
+import socket
 
 import flask
 from flask import Flask
@@ -15,7 +17,12 @@ def create_app(config=None):
     app = Flask('coffeebuddy')
     app.socketio = SocketIO(app)
 
-    app.config.from_object('config')
+    if os.path.exists(f'config_{socket.gethostname()}.py'):
+        logging.getLogger(__name__).info(f'Using config file "config_{socket.gethostname()}"')
+        app.config.from_object(f'config_{socket.gethostname()}')
+    else:
+        logging.getLogger(__name__).info('Using config file "config"')
+        app.config.from_object('config')
     # app.config['SQLALCHEMY_ECHO'] = True
     if config:
         app.config.update(config)
