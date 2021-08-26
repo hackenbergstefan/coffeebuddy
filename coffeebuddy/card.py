@@ -8,6 +8,10 @@ import flask
 class PCSCCard(threading.Thread):
     PCSC_GET_UUID_APDU = bytes.fromhex('ff ca 00 00 00')
 
+    def __init__(self):
+        super().__init__()
+        self.socketio = flask.current_app.socketio
+
     def run(self):
         import smartcard
         import smartcard.CardRequest
@@ -18,7 +22,7 @@ class PCSCCard(threading.Thread):
                 service = request.waitforcard()
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
-                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
             except:  # noqa: E722
@@ -26,6 +30,10 @@ class PCSCCard(threading.Thread):
 
 
 class MRFC522Card(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.socketio = flask.current_app.socketio
+
     def run(self):
         import mfrc522
 
@@ -34,13 +42,17 @@ class MRFC522Card(threading.Thread):
             try:
                 uuid, _ = reader.read()
                 uuid = (uuid >> 8).to_bytes(4, 'big')
-                flask.current_app.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
+                self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
             except:  # noqa: E722
                 continue
 
 
 class PIRC522Card(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.socketio = flask.current_app.socketio
+
     def run(self):
         import RPi.GPIO as GPIO
         import pirc522
@@ -53,7 +65,7 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f'Card {uid} connected.')
-                    flask.current_app.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
+                    self.socketio.emit('card_connected', data=dict(tag=bytes(uid[:4]).hex()))
                     break
 
 
