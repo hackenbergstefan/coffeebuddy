@@ -1,4 +1,4 @@
-name: flake8
+name: lint
 
 on: [push]
 
@@ -16,3 +16,7 @@ jobs:
       run: |
         pip install flake8
         flake8
+    - name: Format with black
+      run: |
+        pip install black
+        black -l 120 -S .

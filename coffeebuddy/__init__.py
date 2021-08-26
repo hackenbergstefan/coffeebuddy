@@ -38,9 +38,11 @@ def init_db():
 
     flask.current_app.db.init_app(flask.current_app)
 
-    if (flask.current_app.config['DB_BACKEND'] == 'sqlite' and not os.path.exists('coffee.db')) or \
-       flask.current_app.config['ENV'] in ('development', 'prefilled') or \
-       flask.current_app.testing:
+    if (
+        (flask.current_app.config['DB_BACKEND'] == 'sqlite' and not os.path.exists('coffee.db'))
+        or flask.current_app.config['ENV'] in ('development', 'prefilled')
+        or flask.current_app.testing
+    ):
         try:
             flask.current_app.db.create_all()
         except OperationalError:
@@ -49,7 +51,9 @@ def init_db():
 
     # Default database content
     if flask.current_app.config['ENV'] == 'development':
-        flask.current_app.db.session.add(coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max'))
+        flask.current_app.db.session.add(
+            coffeebuddy.model.User(tag=bytes.fromhex('01020304'), name='Mustermann', prename='Max')
+        )
         flask.current_app.db.session.commit()
     elif flask.current_app.config['ENV'] == 'prefilled':
         flask.current_app.debug = True
@@ -62,23 +66,30 @@ def init_app_context():
     init_db()
 
     import coffeebuddy.events  # noqa: E402
+
     flask.current_app.events = coffeebuddy.events.EventManager()
 
     import coffeebuddy.routes
+
     coffeebuddy.routes.init()
 
     import coffeebuddy.attachments
+
     coffeebuddy.attachments.init()
     import coffeebuddy.card
+
     coffeebuddy.card.init()
     import coffeebuddy.camera
+
     coffeebuddy.camera.init()
     import coffeebuddy.facerecognition
+
     coffeebuddy.facerecognition.init()
 
 
 def prefill():
     import coffeebuddy.model
+
     demousers = [
         {'prename': 'Donald', 'postname': 'Duck', 'oneswipe': True},
         {'prename': 'Dagobert', 'postname': 'Duck', 'oneswipe': False},
@@ -88,18 +99,20 @@ def prefill():
         {'prename': 'Truck', 'postname': 'Duck', 'oneswipe': False},
     ]
     for idx, data in enumerate(demousers):
-        flask.current_app.db.session.add(coffeebuddy.model.User(
-            tag=idx.to_bytes(1, 'big'),
-            name=data['postname'],
-            prename=data['prename'],
-            option_oneswipe=data['oneswipe'],
-        ))
-    for _ in range(1000):
-        flask.current_app.db.session.add(coffeebuddy.model.Drink(
-            userid=random.randint(0, len(demousers)),
-            price=flask.current_app.config['PRICE'],
-            timestamp=datetime.datetime.now() - datetime.timedelta(
-                seconds=random.randint(0, 365 * 24 * 60 * 60)
+        flask.current_app.db.session.add(
+            coffeebuddy.model.User(
+                tag=idx.to_bytes(1, 'big'),
+                name=data['postname'],
+                prename=data['prename'],
+                option_oneswipe=data['oneswipe'],
             )
-        ))
+        )
+    for _ in range(1000):
+        flask.current_app.db.session.add(
+            coffeebuddy.model.Drink(
+                userid=random.randint(0, len(demousers)),
+                price=flask.current_app.config['PRICE'],
+                timestamp=datetime.datetime.now() - datetime.timedelta(seconds=random.randint(0, 365 * 24 * 60 * 60)),
+            )
+        )
     flask.current_app.db.session.commit()

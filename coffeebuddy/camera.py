@@ -23,6 +23,7 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
 
     def motiondetected(self):
         import cv2
+
         cap = cv2.VideoCapture(0)
         cap.set(3, 320)
         cap.set(4, 240)
@@ -46,7 +47,9 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
                 cameralock.join()
 
             detected = self.motiondetected()
-            if datetime.datetime.now() - last_motion_detected < datetime.timedelta(seconds=self.app_config['CAMERA_MOTION_WAIT']):
+            if datetime.datetime.now() - last_motion_detected < datetime.timedelta(
+                seconds=self.app_config['CAMERA_MOTION_WAIT']
+            ):
                 tag = self.recognize_once()
                 if tag:
                     logging.getLogger(__name__).info(f'Face recognized {tag}.')
@@ -80,6 +83,7 @@ def init():
 
     if flask.current_app.config['CAMERA'] is True:
         import cv2
+
         logging.getLogger(__name__).info('Camera init.')
         if 'CAMERA_MOTION_WAIT' not in flask.current_app.config:
             flask.current_app.config['CAMERA_MOTION_WAIT'] = 10
@@ -103,8 +107,12 @@ def init():
         flask.current_app.events.register('camera_resume', resume)
 
         if flask.current_app.config['CAMERA_MOTION_CONTROL_DISPLAY'] is True:
-            flask.current_app.events.register('camera_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
-            flask.current_app.events.register('camera_motion_lost', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
+            flask.current_app.events.register(
+                'camera_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on'])
+            )
+            flask.current_app.events.register(
+                'camera_motion_lost', lambda: subprocess.run(['xset', 'dpms', 'force', 'off'])
+            )
 
         global thread
         cameralock.put(True)

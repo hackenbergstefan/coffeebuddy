@@ -6,6 +6,7 @@ from . import TestCoffeebuddy
 class TestDatabase(TestCoffeebuddy):
     def test_drink_coffee(self):
         from coffeebuddy.model import User
+
         user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
@@ -21,6 +22,7 @@ class TestDatabase(TestCoffeebuddy):
 
     def test_drinks_today(self):
         from coffeebuddy.model import Drink, User
+
         user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         user2 = User(tag=b'\x03\x04\x05', name='Doe', prename='Jane')
         self.db.session.add(user1)
@@ -37,6 +39,7 @@ class TestDatabase(TestCoffeebuddy):
 
     def test_pay(self):
         from coffeebuddy.model import Drink, User, Pay
+
         user = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         self.db.session.add(user)
         self.db.session.commit()
@@ -53,12 +56,16 @@ class TestDatabase(TestCoffeebuddy):
 class TestRouteEdituser(TestCoffeebuddy):
     def test_adduser(self):
         from coffeebuddy.model import User
-        response = self.client.post('/edituser.html', data=dict(
-            tag='01 02 03 04',
-            last_name='Mustermann',
-            first_name='Max',
-            initial_bill=0,
-        ))
+
+        response = self.client.post(
+            '/edituser.html',
+            data=dict(
+                tag='01 02 03 04',
+                last_name='Mustermann',
+                first_name='Max',
+                initial_bill=0,
+            ),
+        )
         self.assertEqual(response.status_code, 302)
         users = User.query.all()
         self.assertEqual(len(users), 1)
@@ -68,12 +75,16 @@ class TestRouteEdituser(TestCoffeebuddy):
 
     def test_edituser(self):
         from coffeebuddy.model import User
+
         self.db.session.add(User(tag=b'\x01\x02\x03\x04', name='Mustermann', prename='Max'))
-        response = self.client.post('/edituser.html?tag=01020304', data=dict(
-            tag='01 02 03 04',
-            last_name='Doe',
-            first_name='Jane',
-        ))
+        response = self.client.post(
+            '/edituser.html?tag=01020304',
+            data=dict(
+                tag='01 02 03 04',
+                last_name='Doe',
+                first_name='Jane',
+            ),
+        )
         self.assertEqual(response.status_code, 302)
         users = User.query.all()
         self.assertEqual(len(users), 1)
@@ -99,6 +110,7 @@ class TestRouteCoffee(TestCoffeebuddy):
 
     def test_undopay(self):
         from coffeebuddy.model import Pay
+
         user, _ = self.add_default_user()
         user.pays.append(Pay(amount=10))
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))

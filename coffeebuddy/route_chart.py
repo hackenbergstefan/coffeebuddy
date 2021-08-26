@@ -46,8 +46,9 @@ def init():
                 'fillcolor': str(berry.brighter(1 - i / n)),
                 'line': {
                     'color': str(berry),
-                }
-            } for i in range(n, 0, -1)
+                },
+            }
+            for i in range(n, 0, -1)
         ]
 
         return flask.render_template('stats.html', user=user, datasets=datasets)

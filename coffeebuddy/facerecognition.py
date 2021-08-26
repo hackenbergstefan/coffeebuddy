@@ -64,7 +64,7 @@ def every_nth(nth):
 def cv2_show_and_wait(img, timeout=30):
     """Show given image and wait."""
     cv2.imshow('img', img)
-    k = cv2.waitKey(timeout) & 0xff
+    k = cv2.waitKey(timeout) & 0xFF
     # Stop if escape key is pressed
     if k == 27:
         return True
@@ -217,9 +217,12 @@ def init():
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument('function', choices=['capture', 'recognize'])
-    parser.add_argument('--data', nargs='+', default=None, required=False, help='Tuple (TAG, PRENAME, NAME) for function "capture"')
+    parser.add_argument(
+        '--data', nargs='+', default=None, required=False, help='Tuple (TAG, PRENAME, NAME) for function "capture"'
+    )
     args = parser.parse_args()
 
     print('face_data', list(face_data.keys()))

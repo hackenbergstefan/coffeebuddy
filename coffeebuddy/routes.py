@@ -22,19 +22,25 @@ def init():
         return response
 
     import coffeebuddy.route_coffee
+
     coffeebuddy.route_coffee.init()
 
     import coffeebuddy.route_chart
+
     coffeebuddy.route_chart.init()
 
     import coffeebuddy.route_edituser
+
     coffeebuddy.route_edituser.init()
 
     import coffeebuddy.route_oneswipe
+
     coffeebuddy.route_oneswipe.init()
 
     import coffeebuddy.route_tables
+
     coffeebuddy.route_tables.init()
 
     import coffeebuddy.route_welcome
+
     coffeebuddy.route_welcome.init()

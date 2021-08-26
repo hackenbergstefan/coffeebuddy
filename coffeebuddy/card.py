@@ -11,6 +11,7 @@ class PCSCCard(threading.Thread):
     def run(self):
         import smartcard
         import smartcard.CardRequest
+
         while True:
             try:
                 request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
@@ -27,6 +28,7 @@ class PCSCCard(threading.Thread):
 class MRFC522Card(threading.Thread):
     def run(self):
         import mfrc522
+
         reader = mfrc522.SimpleMFRC522()
         while True:
             try:
@@ -42,6 +44,7 @@ class PIRC522Card(threading.Thread):
     def run(self):
         import RPi.GPIO as GPIO
         import pirc522
+
         reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
         while True:
             reader.wait_for_tag()

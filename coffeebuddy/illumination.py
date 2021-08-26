@@ -64,6 +64,7 @@ def init():
 if __name__ == '__main__':
     import IPython
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument('color', help='Color in RGB (0-1) or (0-255). E.g. 255 255 0')
     args = parser.parse_args()
