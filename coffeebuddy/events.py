@@ -30,3 +30,9 @@ class EventManager:
     def fire_reset(self, eventname):
         if eventname in self.locked:
             self.locked.remove(eventname)
+
+    def block(self, eventname):
+        if eventname in self.locked:
+            return
+
+        self.locked.add(eventname)

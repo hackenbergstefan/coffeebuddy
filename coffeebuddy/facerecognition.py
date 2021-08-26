@@ -200,6 +200,8 @@ class FaceRecognizer:
             self.events.fire_once('facerecognition_face_lost')
             self.events.fire_reset('facerecognition_face_detected')
         cap.release()
+        if tag is not None:
+            self.events.block('facerecognition_face_lost')
         return tag
 
 
