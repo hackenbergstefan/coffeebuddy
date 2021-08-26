@@ -19,7 +19,7 @@ elif DB_BACKEND == 'sqlite':
     SQLALCHEMY_DATABASE_URI = 'sqlite:///coffee.db'
 
 # Enable camera
-CAMERA = True
+CAMERA = False
 
 # Switch display on and off by camera motion detection
 CAMERA_MOTION_CONTROL_DISPLAY = False

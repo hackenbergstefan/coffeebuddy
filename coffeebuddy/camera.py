@@ -41,7 +41,6 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
 
     def run(self):
         last_motion_detected = datetime.datetime.now()
-        motion_lost = False
         while True:
             if not cameralock.empty():
                 cameralock.join()
