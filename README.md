@@ -48,10 +48,10 @@ At least I had to adjust the following settings:
   ```conf
   hdmi_group=2
   hdmi_mode=87
-  hdmi_cvt 1024 600 60 3 0 0 0
+  hdmi_cvt 1024 600 60 3 0 0 1
   hdmi_drive=2
   ```
-* If display has to be rotated by 180° adjust `/etc/X11/xorg.conf.d/40-libinput`
+* If display has to be rotated by 180° adjust `/etc/X11/xorg.conf.d/40-libinput.conf`
   ```conf
   Section "InputClass"
       Identifier "libinput touchscreen catchall"
