@@ -14,9 +14,8 @@ services:
         POSTGRES_DB: coffeebuddy
         POSTGRES_PASSWORD: example
         PGDATA: /var/lib/postgresql/data/pgdata
-      user: "${USERID}:${GROUPID}"
       volumes:
-        - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+        - ./pg_hba.conf:/var/lib/postgresql/data/pgdata/pg_hba.conf
         - ./certs/ca/root.crt:/var/lib/postgresql/data/root.crt
         - ./certs/server_coffeebuddydb/server.crt:/var/lib/postgresql/data/server.crt
         - ./certs/server_coffeebuddydb/server.key:/var/lib/postgresql/data/server.key
