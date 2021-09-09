@@ -57,6 +57,7 @@ class PIRC522Card(threading.Thread):
         import RPi.GPIO as GPIO
         import pirc522
 
+        pirc522.RFID.antenna_gain = 0x07
         reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
         while True:
             reader.wait_for_tag()
