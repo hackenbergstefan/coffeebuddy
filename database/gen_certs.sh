@@ -24,7 +24,7 @@ case $op in
     cn="root"  # TODO
     mkdir -p "${ca_dir}"
     openssl ecparam -name prime256v1 -genkey -out "${ca_key}"
-    openssl req -new -x509 -nodes -sha256 -keyout "${ca_key}" -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -subj "/CN=${cn}" -out "${ca_crt}"
+    openssl req -new -x509 -nodes -sha256 -keyout "${ca_key}" -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -subj "/CN=${cn}" -out "${ca_crt}" -days 3650
     echo "[1.2] Copy root cert to ${client_home}? [n]"
     read copy
     case $copy in
@@ -50,7 +50,7 @@ case $op in
     server_crt="${server_dir}/server.crt"
     mkdir -p "${server_dir}"
     openssl req -new -nodes -sha256 -keyout "${server_key}" -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -subj "/CN=${domainname}" -text -out "${server_csr}"
-    openssl x509 -req -in "${server_csr}" -days 365 -CA "${ca_crt}" -CAkey "${ca_key}" -CAcreateserial -out "${server_crt}"
+    openssl x509 -req -in "${server_csr}" -days 3650 -CA "${ca_crt}" -CAkey "${ca_key}" -CAcreateserial -out "${server_crt}"
     ;;
 
   3)
@@ -64,7 +64,7 @@ case $op in
     client_crt="${client_dir}/postgresql.crt"
     mkdir -p "${client_dir}"
     openssl req -new -nodes -sha256 -keyout "${client_key}" -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -subj "/CN=${username}" -text -out "${client_csr}"
-    openssl x509 -req -in "${client_csr}" -days 365 -CA "${ca_crt}" -CAkey "${ca_key}" -CAcreateserial -out "${client_crt}"
+    openssl x509 -req -in "${client_csr}" -days 3650 -CA "${ca_crt}" -CAkey "${ca_key}" -CAcreateserial -out "${client_crt}"
     echo "[3.2] Copy client key and cert to ${client_home}? [n]"
     read copy
     case $copy in
