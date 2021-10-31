@@ -4,18 +4,16 @@ services:
       image: postgres
       command: |
         -c ssl=on
-        -c ssl_ca_file=/var/lib/postgresql/data/root.crt
-        -c ssl_cert_file=/var/lib/postgresql/data/server.crt
-        -c ssl_key_file=/var/lib/postgresql/data/server.key
-      restart: on-failure
+        -c ssl_ca_file=/certs/ca/root.crt
+        -c ssl_cert_file=/certs/server_coffeebuddydb/server.crt
+        -c ssl_key_file=/certs/server_coffeebuddydb/server.key
+      entrypoint: entrypoint.sh
       ports:
         - 5432:5432
       environment:
         POSTGRES_DB: coffeebuddy
         POSTGRES_PASSWORD: example
-        PGDATA: /var/lib/postgresql/data/pgdata
       volumes:
-        - ./pg_hba.conf:/var/lib/postgresql/data/pgdata/pg_hba.conf
-        - ./certs/ca/root.crt:/var/lib/postgresql/data/root.crt
-        - ./certs/server_coffeebuddydb/server.crt:/var/lib/postgresql/data/server.crt
-        - ./certs/server_coffeebuddydb/server.key:/var/lib/postgresql/data/server.key
+        - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
+        - ./certs:/_certs
+        - ./users.txt:/users.txt
