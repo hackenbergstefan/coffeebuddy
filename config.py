@@ -20,5 +20,8 @@ CAMERA = False
 # Switch display on and off by camera motion detection
 CAMERA_MOTION_CONTROL_DISPLAY = False
 
+# Enable Facerecognition
+FACERECOGNITION = False
+
 # Illumination
 ILLUMINATION = False

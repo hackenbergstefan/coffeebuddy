@@ -214,7 +214,8 @@ def init():
     if flask.current_app.testing:
         return
 
-    flask.current_app.events.register('route_coffee_capture', capture)
+    if flask.current_app.config['FACERECOGNITION'] is True:
+        flask.current_app.events.register('route_coffee_capture', capture)
 
 
 def main():
