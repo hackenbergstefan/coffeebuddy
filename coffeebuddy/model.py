@@ -72,7 +72,7 @@ class Drink(flask.current_app.db.Model):
     userid = flask.current_app.db.Column(
         flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False
     )
-    user = flask.current_app.db.relationship('User', backref=flask.current_app.db.backref('coffees', lazy=True))
+    user = flask.current_app.db.relationship('User', cascade='all,delete', backref=flask.current_app.db.backref('coffees', lazy=True))
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
@@ -101,7 +101,7 @@ class Pay(flask.current_app.db.Model):
     userid = flask.current_app.db.Column(
         flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False
     )
-    user = flask.current_app.db.relationship('User', backref=flask.current_app.db.backref('pays', lazy=True))
+    user = flask.current_app.db.relationship('User', cascade='all,delete', backref=flask.current_app.db.backref('pays', lazy=True))
     amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
 
     def __init__(self, *args, **kwargs):
