@@ -1,6 +1,7 @@
 import datetime
 
 import flask
+import sqlalchemy
 from sqlalchemy import text
 
 
@@ -90,6 +91,7 @@ class Drink(flask.current_app.db.Model):
                 flask.current_app.db.func.Date(Drink.timestamp),
             )
             .filter(Drink.timestamp > datetime.datetime.now() - timedelta)
+            .order_by(sqlalchemy.asc(flask.current_app.db.func.Date(Drink.timestamp)))
             .group_by(flask.current_app.db.func.Date(Drink.timestamp))
             .all()
         )
