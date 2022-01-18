@@ -16,4 +16,3 @@ def init():
         flask.current_app.events.register('motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
         flask.current_app.events.register('motion_lost', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
         flask.current_app.events.fire('motion_detected')
-

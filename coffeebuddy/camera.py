@@ -1,13 +1,12 @@
 import datetime
 import logging
 import queue
-import subprocess
-import time
 import threading
+import time
 
 import flask
-import coffeebuddy.facerecognition
 
+import coffeebuddy.facerecognition
 
 cameralock = queue.Queue(maxsize=1)
 thread = None
