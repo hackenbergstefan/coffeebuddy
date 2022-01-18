@@ -56,11 +56,11 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
                     self.socketio.emit('card_connected', data=dict(tag=tag.hex()))
             elif detected:
                 last_motion_detected = datetime.datetime.now()
-                self.events.fire_reset('camera_motion_lost')
-                self.events.fire('camera_motion_detected')
+                self.events.fire_reset('motion_lost')
+                self.events.fire('motion_detected')
                 logging.getLogger(__name__).info(f'Motion detected {last_motion_detected}.')
             else:
-                self.events.fire_once('camera_motion_lost')
+                self.events.fire_once('motion_lost')
             time.sleep(0.05)
 
 
@@ -105,14 +105,6 @@ def init():
         flask.current_app.events.register('facerecognition_capture', pause)
         flask.current_app.events.register('camera_pause', pause)
         flask.current_app.events.register('camera_resume', resume)
-
-        if flask.current_app.config['CAMERA_MOTION_CONTROL_DISPLAY'] is True:
-            flask.current_app.events.register(
-                'camera_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on'])
-            )
-            flask.current_app.events.register(
-                'camera_motion_lost', lambda: subprocess.run(['xset', 'dpms', 'force', 'off'])
-            )
 
         global thread
         cameralock.put(True)

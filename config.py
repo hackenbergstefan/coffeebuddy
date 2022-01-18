@@ -17,9 +17,6 @@ elif DB_BACKEND == 'sqlite':
 # Enable camera
 CAMERA = False
 
-# Switch display on and off by camera motion detection
-CAMERA_MOTION_CONTROL_DISPLAY = False
-
 # Enable Facerecognition
 FACERECOGNITION = False
 
@@ -28,3 +25,6 @@ ILLUMINATION = False
 
 # PIR motion detection (None if not used, BCM pin number otherwise)
 PIR = None
+
+# Switch display on and off by motion detection
+MOTION_DISPLAY_CONTROL = False

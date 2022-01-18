@@ -1,7 +1,24 @@
 import logging
 import subprocess
+import threading
 
 import flask
+
+
+class PirThread(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.events = flask.current_app.events
+        self.pin = flask.current_app.config['PIR']
+        import RPi.GPIO as GPIO
+        GPIO.setup(self.pin, GPIO.IN)
+
+    def run(self):
+        import RPi.GPIO as GPIO
+        while True:
+            GPIO.wait_for_edge(self.pin, GPIO.BOTH)
+            self.events.fire('motion_detected' if GPIO.input(self.pin) else 'motion_lost')
+
 
 
 def init():
@@ -16,11 +33,5 @@ def init():
     if flask.current_app.config['PIR'] is None:
         return
 
-    GPIO.setmode(GPIO.BCM)
-    pin = flask.current_app.config['PIR']
-    GPIO.setup(pin, GPIO.IN)
-
-    GPIO.add_event_detect(pin, GPIO.RISING, callback=lambda _: flask.current_app.events.fire('pir_motion_detected'))
-    GPIO.add_event_detect(pin, GPIO.FALLING, callback=lambda _: flask.current_app.events.fire('pir_motion_lost'))
-    flask.current_app.events.register('pir_motion_detected', lambda: subprocess.run(['xset', 'dpms', 'force', 'on']))
-    flask.current_app.events.register('pir_motion_lost', lambda: subprocess.run(['xset', 'dpms', 'force', 'off']))
+    thread = PirThread()
+    thread.start()
