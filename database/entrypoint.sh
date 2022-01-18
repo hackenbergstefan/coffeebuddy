@@ -28,7 +28,8 @@ function adjusthba {
 function createuser {
     psql -U postgres -d coffeebuddy -a \
          -c "create role $1 with login;" \
-         -c "grant all privileges on schema public to $1;"
+         -c "grant all privileges on schema public to $1;"\
+         -c "grant all privileges on all tables in schema public to $1;"
 }
 
 function adjustdb {
