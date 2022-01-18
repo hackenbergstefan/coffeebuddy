@@ -25,3 +25,6 @@ FACERECOGNITION = False
 
 # Illumination
 ILLUMINATION = False
+
+# PIR motion detection (None if not used, BCM pin number otherwise)
+PIR = None
