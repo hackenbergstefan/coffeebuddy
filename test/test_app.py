@@ -38,7 +38,7 @@ class TestDatabase(TestCoffeebuddy):
         self.assertEqual(len(user2.coffees), 1)
 
     def test_pay(self):
-        from coffeebuddy.model import Drink, User, Pay
+        from coffeebuddy.model import Drink, Pay, User
 
         user = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         self.db.session.add(user)
@@ -113,6 +113,7 @@ class TestRouteCoffee(TestCoffeebuddy):
 
         user, _ = self.add_default_user()
         user.pays.append(Pay(amount=10))
+        self.db.session.commit()
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user.pays), 0)

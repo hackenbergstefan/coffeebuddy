@@ -11,6 +11,7 @@ class User(flask.current_app.db.Model):
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean)
+    pays = flask.current_app.db.relationship("Pay", back_populates="user", cascade="all, delete", passive_deletes=True)
 
     @property
     def coffees_today(self):
@@ -101,9 +102,10 @@ class Pay(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
     timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime, nullable=False)
     userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False
+        flask.current_app.db.Integer,
+        flask.current_app.db.ForeignKey('user.id', ondelete='CASCADE'),
     )
-    user = flask.current_app.db.relationship('User', cascade='all,delete', backref=flask.current_app.db.backref('pays', lazy=True))
+    user = flask.current_app.db.relationship('User', back_populates='pays')
     amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
 
     def __init__(self, *args, **kwargs):
