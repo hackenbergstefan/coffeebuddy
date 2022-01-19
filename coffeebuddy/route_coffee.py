@@ -20,7 +20,6 @@ def init():
                 flask.current_app.db.session.add(Pay(user=user, amount=flask.request.form['pay']))
                 flask.current_app.db.session.commit()
             elif 'undopay' in flask.request.form:
-                print('undo', user, len(user.pays))
                 # TODO: Really deleting pay? Introduce property 'undone' on Pay?
                 if len(user.pays) > 0:
                     del user.pays[-1]
