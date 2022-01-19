@@ -12,27 +12,29 @@ class User(flask.current_app.db.Model):
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean)
     pays = flask.current_app.db.relationship("Pay", back_populates="user", cascade="all, delete", passive_deletes=True)
+    drinks = flask.current_app.db.relationship(
+        "Drink", back_populates="user", cascade="all, delete", passive_deletes=True
+    )
 
     @property
-    def coffees_today(self):
-        return Drink.query.filter(
-            self.id == Drink.userid, flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today()
-        ).all()
+    def drinks_today(self):
+        return (
+            Drink.query.filter(Drink.user == self)
+            .filter(flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today())
+            .all()
+        )
 
     @property
     def unpayed(self):
         # TODO: Fast enough?
-        return sum(c.price for c in self.coffees) - sum(p.amount for p in self.pays)
-
-    def drinks(self, date=None):
-        drinks = Drink.query.filter(self.id == Drink.userid)
-        if date is not None:
-            drinks = drinks.filter(flask.current_app.db.func.Date(Drink.timestamp) == date)
-        drinks = drinks.order_by(Drink.timestamp)
-        return drinks
+        return sum(c.price for c in self.drinks) - sum(p.amount for p in self.pays)
 
     def nth_drink(self, date, n):
-        return self.drinks(date).limit(n)[-1]
+        return (
+            Drink.query.filter(Drink.user == self)
+            .filter(flask.current_app.db.func.Date(Drink.timestamp) == date)
+            .limit(n)[-1]
+        )
 
     @property
     def drinks_per_day(self):
@@ -72,9 +74,10 @@ class Drink(flask.current_app.db.Model):
     timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime)
     price = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
     userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer, flask.current_app.db.ForeignKey('user.id'), nullable=False
+        flask.current_app.db.Integer,
+        flask.current_app.db.ForeignKey('user.id', ondelete='CASCADE'),
     )
-    user = flask.current_app.db.relationship('User', cascade='all,delete', backref=flask.current_app.db.backref('coffees', lazy=True))
+    user = flask.current_app.db.relationship('User', back_populates='drinks')
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
