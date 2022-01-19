@@ -14,11 +14,11 @@ class TestDatabase(TestCoffeebuddy):
         self.db.session.commit()
         response = self.client.post('/coffee.html?tag=010203', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(user1.coffees), 1)
-        self.assertEqual(len(user1.coffees_today), 1)
+        self.assertEqual(len(user1.drinks), 1)
+        self.assertEqual(len(user1.drinks_today), 1)
         response = self.client.post('/coffee.html?tag=030405', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(user2.coffees), 1)
+        self.assertEqual(len(user2.drinks), 1)
 
     def test_drinks_today(self):
         from coffeebuddy.model import Drink, User
@@ -29,24 +29,24 @@ class TestDatabase(TestCoffeebuddy):
         self.db.session.add(user2)
         self.db.session.commit()
 
-        user1.coffees.append(Drink(price=30))
-        user1.coffees.append(Drink(price=30, timestamp=datetime.datetime.now() - datetime.timedelta(days=1)))
-        user2.coffees.append(Drink(price=30))
+        user1.drinks.append(Drink(price=30))
+        user1.drinks.append(Drink(price=30, timestamp=datetime.datetime.now() - datetime.timedelta(days=1)))
+        user2.drinks.append(Drink(price=30))
 
-        self.assertEqual(len(user1.coffees), 2)
-        self.assertEqual(len(user1.coffees_today), 1)
-        self.assertEqual(len(user2.coffees), 1)
+        self.assertEqual(len(user1.drinks), 2)
+        self.assertEqual(len(user1.drinks_today), 1)
+        self.assertEqual(len(user2.drinks), 1)
 
     def test_pay(self):
-        from coffeebuddy.model import Drink, User, Pay
+        from coffeebuddy.model import Drink, Pay, User
 
         user = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
         self.db.session.add(user)
         self.db.session.commit()
 
-        user.coffees.append(Drink(price=30))
-        user.coffees.append(Drink(price=30))
-        user.coffees.append(Drink(price=30))
+        user.drinks.append(Drink(price=30))
+        user.drinks.append(Drink(price=30))
+        user.drinks.append(Drink(price=30))
         user.pays.append(Pay(amount=60))
         self.db.session.commit()
 
@@ -113,6 +113,7 @@ class TestRouteCoffee(TestCoffeebuddy):
 
         user, _ = self.add_default_user()
         user.pays.append(Pay(amount=10))
+        self.db.session.commit()
         response = self.client.post('/coffee.html?tag=010203', data=dict(undopay=''))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user.pays), 0)
@@ -129,7 +130,7 @@ class TestRouteOneSwipe(TestCoffeebuddy):
         user, _ = self.add_default_user()
         response = self.client.post(f'/oneswipe.html?tag={user.tag.hex()}', data=dict(coffee=True))
         self.assertEqual(response.status_code, 200)
-        self.assertGreater(len(list(user.drinks())), 0)
+        self.assertGreater(len(user.drinks), 0)
 
 
 class TestRouteWelcome(TestCoffeebuddy):

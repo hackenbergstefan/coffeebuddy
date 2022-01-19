@@ -1,6 +1,6 @@
 import flask
 
-from coffeebuddy.model import Drink, User, Pay
+from coffeebuddy.model import Drink, Pay, User
 
 
 def init():
@@ -22,7 +22,7 @@ def init():
             elif 'undopay' in flask.request.form:
                 # TODO: Really deleting pay? Introduce property 'undone' on Pay?
                 if len(user.pays) > 0:
-                    flask.current_app.db.session.delete(user.pays[-1])
+                    del user.pays[-1]
                     flask.current_app.db.session.commit()
             elif 'logout' in flask.request.form:
                 return flask.redirect('/')

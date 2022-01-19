@@ -172,16 +172,16 @@
                         COFFEEMETER
                     </div>
                     <div class="coffeemeter-tag">
-                        {{ len(user.coffees_today) }}
+                        {{ len(user.drinks_today) }}
                     </div>
                     <div class="d-flex flex-column h-100">
-                        <div class="display-2 fas {{ coffee_state[min(len(coffee_state) - 1, len(user.coffees_today))] }}"
-                             style="{{ 'color: var(--danger);' if len(user.coffees_today) >= len(coffee_state) }}">
+                        <div class="display-2 fas {{ coffee_state[min(len(coffee_state) - 1, len(user.drinks_today))] }}"
+                             style="{{ 'color: var(--danger);' if len(user.drinks_today) >= len(coffee_state) }}">
                         </div>
                         <div class="d-flex flex-column justify-content-end h-100 border mt-2 px-2">
                             <div id="coffeemeter-bar" class="bg-engineering-dark m-1 rounded"
-                                 style="height: {{ len(user.coffees_today) / len(coffee_state) * 100 | round }}%;
-                                     {{ 'background: var(--danger); color: white;' if len(user.coffees_today) >= len(coffee_state) }}">
+                                 style="height: {{ len(user.drinks_today) / len(coffee_state) * 100 | round }}%;
+                                     {{ 'background: var(--danger); color: white;' if len(user.drinks_today) >= len(coffee_state) }}">
                             </div>
                         </div>
                     </div>
