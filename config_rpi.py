@@ -20,8 +20,11 @@ CAMERA = True
 # Rotation of camera (clockwise)
 CAMERA_ROTATION = 90
 
-# Switch display on and off by camera motion detection
-CAMERA_MOTION_CONTROL_DISPLAY = True
+# Switch display on and off by motion detection
+MOTION_DISPLAY_CONTROL = True
 
 # Illumination
 ILLUMINATION = True
+
+# PIR motion detection (None if not used, BCM pin number otherwise)
+PIR = None

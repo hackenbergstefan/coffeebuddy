@@ -6,8 +6,8 @@ import socket
 
 import flask
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
 db = SQLAlchemy()
@@ -92,6 +92,10 @@ def init_app_context():
     import coffeebuddy.facerecognition
 
     coffeebuddy.facerecognition.init()
+
+    import coffeebuddy.pir
+
+    coffeebuddy.pir.init()
 
 
 def prefill():
