@@ -24,6 +24,7 @@ def handle_post(user):
         flask.current_app.db.session.commit()
     else:
         # Edit existing new user
+        user.tag = bytes.fromhex(flask.request.form['tag'])
         user.name = flask.request.form['last_name']
         user.prename = flask.request.form['first_name']
         user.option_oneswipe = 'oneswipe' in flask.request.form
@@ -41,7 +42,12 @@ def handle_get(user):
 def init():
     @flask.current_app.route('/edituser.html', methods=['GET', 'POST'])
     def edit_user():
-        tag = bytes.fromhex(flask.request.args['tag']) if 'tag' in flask.request.args else None
+        if 'oldtag' in flask.request.args:
+            tag = bytes.fromhex(flask.request.args['oldtag'])
+        elif 'tag' in flask.request.args:
+            tag = bytes.fromhex(flask.request.args['tag'])
+        else:
+            tag = None
         user = User.query.filter(User.tag == tag).first()
         if flask.request.method == 'POST':
             return handle_post(user)

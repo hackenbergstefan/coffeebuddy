@@ -1,55 +1,108 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-    </head>
-    <body>
-        <div class="container">
-            <h1 class="display-1">Edit User</h1>
-            <form method="post">
-                <div class="form-group">
-                    <label>Tag ID</label>
-                    <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id" required value="{{ data['tag'] }}">
-                    <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or <code>01 02 03 04</code></small>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"
+        integrity="sha512-fB746S+jyTdN2LSWbYSGP2amFYId226wpOeV4ApumcDpIttPxvk1ZPOgnwqwQziRAtZkiFJVx9F64GLAtoIlCQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+
+
+    <script>
+        var socket;
+        $(() => {
+            socket = io.connect(window.location.host);
+        });
+        function updatetag() {
+            console.log("update tag");
+            $("#modal-tag").modal("show");
+            socket.on('card_connected', (msg) => {
+                console.log(`connected: ${msg}`);
+                $("input[name='tag']").val(msg["tag"]);
+                updatetag_abort();
+            });
+        }
+        function updatetag_abort() {
+            $("#modal-tag").modal("hide");
+            socket.off('card_connected');
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="display-1">Edit User</h1>
+        <form id="edituser-form" method="post">
+            <div class="form-group">
+                <label>Tag ID</label>
+                <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id" required
+                    value="{{ data['tag'] }}">
+                <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
+                    <code>01 02 03 04</code></small>
+                <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
+                <input name="oldtag" type="hidden" value="{{ data['tag'] }}"></input>
+            </div>
+            <h3>Name</h3>
+            <div class="form-group row">
+                <div class="col">
+                    <label>First name</label>
+                    <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required
+                        value="{{ user.prename }}" autocomplete="off">
                 </div>
-                <h3>Name</h3>
-                <div class="form-group row">
-                    <div class="col">
-                        <label>First name</label>
-                        <input class="form-control" type="text" name="first_name" placeholder="Enter first name" required value="{{ user.prename }}" autocomplete="off">
-                    </div>
-                    <div class="col">
-                        <label>Last name</label>
-                        <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required value="{{ user.name }}" autocomplete="off">
+                <div class="col">
+                    <label>Last name</label>
+                    <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required
+                        value="{{ user.name }}" autocomplete="off">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Options</h3>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="oneswipe" {{ 'checked' if
+                            user.option_oneswipe }}>
+                        <label class="form-check-label">One swipe</label>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <h3>Options</h3>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="oneswipe" {{ 'checked' if user.option_oneswipe }}>
-                            <label class="form-check-label">One swipe</label>
+                <div class="col">
+                    <h3>Misc</h3>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">€</span>
                         </div>
-                    </div>
-                    <div class="col">
-                        <h3>Misc</h3>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">€</span>
-                            </div>
-                            <input class="form-control col-5" type="number" name="initial_bill" placeholder="Your initial bill in €" autocomplete="off">
-                        </div>
+                        <input class="form-control col-5" type="number" name="initial_bill"
+                            placeholder="Your initial bill in €" autocomplete="off">
                     </div>
                 </div>
-                <div class="mt-3 text-right">
-                    <button type="submit" class="btn btn-primary">Ok</button>
-                    <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
+            </div>
+            <div class="mt-3 text-right">
+                <button type="submit" class="btn btn-primary">Ok</button>
+                <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
+            </div>
+        </form>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal-tag" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <h2 class="color-berry">Tap new tag.</h2>
+                <div class="d-flex flex-column justify-content-center text-center h-100">
+                    <div class="display-1 color-berry fas fa-address-card mb-3"></div>
                 </div>
-            </form>
+            </div>
+            <button onclick="updatetag_abort()">Abort</button>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

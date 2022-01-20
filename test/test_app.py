@@ -92,6 +92,26 @@ class TestRouteEdituser(TestCoffeebuddy):
         self.assertEqual(users[0].name, 'Doe')
         self.assertEqual(users[0].prename, 'Jane')
 
+    def test_edituser_update_tag(self):
+        from coffeebuddy.model import User
+
+        self.db.session.add(User(tag=b'\x01\x02\x03\x04', name='Mustermann', prename='Max'))
+        response = self.client.post(
+            '/edituser.html?tag=01020304',
+            data=dict(
+                tag='05 06 07 08',
+                last_name='Mustermann',
+                first_name='Max',
+                oldtag='01 02 03 04',
+            ),
+        )
+        self.assertEqual(response.status_code, 302)
+        users = User.query.all()
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].tag, b'\x05\x06\x07\x08')
+        self.assertEqual(users[0].name, 'Mustermann')
+        self.assertEqual(users[0].prename, 'Max')
+
 
 class TestRouteCoffee(TestCoffeebuddy):
     def test_non_existing_user(self):
