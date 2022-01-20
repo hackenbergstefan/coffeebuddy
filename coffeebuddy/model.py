@@ -1,4 +1,5 @@
 import datetime
+import socket
 
 import flask
 import sqlalchemy
@@ -78,10 +79,13 @@ class Drink(flask.current_app.db.Model):
         flask.current_app.db.ForeignKey('user.id', ondelete='CASCADE'),
     )
     user = flask.current_app.db.relationship('User', back_populates='drinks')
+    host = flask.current_app.db.Column(flask.current_app.db.String(50))
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
             kwargs['timestamp'] = datetime.datetime.now()
+        if 'host' not in kwargs:
+            kwargs['host'] = socket.gethostname()
         super().__init__(*args, **kwargs)
 
     def by_date(date):
@@ -110,8 +114,11 @@ class Pay(flask.current_app.db.Model):
     )
     user = flask.current_app.db.relationship('User', back_populates='pays')
     amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
+    host = flask.current_app.db.Column(flask.current_app.db.String(50))
 
     def __init__(self, *args, **kwargs):
         if 'timestamp' not in kwargs:
             kwargs['timestamp'] = datetime.datetime.now()
+        if 'host' not in kwargs:
+            kwargs['host'] = socket.gethostname()
         super().__init__(*args, **kwargs)

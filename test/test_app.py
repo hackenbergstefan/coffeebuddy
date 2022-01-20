@@ -1,4 +1,5 @@
 import datetime
+import socket
 
 from . import TestCoffeebuddy
 
@@ -16,9 +17,12 @@ class TestDatabase(TestCoffeebuddy):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user1.drinks), 1)
         self.assertEqual(len(user1.drinks_today), 1)
+        self.assertEqual(user1.drinks[0].host, socket.gethostname())
+
         response = self.client.post('/coffee.html?tag=030405', data=dict(coffee='coffee'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(user2.drinks), 1)
+        self.assertEqual(user2.drinks[0].host, socket.gethostname())
 
     def test_drinks_today(self):
         from coffeebuddy.model import Drink, User
@@ -51,6 +55,7 @@ class TestDatabase(TestCoffeebuddy):
         self.db.session.commit()
 
         self.assertEqual(user.unpayed, 30)
+        self.assertEqual(user.pays[0].host, socket.gethostname())
 
 
 class TestRouteEdituser(TestCoffeebuddy):
