@@ -50,20 +50,20 @@
                 <div class="col">
                     <label>Tag ID</label>
                     <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id"
-                        required value="{{ user.tag }}">
+                        required value="{{ hexstr(user.tag) }}">
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
                         <code>01 02 03 04</code></small>
                     <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
-                    <input name="oldtag" type="hidden" value="{{ user.tag }}"></input>
+                    <input name="oldtag" type="hidden" value="{{ hexstr(user.tag) }}"></input>
                 </div>
                 <div class="col">
                     <label>Tag2 ID</label>
                     <input class="form-control form-control-lg" type="text" name="tag2" placeholder="Enter tag id"
-                        value="{{ user.tag2 }}">
+                        value="{{ hexstr(user.tag2) }}">
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
                         <code>01 02 03 04</code></small>
                     <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
-                    <input name="oldtag2" type="hidden" value="{{ user.tag2 }}"></input>
+                    <input name="oldtag2" type="hidden" value="{{ hexstr(user.tag2) }}"></input>
                 </div>
             </div>
             <h3>Name</h3>

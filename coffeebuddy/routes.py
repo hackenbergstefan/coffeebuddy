@@ -9,7 +9,7 @@ def init():
             'round': round,
             'max': max,
             'min': min,
-            'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data),
+            'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data) if data else '',
         }
 
     @flask.current_app.after_request
