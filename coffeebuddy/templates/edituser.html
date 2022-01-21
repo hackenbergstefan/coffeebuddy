@@ -23,12 +23,15 @@
         $(() => {
             socket = io.connect(window.location.host);
         });
-        function updatetag() {
+        function updatetag(num) {
             console.log("update tag");
             $("#modal-tag").modal("show");
             socket.on('card_connected', (msg) => {
                 console.log(`connected: ${msg}`);
-                $("input[name='tag']").val(msg["tag"]);
+                if (num == 1)
+                    $("input[name='tag']").val(msg["tag"]);
+                else
+                    $("input[name='tag2']").val(msg["tag"]);
                 updatetag_abort();
             });
         }
@@ -43,14 +46,25 @@
     <div class="container">
         <h1 class="display-1">Edit User</h1>
         <form id="edituser-form" method="post">
-            <div class="form-group">
-                <label>Tag ID</label>
-                <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id" required
-                    value="{{ data['tag'] }}">
-                <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
-                    <code>01 02 03 04</code></small>
-                <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
-                <input name="oldtag" type="hidden" value="{{ data['tag'] }}"></input>
+            <div class="form-group row">
+                <div class="col">
+                    <label>Tag ID</label>
+                    <input class="form-control form-control-lg" type="text" name="tag" placeholder="Enter tag id"
+                        required value="{{ user.tag }}">
+                    <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
+                        <code>01 02 03 04</code></small>
+                    <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
+                    <input name="oldtag" type="hidden" value="{{ user.tag }}"></input>
+                </div>
+                <div class="col">
+                    <label>Tag2 ID</label>
+                    <input class="form-control form-control-lg" type="text" name="tag2" placeholder="Enter tag id"
+                        value="{{ user.tag2 }}">
+                    <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
+                        <code>01 02 03 04</code></small>
+                    <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
+                    <input name="oldtag2" type="hidden" value="{{ user.tag2 }}"></input>
+                </div>
             </div>
             <h3>Name</h3>
             <div class="form-group row">

@@ -9,6 +9,7 @@ from sqlalchemy import text
 class User(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
     tag = flask.current_app.db.Column(flask.current_app.db.LargeBinary, nullable=False, unique=True)
+    tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True)
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean)
@@ -16,6 +17,10 @@ class User(flask.current_app.db.Model):
     drinks = flask.current_app.db.relationship(
         "Drink", back_populates="user", cascade="all, delete", passive_deletes=True
     )
+
+    @staticmethod
+    def by_tag(tag):
+        return User.query.filter((User.tag == tag) | (User.tag2 == tag)).first()
 
     @property
     def drinks_today(self):
@@ -67,7 +72,7 @@ class User(flask.current_app.db.Model):
         )
 
     def __repr__(self):
-        return f'<User tag={self.tag} name={self.name} prename={self.prename}>'
+        return f'<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename}>'
 
 
 class Drink(flask.current_app.db.Model):

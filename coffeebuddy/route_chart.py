@@ -22,7 +22,7 @@ class Color:
 def init():
     @flask.current_app.route('/stats.html', methods=['GET', 'POST'])
     def chart():
-        user = User.query.filter(User.tag == bytes.fromhex(flask.request.args['tag'])).first()
+        user = User.by_tag(bytes.fromhex(flask.request.args['tag']))
         if user is None:
             return flask.render_template('cardnotfound.html', uuid=flask.request.args['tag'])
 
