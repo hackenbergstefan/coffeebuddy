@@ -1,55 +1,101 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js" integrity="sha512-fB746S+jyTdN2LSWbYSGP2amFYId226wpOeV4ApumcDpIttPxvk1ZPOgnwqwQziRAtZkiFJVx9F64GLAtoIlCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
 
-        <script>
-         $(() => {
-             var socket = io.connect(window.location.host);
-             socket.on('card_connected', (msg) => {
-                 window.location.href = `../coffee.html?tag=${msg['tag']}`;
-             });
-         });
-         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
-             var data = [{
-                 x: {{ dataset|map(attribute=1)|list|tojson }},
-                 y: {{ dataset|map(attribute=0)|list|tojson }},
-                 type: "bar",
-                 mode: "lines",
-                 marker: {
-                     colorscale: [
-                         ["0.0", "#ab377a10"],
-                         ["1.0", "#ab377aff"],
-                     ],
-                     color: {{ dataset|map(attribute=0)|list|tojson }},
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"
+        integrity="sha512-fB746S+jyTdN2LSWbYSGP2amFYId226wpOeV4ApumcDpIttPxvk1ZPOgnwqwQziRAtZkiFJVx9F64GLAtoIlCQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+
+    <script>
+        $(() => {
+            var socket = io.connect(window.location.host);
+            socket.on('card_connected', (msg) => {
+                window.location.href = `../coffee.html?tag=${msg['tag']}`;
+            });
+        });
+        $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
+            var data = [{
+                x: {{ dataset| map(attribute = 1) | list | tojson }},
+            y: {{ dataset| map(attribute = 0) | list | tojson }},
+            type: "bar",
+            mode: "lines",
+            marker: {
+            colorscale: [
+                ["0.0", "#ab377a10"],
+                ["1.0", "#ab377aff"],
+            ],
+            color: {{ dataset| map(attribute = 0) | list | tojson }},
                  },
              }];
-             var layout = {
-                 showlegend: false,
-                 plot_bgcolor: "rgba(0,0,0,0)",
-                 paper_bgcolor: "rgba(0,0,0,0)",
-                 bargap: 0,
-                 margin: {
-                     t: "20",
-                 },
-                 autosize: true,
-             };
-             Plotly.newPlot("stats", data, layout);
+        var layout = {
+            showlegend: false,
+            plot_bgcolor: "rgba(0,0,0,0)",
+            paper_bgcolor: "rgba(0,0,0,0)",
+            bargap: 0,
+            margin: {
+                t: "20",
+            },
+            autosize: true,
+        };
+        Plotly.newPlot("stats", data, layout);
          });
-        </script>
-    </head>
-    <body>
-        <div class="d-flex flex-column justify-content-center text-center h-100">
-            <h1 class="display-1" style="margin-top: 100px;">Welcome</h1>
-            <h3>Tap your card to continue</h3>
-            <div>
-            </div>
-            <div id="stats" class="flex-grow-1"></div>
+
+        setInterval(() => {
+            var d = new Date();
+            $("#clock").text(`${d.getHours()}:${d.getMinutes()}`);
+        }, 1000)
+    </script>
+    <style>
+        #clock {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-weight: 100;
+            font-size: 50px;
+            color: var(--color-engineering-light);
+        }
+
+        #info {
+            color: var(--color-berry);
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-align: left;
+        }
+
+        #info .info-label {
+            font-size: 8pt;
+            color: var(--color-engineering);
+            margin-top: 8px;
+            line-height: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex flex-column justify-content-center text-center h-100">
+        <h1 class="display-1" style="margin-top: 100px;">Welcome</h1>
+        <h3>Tap your card to continue</h3>
+        <div id="clock"></div>
+        <div id="info">
+            <div class="info-label">Hostname</div>
+            <div class="info-field">{{ hostname }}</div>
+            <div class="info-label">Version</div>
+            <div class="info-field">{{ githash }}</div>
         </div>
-    </body>
+        <div id="stats" class="flex-grow-1"></div>
+    </div>
+</body>
+
 </html>
