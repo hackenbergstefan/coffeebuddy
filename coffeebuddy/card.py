@@ -21,7 +21,7 @@ class PCSCCard(threading.Thread):
                 request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
                 service = request.waitforcard()
                 service.connection.connect()
-                uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])
+                uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])[:4]
                 self.socketio.emit('card_connected', data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
