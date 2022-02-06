@@ -28,3 +28,6 @@ PIR = None
 
 # Switch display on and off by motion detection
 MOTION_DISPLAY_CONTROL = False
+
+# Guest account enabled
+GUEST = False

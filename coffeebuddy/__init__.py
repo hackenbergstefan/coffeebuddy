@@ -66,6 +66,11 @@ def init_db():
         flask.current_app.debug = True
         prefill()
 
+    if flask.current_app.config['GUEST']:
+        if not coffeebuddy.model.User.query.filter(coffeebuddy.model.User.name == 'Guest').first():
+            flask.current_app.db.session.add(coffeebuddy.model.User(tag=b'\xff\xff\xff\xff', name='Guest', prename=''))
+            flask.current_app.db.session.commit()
+
     return flask.current_app.db
 
 

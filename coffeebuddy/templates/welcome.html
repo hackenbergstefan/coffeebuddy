@@ -93,6 +93,10 @@
             <div class="info-field">{{ hostname }}</div>
             <div class="info-label">Version</div>
             <div class="info-field">{{ githash }}</div>
+            {% if config['GUEST'] %}
+            <button class="btn btn-primary mt-3"
+                onclick="window.location.href = '../coffee.html?tag=ffffffff'">Guest</button>
+            {% endif %}
         </div>
         <div id="stats" class="flex-grow-1"></div>
     </div>
