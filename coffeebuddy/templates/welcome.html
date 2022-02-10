@@ -53,7 +53,7 @@
 
         setInterval(() => {
             var d = new Date();
-            $("#clock").text(`${d.getHours()}:${d.getMinutes()}`);
+            $("#clock").text(d.toLocaleString('de-DE', { hour: '2-digit', minute: '2-digit' }));
         }, 1000)
     </script>
     <style>
