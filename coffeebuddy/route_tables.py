@@ -11,7 +11,7 @@ def init():
         return flask.render_template(
             'tables.html',
             bills=[
-                (user.name, user.prename, user.tag.hex(), user.tag2.hex(), round(user.unpayed, 2))
+                (user.name, user.prename, user.tag.hex(), (user.tag2 or b'').hex(), round(user.unpayed, 2))
                 for user in User.query.all()
             ],
             drinks=[
