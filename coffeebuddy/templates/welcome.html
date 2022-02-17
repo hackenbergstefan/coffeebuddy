@@ -80,6 +80,7 @@
             margin-top: 8px;
             line-height: 0.8;
         }
+
     </style>
 </head>
 
@@ -94,9 +95,12 @@
             <div class="info-label">Version</div>
             <div class="info-field">{{ githash }}</div>
             {% if config['GUEST'] %}
-            <button class="btn btn-primary mt-3"
+            <button class="btn btn-primary mt-3 d-block"
                 onclick="window.location.href = '../coffee.html?tag=ffffffff'">Guest</button>
             {% endif %}
+            <button class="btn btn-primary mt-3 d-block" onclick="window.location.href = '../selectuser.html'">
+                Select manual
+            </button>
         </div>
         <div id="stats" class="flex-grow-1"></div>
     </div>

@@ -44,3 +44,7 @@ def init():
     import coffeebuddy.route_welcome
 
     coffeebuddy.route_welcome.init()
+
+    import coffeebuddy.route_selectuser
+
+    coffeebuddy.route_selectuser.init()
