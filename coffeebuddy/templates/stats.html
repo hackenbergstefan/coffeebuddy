@@ -9,12 +9,14 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js" integrity="sha512-94titNdENTKSvhQZbcdBcW6kMstfKZsWqGBRCAF0UUmzPx2DKYRHIsAxXJnXxiyvbBD3eMxwotX9rccAjgkVPg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
         <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
         <script>
+{% if not config['NOTIMEOUT'] %}
          $(() => {
              if (window.location.search.search('notimeout') == -1)
              {
                  startAutologout(autologoutTime = 20);
              }
          });
+{% endif %}
 
          $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
              data = {{ datasets|tojson }};

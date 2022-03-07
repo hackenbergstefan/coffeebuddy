@@ -31,3 +31,6 @@ MOTION_DISPLAY_CONTROL = False
 
 # Guest account enabled
 GUEST = False
+
+# Disable automatic timeout from coffee.html
+NOTIMEOUT = False

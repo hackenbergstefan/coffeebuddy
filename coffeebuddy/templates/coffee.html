@@ -19,6 +19,7 @@
 
         <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
         <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
+{% if not config['NOTIMEOUT'] %}
         <script>
          $(() => {
              if (window.location.search.search('notimeout') == -1)
@@ -27,6 +28,7 @@
              }
          });
         </script>
+{% endif %}
         <script>
          $(() => {
              {% if 'coffee' in referer %}
