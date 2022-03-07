@@ -2,7 +2,7 @@ import datetime
 
 import flask
 
-from coffeebuddy.model import Drink, User
+from coffeebuddy.model import Drink, User, Pay
 
 
 def init():
@@ -10,10 +10,7 @@ def init():
     def tables():
         return flask.render_template(
             'tables.html',
-            bills=[
-                (user.name, user.prename, user.tag.hex(), (user.tag2 or b'').hex(), round(user.unpayed, 2))
-                for user in User.query.all()
-            ],
+            bills=[(user.name, user.prename, round(user.unpayed, 2)) for user in User.query.all()],
             drinks=[
                 (str(drink.timestamp), drink.user.name, drink.user.prename, drink.price)
                 for drink in Drink.query.filter(
@@ -21,5 +18,9 @@ def init():
                     >= datetime.date.today() - datetime.timedelta(days=30)
                 )
                 if drink.user
-            ],
+            ] + [
+                (str(pay.timestamp), pay.user.name, pay.user.prename, -pay.amount)
+                for pay in Pay.query.all()
+                if pay.user
+             ],
         )
