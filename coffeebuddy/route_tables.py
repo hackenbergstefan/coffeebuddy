@@ -18,9 +18,10 @@ def init():
                     >= datetime.date.today() - datetime.timedelta(days=30)
                 )
                 if drink.user
-            ] + [
+            ]
+            + [
                 (str(pay.timestamp), pay.user.name, pay.user.prename, -pay.amount)
                 for pay in Pay.query.all()
                 if pay.user
-             ],
+            ],
         )

@@ -1,7 +1,3 @@
-import datetime
-import socket
-import subprocess
-
 import flask
 
 from coffeebuddy.model import User
