@@ -34,3 +34,6 @@ GUEST = False
 
 # Disable automatic timeout from coffee.html
 NOTIMEOUT = False
+
+# Enable https
+SSL = False

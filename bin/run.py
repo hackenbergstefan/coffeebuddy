@@ -23,4 +23,9 @@ if __name__ == '__main__':
             coffeebuddy.init_app_context()
     except:  # noqa: E722
         raise
-    app.socketio.run(app, use_reloader=False, host=app.config['HOST'] if 'HOST' in app.config else '')
+    app.socketio.run(
+        app,
+        use_reloader=False,
+        host=app.config['HOST'] if 'HOST' in app.config else '',
+        ssl_context='adhoc' if app.config['SSL'] else None,
+    )
