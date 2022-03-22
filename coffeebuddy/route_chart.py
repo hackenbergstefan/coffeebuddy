@@ -20,17 +20,17 @@ class Color:
 
 
 def init():
-    @flask.current_app.route('/stats.html', methods=['GET', 'POST'])
+    @flask.current_app.route("/stats.html", methods=["GET", "POST"])
     def chart():
-        user = User.by_tag(bytes.fromhex(flask.request.args['tag']))
+        user = User.by_tag(bytes.fromhex(flask.request.args["tag"]))
         if user is None:
-            return flask.render_template('cardnotfound.html', uuid=flask.request.args['tag'])
+            return flask.render_template("cardnotfound.html", uuid=flask.request.args["tag"])
 
-        if flask.request.method == 'POST':
-            if 'coffee' in flask.request.form:
+        if flask.request.method == "POST":
+            if "coffee" in flask.request.form:
                 return flask.redirect(f'coffee.html?tag={flask.request.args["tag"]}')
-            elif 'logout' in flask.request.form:
-                return flask.redirect('/')
+            elif "logout" in flask.request.form:
+                return flask.redirect("/")
 
         berry = Color(171, 55, 122)
 
@@ -38,17 +38,17 @@ def init():
         n = user.max_drinks_per_day
         datasets = [
             {
-                'x': x,
-                'y': [f'1970-01-01T{user.nth_drink(date, i).timestamp.time().isoformat()}' for date in x],
-                'fill': 'tozeroy',
-                'name': f'{i}. Coffee',
-                'mode': 'markers',
-                'fillcolor': str(berry.brighter(1 - i / n)),
-                'line': {
-                    'color': str(berry),
+                "x": x,
+                "y": [f"1970-01-01T{user.nth_drink(date, i).timestamp.time().isoformat()}" for date in x],
+                "fill": "tozeroy",
+                "name": f"{i}. Coffee",
+                "mode": "markers",
+                "fillcolor": str(berry.brighter(1 - i / n)),
+                "line": {
+                    "color": str(berry),
                 },
             }
             for i in range(n, 0, -1)
         ]
 
-        return flask.render_template('stats.html', user=user, datasets=datasets)
+        return flask.render_template("stats.html", user=user, datasets=datasets)

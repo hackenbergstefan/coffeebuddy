@@ -7,7 +7,7 @@ import coffeebuddy
 
 class TestCoffeebuddy(unittest.TestCase):
     def setUp(self):
-        self.app = coffeebuddy.create_app({'TESTING': True})
+        self.app = coffeebuddy.create_app({"TESTING": True})
         self.client = self.app.test_client().__enter__()
         self.ctx = self.app.app_context().__enter__()
         coffeebuddy.init_db()
@@ -29,9 +29,9 @@ class TestCoffeebuddy(unittest.TestCase):
     def add_default_user(self):
         from coffeebuddy.model import User
 
-        user1 = User(tag=b'\x01\x02\x03', name='Mustermann', prename='Max')
+        user1 = User(tag=b"\x01\x02\x03", name="Mustermann", prename="Max")
         self.db.session.add(user1)
-        user2 = User(tag=b'\x04\x05\x06', name='Doe', prename='Jane')
+        user2 = User(tag=b"\x04\x05\x06", name="Doe", prename="Jane")
         self.db.session.add(user2)
         self.db.session.commit()
         return user1, user2

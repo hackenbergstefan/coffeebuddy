@@ -5,20 +5,20 @@ def init():
     @flask.current_app.context_processor
     def inject_globals():
         return {
-            'len': len,
-            'round': round,
-            'max': max,
-            'min': min,
-            'hexstr': lambda data: ' '.join(f'{x:02x}' for x in data) if data else '',
+            "len": len,
+            "round": round,
+            "max": max,
+            "min": min,
+            "hexstr": lambda data: " ".join(f"{x:02x}" for x in data) if data else "",
         }
 
     @flask.current_app.after_request
     def after_request(response):
         if flask.request.endpoint:
-            if flask.request.endpoint == 'welcome':
-                flask.current_app.events.fire('route_welcome')
-            elif flask.request.endpoint != 'static':
-                flask.current_app.events.fire('route_notwelcome')
+            if flask.request.endpoint == "welcome":
+                flask.current_app.events.fire("route_welcome")
+            elif flask.request.endpoint != "static":
+                flask.current_app.events.fire("route_notwelcome")
         return response
 
     import coffeebuddy.route_coffee

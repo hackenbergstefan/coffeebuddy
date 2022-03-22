@@ -10,14 +10,14 @@ try:
     import face_recognition
 
     face_cascade = cv2.CascadeClassifier(
-        os.path.join(os.path.dirname(cv2.__file__), 'data', 'haarcascade_frontalface_default.xml')
+        os.path.join(os.path.dirname(cv2.__file__), "data", "haarcascade_frontalface_default.xml")
     )
     """OpenCV cascade for frontal face detection. Used for fast face detection."""
 
-    face_data_path = os.path.join(os.path.dirname(__file__), 'face_encodings.pickle')
+    face_data_path = os.path.join(os.path.dirname(__file__), "face_encodings.pickle")
     """Path to binary face data."""
     try:
-        face_data = pickle.loads(open(face_data_path, 'rb').read())
+        face_data = pickle.loads(open(face_data_path, "rb").read())
         """Binary data of captured faces."""
     except FileNotFoundError:
         face_data = {}
@@ -27,7 +27,7 @@ except ModuleNotFoundError:
 
 def save_face_data():
     """Save (updated) captured faces."""
-    with open(face_data_path, 'wb') as fout:
+    with open(face_data_path, "wb") as fout:
         fout.write(pickle.dumps(face_data))
     print(list(face_data.keys()))
 
@@ -63,7 +63,7 @@ def every_nth(nth):
 
 def cv2_show_and_wait(img, timeout=30):
     """Show given image and wait."""
-    cv2.imshow('img', img)
+    cv2.imshow("img", img)
     k = cv2.waitKey(timeout) & 0xFF
     # Stop if escape key is pressed
     if k == 27:
@@ -78,7 +78,7 @@ def encode_face(img):
     """
     img_small = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
     rgb = cv2.cvtColor(img_small, cv2.COLOR_BGR2RGB)
-    boxes = face_recognition.face_locations(rgb, model='hog')
+    boxes = face_recognition.face_locations(rgb, model="hog")
     encodings = face_recognition.face_encodings(rgb, boxes)
     if len(encodings) == 0:
         return None
@@ -113,15 +113,15 @@ class FaceCapturer:
         detected_faces = []
         for nth in every_nth(4):
             _, img = cap.read()
-            if self.app_config['CAMERA_ROTATION'] is not None:
-                img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
+            if self.app_config["CAMERA_ROTATION"] is not None:
+                img = cv2.rotate(img, self.app_config["CAMERA_ROTATION"])
             if nth:
                 # Detect faces only every nth frame
                 detected_faces = detect_faces(img)
             mark_faces(img, detected_faces)
 
             # Wait until button is pressed
-            cv2.setMouseCallback('img', self.cv2_click_callback, param=img)
+            cv2.setMouseCallback("img", self.cv2_click_callback, param=img)
             if not self.capturing or cv2_show_and_wait(img):
                 break
 
@@ -135,9 +135,9 @@ class FaceCapturer:
             return
 
         encoded_face = encode_face(img)
-        logging.getLogger(__name__).info(f'Encoded face: {encoded_face}')
+        logging.getLogger(__name__).info(f"Encoded face: {encoded_face}")
         if encoded_face is not None:
-            logging.getLogger(__name__).info(f'Save face: {self.tag} {self.name} {self.prename} {encoded_face}')
+            logging.getLogger(__name__).info(f"Save face: {self.tag} {self.name} {self.prename} {encoded_face}")
             add_face_data(self.tag, self.name, self.prename, encoded_face)
             self.capturing = False
 
@@ -158,8 +158,8 @@ class FaceRecognizer:
         detected_name = None
         for nth in every_nth(32):
             _, img = cap.read()
-            if self.app_config['CAMERA_ROTATION'] is not None:
-                img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
+            if self.app_config["CAMERA_ROTATION"] is not None:
+                img = cv2.rotate(img, self.app_config["CAMERA_ROTATION"])
             if nth:
                 # Use fast detection for boxes
                 detected_faces = detect_faces(img)
@@ -184,29 +184,29 @@ class FaceRecognizer:
         cap.set(3, 640)
         cap.set(4, 480)
         _, img = cap.read()
-        if self.app_config['CAMERA_ROTATION'] is not None:
-            img = cv2.rotate(img, self.app_config['CAMERA_ROTATION'])
+        if self.app_config["CAMERA_ROTATION"] is not None:
+            img = cv2.rotate(img, self.app_config["CAMERA_ROTATION"])
         # Use fast detection for boxes
         detected_faces = detect_faces(img)
         if len(detected_faces) > 0:
-            logging.getLogger(__name__).info('Face detected.')
-            self.events.fire_reset('facerecognition_face_lost')
-            self.events.fire_once('facerecognition_face_detected')
+            logging.getLogger(__name__).info("Face detected.")
+            self.events.fire_reset("facerecognition_face_lost")
+            self.events.fire_once("facerecognition_face_detected")
             # Recognize
             encoding = encode_face(img)
             if encoding is not None:
                 tag, _, _ = recognize_face(encoding)
         else:
-            self.events.fire_once('facerecognition_face_lost')
-            self.events.fire_reset('facerecognition_face_detected')
+            self.events.fire_once("facerecognition_face_lost")
+            self.events.fire_reset("facerecognition_face_detected")
         cap.release()
         if tag is not None:
-            self.events.block('facerecognition_face_lost')
+            self.events.block("facerecognition_face_lost")
         return tag
 
 
 def capture(user):
-    flask.current_app.events.fire('facerecognition_capture')
+    flask.current_app.events.fire("facerecognition_capture")
     FaceCapturer(user.tag, user.name, user.prename).capture()
 
 
@@ -214,30 +214,30 @@ def init():
     if flask.current_app.testing:
         return
 
-    if flask.current_app.config['FACERECOGNITION'] is True:
-        flask.current_app.events.register('route_coffee_capture', capture)
+    if flask.current_app.config["FACERECOGNITION"] is True:
+        flask.current_app.events.register("route_coffee_capture", capture)
 
 
 def main():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('function', choices=['capture', 'recognize'])
+    parser.add_argument("function", choices=["capture", "recognize"])
     parser.add_argument(
-        '--data', nargs='+', default=None, required=False, help='Tuple (TAG, PRENAME, NAME) for function "capture"'
+        "--data", nargs="+", default=None, required=False, help='Tuple (TAG, PRENAME, NAME) for function "capture"'
     )
     args = parser.parse_args()
 
-    print('face_data', list(face_data.keys()))
+    print("face_data", list(face_data.keys()))
 
-    if args.function == 'capture':
+    if args.function == "capture":
         tag = bytes.fromhex(args.data[0])
         prename = args.data[1]
         name = args.data[2]
         FaceCapturer(tag, name, prename).capture()
-    elif args.function == 'recognize':
+    elif args.function == "recognize":
         FaceRecognizer().recognize_guiloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

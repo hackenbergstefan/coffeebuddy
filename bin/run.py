@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import coffeebuddy  # noqa: E402
 
@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     app = coffeebuddy.create_app()
     try:
@@ -26,6 +26,6 @@ if __name__ == '__main__':
     app.socketio.run(
         app,
         use_reloader=False,
-        host=app.config['HOST'] if 'HOST' in app.config else '',
-        ssl_context='adhoc' if app.config['SSL'] else None,
+        host=app.config["HOST"] if "HOST" in app.config else "",
+        ssl_context="adhoc" if app.config["SSL"] else None,
     )
