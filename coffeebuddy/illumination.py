@@ -2,40 +2,29 @@
 import logging
 
 import flask
-import RPi.GPIO as GPIO
+import pigpio
 
 
 PIN_GREEN = 16
 PIN_BLUE = 20
 PIN_RED = 21
 
-pwms = None
-
+pi = pigpio.pi()
 
 def setup():
-    global pwms
-    GPIO.setup(PIN_GREEN, GPIO.OUT)
-    GPIO.setup(PIN_RED, GPIO.OUT)
-    GPIO.setup(PIN_BLUE, GPIO.OUT)
-
-    pwms = [
-        GPIO.PWM(PIN_RED, 100),
-        GPIO.PWM(PIN_GREEN, 100),
-        GPIO.PWM(PIN_BLUE, 100),
-    ]
-    for p in pwms:
-        p.start(1)
+    pi.set_PWM_frequency(PIN_RED, 10_000)
+    pi.set_PWM_frequency(PIN_GREEN, 10_000)
+    pi.set_PWM_frequency(PIN_BLUE, 10_000)
 
 
 def color(r, g, b):
-    if any([r > 1, g > 1, b > 1]):
-        r /= 255
-        g /= 255
-        b /= 255
-    if pwms:
-        pwms[0].ChangeDutyCycle(100 * r)
-        pwms[1].ChangeDutyCycle(100 * g)
-        pwms[2].ChangeDutyCycle(100 * b)
+    if any([r < 1, g < 1, b < 1]):
+        r *= 255
+        g *= 255
+        b *= 255
+    pi.set_PWM_dutycycle(PIN_GREEN, g)
+    pi.set_PWM_dutycycle(PIN_RED, r)
+    pi.set_PWM_dutycycle(PIN_BLUE, b)
 
 
 def color_named(name):
