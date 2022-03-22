@@ -1,13 +1,13 @@
 import flask
 
-from coffeebuddy.model import Drink, Pay, User
+from coffeebuddy.model import Drink, Pay, User, escapefromhex
 
 
 def init():
     @flask.current_app.route("/coffee.html", methods=["GET", "POST"])
     def coffee():
         flask.current_app.events.fire("route_coffee")
-        user = User.by_tag(bytes.fromhex(flask.request.args["tag"]))
+        user = User.by_tag(escapefromhex(flask.request.args["tag"]))
         if user is None:
             return flask.render_template("cardnotfound.html", uuid=flask.request.args["tag"])
         if flask.request.method == "GET" and user.option_oneswipe:
