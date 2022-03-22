@@ -44,7 +44,13 @@
 
 <body>
     <div class="container">
-        <h1 class="display-1">Edit User</h1>
+        <div class="d-flex flex-row align-items-end">
+            <div class="flex-grow display-1">{{ "Edit User" if user.id else "Add User" }}</div>
+            <div id="userid-container" class="ml-auto mt-3">
+                <div class="d-inline">Database ID:</div>
+                <code class="d-inline h3">{{ user.id }}</code>
+            </div>
+        </div>
         <form id="edituser-form" method="post">
             <input name="id" type="hidden" value="{{ user.id }}"></input>
             <div class="form-group row">
