@@ -9,18 +9,16 @@ from sqlalchemy import text
 class User(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
     tag = flask.current_app.db.Column(flask.current_app.db.LargeBinary, nullable=False, unique=True)
-    tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True)
+    tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True, default=None)
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean)
-    pays = flask.current_app.db.relationship("Pay", back_populates="user", cascade="all, delete", passive_deletes=True)
-    drinks = flask.current_app.db.relationship(
-        "Drink", back_populates="user", cascade="all, delete", passive_deletes=True
-    )
+    option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean, default=False)
+    pays = flask.current_app.db.relationship("Pay", backref="user", cascade="all, delete")
+    drinks = flask.current_app.db.relationship("Drink", backref="user", cascade="all, delete")
 
     @staticmethod
     def by_tag(tag):
-        return User.query.filter((User.tag == tag) | (User.tag2 == tag)).first()
+        return User.query.filter((User.tag == tag) | ((User.tag2 != None) & (User.tag2 == tag))).first()  # noqa: E711
 
     @property
     def drinks_today(self):
@@ -80,10 +78,8 @@ class Drink(flask.current_app.db.Model):
     timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime)
     price = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
     userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer,
-        flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),
+        flask.current_app.db.Integer, flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
-    user = flask.current_app.db.relationship("User", back_populates="drinks")
     host = flask.current_app.db.Column(flask.current_app.db.String(50))
 
     def __init__(self, *args, **kwargs):
@@ -116,8 +112,8 @@ class Pay(flask.current_app.db.Model):
     userid = flask.current_app.db.Column(
         flask.current_app.db.Integer,
         flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
     )
-    user = flask.current_app.db.relationship("User", back_populates="pays")
     amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
     host = flask.current_app.db.Column(flask.current_app.db.String(50))
 
@@ -127,3 +123,9 @@ class Pay(flask.current_app.db.Model):
         if "host" not in kwargs:
             kwargs["host"] = socket.gethostname()
         super().__init__(*args, **kwargs)
+
+
+def escapefromhex(data):
+    if not data:
+        return None
+    return bytes.fromhex(data)

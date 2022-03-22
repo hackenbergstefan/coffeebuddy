@@ -46,6 +46,7 @@
     <div class="container">
         <h1 class="display-1">Edit User</h1>
         <form id="edituser-form" method="post">
+            <input name="id" type="hidden" value="{{ user.id }}"></input>
             <div class="form-group row">
                 <div class="col">
                     <label>Tag ID</label>
@@ -53,8 +54,7 @@
                         required value="{{ hexstr(user.tag) }}">
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
                         <code>01 02 03 04</code></small>
-                    <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
-                    <input name="oldtag" type="hidden" value="{{ hexstr(user.tag) }}"></input>
+                    <input type="button" class="btn btn-secondary" onclick="updatetag(1)" value="Update Tag"></input>
                 </div>
                 <div class="col">
                     <label>Tag2 ID</label>
@@ -62,8 +62,7 @@
                         value="{{ hexstr(user.tag2) }}">
                     <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
                         <code>01 02 03 04</code></small>
-                    <input type="button" class="btn btn-secondary" onclick="updatetag()" value="Update Tag"></input>
-                    <input name="oldtag2" type="hidden" value="{{ hexstr(user.tag2) }}"></input>
+                    <input type="button" class="btn btn-secondary" onclick="updatetag(2)" value="Update Tag"></input>
                 </div>
             </div>
             <h3>Name</h3>
