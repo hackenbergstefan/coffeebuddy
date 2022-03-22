@@ -22,7 +22,8 @@ class PCSCCard(threading.Thread):
                 service = request.waitforcard()
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])[:4]
-                self.socketio.emit("card_connected", data=dict(tag=uuid.hex()))
+                if len(uuid) == 4:
+                    self.socketio.emit("card_connected", data=dict(tag=uuid.hex()))
                 time.sleep(2)
                 service.connection.disconnect()
             except:  # noqa: E722
