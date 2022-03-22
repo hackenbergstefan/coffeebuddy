@@ -1,6 +1,6 @@
 import flask
 
-from coffeebuddy.model import User
+from coffeebuddy.model import User, escapefromhex
 
 
 class Color:
@@ -22,7 +22,7 @@ class Color:
 def init():
     @flask.current_app.route("/stats.html", methods=["GET", "POST"])
     def chart():
-        user = User.by_tag(bytes.fromhex(flask.request.args["tag"]))
+        user = User.by_tag(escapefromhex(flask.request.args["tag"]))
         if user is None:
             return flask.render_template("cardnotfound.html", uuid=flask.request.args["tag"])
 

@@ -2,19 +2,15 @@ import math
 
 import flask
 
-from coffeebuddy.model import Drink, User
+from coffeebuddy.model import Drink, User, escapefromhex
 
 
 def handle_post():
-    user = User.query.filter(
-        (User.tag == bytes.fromhex(flask.request.form["oldtag"]))
-        | (User.tag2 == bytes.fromhex(flask.request.form["oldtag2"]))
-    ).first()
+    user = User.query.filter(User.id == flask.request.form["id"]).first()
     if user is None:
-        # Add new user
         user = User(
-            tag=bytes.fromhex(flask.request.form["tag"]),
-            tag2=bytes.fromhex(flask.request.form["tag2"]),
+            tag=escapefromhex(flask.request.form["tag"]),
+            tag2=escapefromhex(flask.request.form["tag2"]),
             name=flask.request.form["last_name"],
             prename=flask.request.form["first_name"],
             option_oneswipe="oneswipe" in flask.request.form,
@@ -29,8 +25,8 @@ def handle_post():
         flask.current_app.db.session.commit()
     else:
         # Edit existing new user
-        user.tag = bytes.fromhex(flask.request.form["tag"])
-        user.tag2 = bytes.fromhex(flask.request.form["tag2"])
+        user.tag = escapefromhex(flask.request.form["tag"])
+        user.tag2 = escapefromhex(flask.request.form["tag2"])
         user.name = flask.request.form["last_name"]
         user.prename = flask.request.form["first_name"]
         user.option_oneswipe = "oneswipe" in flask.request.form
@@ -39,7 +35,7 @@ def handle_post():
 
 
 def handle_get():
-    tag = bytes.fromhex(flask.request.args["tag"])
+    tag = escapefromhex(flask.request.args["tag"])
     return flask.render_template(
         "edituser.html",
         user=User.by_tag(tag) or User(tag=tag, name="", prename=""),
