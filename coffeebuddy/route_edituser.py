@@ -2,7 +2,7 @@ import math
 
 import flask
 
-from coffeebuddy.model import Drink, User, escapefromhex
+from coffeebuddy.model import Pay, User, escapefromhex
 
 
 def handle_post():
@@ -16,12 +16,6 @@ def handle_post():
             option_oneswipe="oneswipe" in flask.request.form,
         )
         flask.current_app.db.session.add(user)
-        try:
-            bill = float(flask.request.form["initial_bill"].replace(",", "."))
-            for _ in range(math.ceil(bill / flask.current_app.config["PRICE"])):
-                flask.current_app.db.session.add(Drink(user=user, price=flask.current_app.config["PRICE"]))
-        except ValueError:
-            pass
         flask.current_app.db.session.commit()
     else:
         # Edit existing new user
@@ -30,7 +24,13 @@ def handle_post():
         user.name = flask.request.form["last_name"]
         user.prename = flask.request.form["first_name"]
         user.option_oneswipe = "oneswipe" in flask.request.form
-        flask.current_app.db.session.commit()
+    try:
+        bill = float(flask.request.form["initial_bill"].replace(",", "."))
+        if bill != user.unpayed:
+            flask.current_app.db.session.add(Pay(user=user, amount=user.unpayed - bill))
+    except ValueError:
+        pass
+    flask.current_app.db.session.commit()
     return flask.redirect("/")
 
 
