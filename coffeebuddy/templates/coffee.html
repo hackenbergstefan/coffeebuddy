@@ -1,207 +1,218 @@
 <!doctype html>
 {% set coffee_state = {
-    0: 'fa-meh-blank',
-    1: 'fa-surprise',
-    2: 'fa-smile-wink',
-    3: 'fa-smile-beam',
-    4: 'fa-grin',
-    5: 'fa-grin-wink',
-    6: 'fa-grin-stars',
-    7: 'fa-grimace',
+0: 'fa-meh-blank',
+1: 'fa-surprise',
+2: 'fa-smile-wink',
+3: 'fa-smile-beam',
+4: 'fa-grin',
+5: 'fa-grin-wink',
+6: 'fa-grin-stars',
+7: 'fa-grimace',
 } %}
 <html lang="en">
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
 
-        <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
-        <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
-{% if not config['NOTIMEOUT'] %}
-        <script>
-         $(() => {
-             if (window.location.search.search('notimeout') == -1)
-             {
-                 startAutologout();
-             }
-         });
-        </script>
-{% endif %}
-        <script>
-         $(() => {
-             {% if 'coffee' in referer %}
-             $("#modal-enjoy").modal("show");
-             window.setTimeout(() => {
-                 $("#modal-enjoy").modal("hide");
-             }, 1000);
-             {% endif %}
-         });
-        </script>
-        <style>
-         .btnbar {
-             width: 200px;
-         }
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
 
-         .btnbar > * {
-             border: none;
-             border-bottom: 1px solid var(--color-engineering);
-             border-radius: 0;
-             padding: 1.5rem 0.3rem 1.5rem 1rem ;
-             font-size: 1.2rem;
-             width: 100%;
-             text-align: left;
-             white-space: nowrap;
-         }
+    <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
+    {% if not config['NOTIMEOUT'] %}
+    <script>
+        $(() => {
+            if (window.location.search.search('notimeout') == -1) {
+                startAutologout();
+            }
+        });
+    </script>
+    {% endif %}
+    <script>
+        $(() => {
+            {% if 'coffee' in referer %}
+            $("#modal-enjoy").modal("show");
+            window.setTimeout(() => {
+                $("#modal-enjoy").modal("hide");
+            }, 1000);
+            {% endif %}
+        });
+    </script>
+    <style>
+        .btnbar {
+            width: 200px;
+        }
 
-         .btnbar > button:last-child {
-             margin-top: auto;
-             border-top: 1px solid var(--color-engineering);
-             border-bottom: none;
-         }
+        .btnbar>* {
+            border: none;
+            border-bottom: 1px solid var(--color-engineering);
+            border-radius: 0;
+            padding: 1.5rem 0.3rem 1.5rem 1rem;
+            font-size: 1.2rem;
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+        }
 
-         .btnbar-button-icon {
-             font-size: 1.75rem;
-             /* TODO: No idea why the icon is optically higher than the text */
-             transform: translateY(3px);
-             width: 35px;
-         }
+        .btnbar>button:last-child {
+            margin-top: auto;
+            border-top: 1px solid var(--color-engineering);
+            border-bottom: none;
+        }
 
-         .btn-coffee {
-             padding: 25px 40px 20px 40px;
-             border-radius: 15px;
-             color: var(--color-berry);
-         }
+        .btnbar-button-icon {
+            font-size: 1.75rem;
+            /* TODO: No idea why the icon is optically higher than the text */
+            transform: translateY(3px);
+            width: 35px;
+        }
 
-         .coffeemeter-title {
-             position: absolute;
-             bottom: 0;
-             font-size: 1.3rem;
-             margin-left: 0.5rem;
-             transform-origin: 0 100%;
-             transform: rotate(-90deg);
-             color: var(--color-engineering);
-         }
+        .btn-coffee {
+            padding: 25px 40px 20px 40px;
+            border-radius: 15px;
+            color: var(--color-berry);
+        }
 
-         .coffeemeter-tag {
-             position: absolute;
-             bottom: 0;
-             width: 100%;
-             font-size: 1.75rem;
-             color: var(--color-engineering-light);
-             text-align: center;
-             margin-bottom: 1rem;
-         }
+        .coffeemeter-title {
+            position: absolute;
+            bottom: 0;
+            font-size: 1.3rem;
+            margin-left: 0.5rem;
+            transform-origin: 0 100%;
+            transform: rotate(-90deg);
+            color: var(--color-engineering);
+        }
 
-         #matrix {
-             position: absolute;
-             width: 100%;
-             height: 100%;
-             z-index: -1;
-             visibility: hidden;
-             left: 0;
-             top: 0;
-         }
+        .coffeemeter-tag {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            font-size: 1.75rem;
+            color: var(--color-engineering-light);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
 
-         .modal-dialog {
-             max-width: 300px;
-         }
+        #matrix {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            visibility: hidden;
+            left: 0;
+            top: 0;
+        }
 
-         #modal-enjoy .modal-content {
-             width: 300px;
-             height: 300px;
-         }
-        </style>
-    </head>
-    <body>
-        <div class="d-flex flex-row w-100 h-100">
-            <div style="width: 200px">
-                <form method="post" class="h-100">
-                    <div class="d-flex flex-column h-100 btnbar">
-                        <div class="" type="submit">
-                            <span>Your bill:
-                                <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
-                            </span>
-                        </div>
-                        <button type="submit" name="pay" value={{ config['PAY'] }}>
-                            <span class="btnbar-button-icon fas fa-euro-sign"></span>
-                            <span>payed {{ config['PAY'] }}€</span>
-                        </button>
-                        <button type="submit" name="undopay">
-                            <span class="btnbar-button-icon fas fa-undo-alt"></span>
-                            <span>undo last pay</span>
-                        </button>
-                        <button type="submit" name="edituser">
-                            <span class="btnbar-button-icon fas fa-edit"></span>
-                            <span>edit user</span>
-                        </button>
-                        <button type="submit" name="stats">
-                            <span class="btnbar-button-icon fas fa-chart-line"></span>
-                            <span>stats</span>
-                        </button>
-                        <button type="submit" name="capture">
-                            <span class="btnbar-button-icon fas fa-camera"></span>
-                            <span>capture</span>
-                        </button>
-                        <button type="submit" name="logout">
-                            <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
-                            <span>Logout</span>
-                            <div id="autologout-bar-container" class="d-flex flex-row">
-                            </div>
-                        </button>
+        .modal-dialog {
+            max-width: 300px;
+        }
+
+        #modal-enjoy .modal-content {
+            width: 300px;
+            height: 300px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="d-flex flex-row w-100 h-100">
+        <div style="width: 200px">
+            <form method="post" class="h-100">
+                <div class="d-flex flex-column h-100 btnbar">
+                    <div class="" type="submit">
+                        <span>Your bill:
+                            <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
+                        </span>
                     </div>
+                    <button type="submit" name="pay" value={{ config['PAY'] }}>
+                        <span class="btnbar-button-icon fas fa-euro-sign"></span>
+                        <span>payed {{ config['PAY'] }}€</span>
+                    </button>
+                    <button type="submit" name="undopay">
+                        <span class="btnbar-button-icon fas fa-undo-alt"></span>
+                        <span>undo last pay</span>
+                    </button>
+                    <button type="submit" name="edituser">
+                        <span class="btnbar-button-icon fas fa-edit"></span>
+                        <span>edit user</span>
+                    </button>
+                    <button type="submit" name="stats">
+                        <span class="btnbar-button-icon fas fa-chart-line"></span>
+                        <span>stats</span>
+                    </button>
+                    {% if config['FACERECOGNITION'] %}
+                    <button type="submit" name="capture">
+                        <span class="btnbar-button-icon fas fa-camera"></span>
+                        <span>capture</span>
+                    </button>
+                    {% endif %}
+                    <button type="submit" name="logout">
+                        <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
+                        <span>Logout</span>
+                        <div id="autologout-bar-container" class="d-flex flex-row">
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="d-flex flex-column flex-grow text-center w-100 mx-5 my-4">
+            <div class="text-left">
+                <h3>Hi</h3>
+                <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
+                <code class="h5">{{ hexstr(user.tag) }}</code>
+            </div>
+            <div class="my-auto">
+                <form method="post">
+                    <button id="btn-coffee" type="submit" class="btn-coffee" name="coffee" value="coffee">
+                        <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
+                        <div id="btn-coffee-text" class="h3">Take one coffee</div>
+                    </button>
                 </form>
             </div>
-            <div class="d-flex flex-column flex-grow text-center w-100 mx-5 my-4">
-                <div class="text-left">
-                    <h3>Hi</h3>
-                    <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
-                    <code class="h5">{{ hexstr(user.tag) }}</code>
+        </div>
+        <div class="d-flex m-4" style="width: 100px;">
+            <div class="position-relative h-100 w-100">
+                <div class="coffeemeter-title">
+                    COFFEEMETER
                 </div>
-                <div class="my-auto">
-                    <form method="post">
-                        <button id="btn-coffee" type="submit" class="btn-coffee" name="coffee" value="coffee">
-                            <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
-                            <div id="btn-coffee-text" class="h3">Take one coffee</div>
-                        </button>
-                    </form>
+                <div class="coffeemeter-tag">
+                    {{ len(user.drinks_today) }}
                 </div>
-            </div>
-            <div class="d-flex m-4" style="width: 100px;">
-                <div class="position-relative h-100 w-100">
-                    <div class="coffeemeter-title">
-                        COFFEEMETER
+                <div class="d-flex flex-column h-100">
+                    <div class="display-2 fas {{ coffee_state[min(len(coffee_state) - 1, len(user.drinks_today))] }}"
+                        style="{{ 'color: var(--danger);' if len(user.drinks_today) >= len(coffee_state) }}">
                     </div>
-                    <div class="coffeemeter-tag">
-                        {{ len(user.drinks_today) }}
-                    </div>
-                    <div class="d-flex flex-column h-100">
-                        <div class="display-2 fas {{ coffee_state[min(len(coffee_state) - 1, len(user.drinks_today))] }}"
-                             style="{{ 'color: var(--danger);' if len(user.drinks_today) >= len(coffee_state) }}">
-                        </div>
-                        <div class="d-flex flex-column justify-content-end h-100 border mt-2 px-2">
-                            <div id="coffeemeter-bar" class="bg-engineering-dark m-1 rounded"
-                                 style="height: {{ len(user.drinks_today) / len(coffee_state) * 100 | round }}%;
+                    <div class="d-flex flex-column justify-content-end h-100 border mt-2 px-2">
+                        <div id="coffeemeter-bar" class="bg-engineering-dark m-1 rounded"
+                            style="height: {{ len(user.drinks_today) / len(coffee_state) * 100 | round }}%;
                                      {{ 'background: var(--danger); color: white;' if len(user.drinks_today) >= len(coffee_state) }}">
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <canvas id="matrix"></canvas>
+    </div>
+    <canvas id="matrix"></canvas>
 
-        <!-- Modal -->
-        <div class="modal fade" id="modal-enjoy" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content p-3">
-                    <h2 class="color-berry">Enjoy!</h2>
-                    <div class="d-flex flex-column justify-content-center text-center h-100">
-                        <div class="display-1 color-berry far fa-smile mb-3"></div>
-                    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal-enjoy" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <h2 class="color-berry">Enjoy!</h2>
+                <div class="d-flex flex-column justify-content-center text-center h-100">
+                    <div class="display-1 color-berry far fa-smile mb-3"></div>
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>
