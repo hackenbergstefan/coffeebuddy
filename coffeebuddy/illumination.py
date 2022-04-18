@@ -38,6 +38,9 @@ def color_named(name):
         "rose": (1, 0.1, 0.1),
         "lightblue": (0, 0.2, 0.1),
         "lightrose": (0.1, 0.01, 0.01),
+        "steelblue": (0.8, 0.5, 1),
+        "lightsteelblue": (0.1, 0.05, 0.1),
+        "lime": (1, 1, 0),
     }
     color(*names[name])
 
