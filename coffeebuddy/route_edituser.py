@@ -6,7 +6,11 @@ from coffeebuddy.model import Pay, User, escapefromhex
 
 
 def handle_post():
-    user = User.query.filter(User.id == flask.request.form["id"]).first()
+    try:
+        userid = int(flask.request.form["id"])
+    except ValueError:
+        userid = None
+    user = User.query.filter(User.id == userid).first()
     if user is None:
         user = User(
             tag=escapefromhex(flask.request.form["tag"]),
