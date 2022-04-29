@@ -1,5 +1,5 @@
 ![test](https://github.com/hackenbergstefan/coffeebuddy/workflows/test/badge.svg)
-![flake8](https://github.com/hackenbergstefan/coffeebuddy/workflows/flake8/badge.svg)
+![flake8](https://github.com/hackenbergstefan/coffeebuddy/workflows/lint/badge.svg)
 
 # coffeebuddy
 
