@@ -1,5 +1,3 @@
-import math
-
 import flask
 
 from coffeebuddy.model import Pay, User, escapefromhex
