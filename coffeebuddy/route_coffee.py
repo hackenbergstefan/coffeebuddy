@@ -1,6 +1,6 @@
 import flask
 
-from coffeebuddy.model import Drink, Pay, User, escapefromhex
+from coffeebuddy.model import Drink, User, escapefromhex
 
 
 def init():
@@ -17,13 +17,7 @@ def init():
                 flask.current_app.db.session.add(Drink(user=user, price=flask.current_app.config["PRICE"]))
                 flask.current_app.db.session.commit()
             elif "pay" in flask.request.form:
-                flask.current_app.db.session.add(Pay(user=user, amount=flask.request.form["pay"]))
-                flask.current_app.db.session.commit()
-            elif "undopay" in flask.request.form:
-                # TODO: Really deleting pay? Introduce property 'undone' on Pay?
-                if len(user.pays) > 0:
-                    flask.current_app.db.session.delete(user.pays[-1])
-                    flask.current_app.db.session.commit()
+                return flask.redirect(f'pay.html?tag={flask.request.args["tag"]}')
             elif "logout" in flask.request.form:
                 return flask.redirect("/")
             elif "edituser" in flask.request.form:

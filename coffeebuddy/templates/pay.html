@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+
+    <script>
+        var simple_keyboard_element = null;
+        var myKeyboard;
+
+        $(() => {
+            const Keyboard = window.SimpleKeyboard.default;
+
+            myKeyboard = new Keyboard({
+                onChange: input => onChange(input),
+                onKeyPress: button => onKeyPress(button),
+                layout: {
+                    'default': [
+                        "1 2 3",
+                        "4 5 6",
+                        "7 8 9",
+                        "- 0 {bksp}",
+                        "{enter} {abort}",
+                    ],
+                },
+                display: {
+                    "{bksp}": "\u232B",
+                    "{enter}": "OK",
+                    "{space}": "space",
+                    "{shift}": "shift",
+                    "{abort}": "Abort",
+                },
+                buttonTheme: [
+                    {
+                        class: "simple-keyboard-bigkey",
+                        buttons: "{enter}"
+                    }
+                ]
+            });
+
+            function validateInput(input) {
+                if (!input || isNaN(input)) {
+                    $("#simple-keyboard-input").removeClass("is-valid");
+                    $("#simple-keyboard-input").addClass("is-invalid");
+                    return false;
+                }
+                else {
+                    $("#simple-keyboard-input").removeClass("is-invalid");
+                    $("#simple-keyboard-input").addClass("is-valid");
+                    return true;
+                }
+            }
+
+            function onChange(input) {
+                $("#simple-keyboard-input").val(input);
+                validateInput(input);
+            }
+
+            $("#simple-keyboard-input").keypress(() => {
+                var input = $("#simple-keyboard-input").val();
+                validateInput(input);
+                myKeyboard.setInput(input);
+            });
+
+            function onKeyPress(button) {
+                if (button == "{enter}") {
+                    var val = $("#simple-keyboard-input").val();
+                    if (validateInput(val)) {
+                        $("#modal-simple-keyboard").modal("hide");
+                        $("#modal-confirm-amount").html(val);
+                        $("#modal-confirm").modal("show");
+                    }
+                }
+                else if (button == "{abort}") {
+                    $("#modal-simple-keyboard").modal("hide");
+                }
+            }
+        });
+
+        function simple_keyboard_process() {
+            $("#modal-simple-keyboard").modal("show");
+            $("#simple-keyboard-input").val("");
+            myKeyboard.setInput("");
+        }
+
+        $(() => {
+            $(".btn-pay-amount").click((e) => {
+                var amount = $(e.target).html();
+                if (amount == "X") {
+                    simple_keyboard_process();
+                }
+                else {
+                    $("#modal-confirm-amount").html(amount);
+                    $("#modal-confirm").modal("show");
+                }
+            })
+        });
+
+        function doPayment() {
+            console.log(window.location.href);
+            var amount = $("#modal-confirm-amount").html();
+
+            $("#modal-confirm").modal("hide");
+            $("#modal-thanks").modal("show");
+            $("#modal-thanks-amount").html(amount);
+            window.setTimeout(() => {
+                $("#modal-thanks").modal("hide");
+                $("#modal-confirm-form input").val(amount);
+                $("#modal-confirm-form").submit();
+
+            }, 1500);
+        }
+    </script>
+
+    <style>
+        .simple-keyboard-bigkey {
+            color: var(--color-berry);
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+    </style>
+    <style>
+        .btnbar {
+            width: 200px;
+        }
+
+        .btnbar>* {
+            border: none;
+            border-bottom: 1px solid var(--color-engineering);
+            border-radius: 0;
+            padding: 1.5rem 0.3rem 1.5rem 1rem;
+            font-size: 1.2rem;
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .btnbar>button:last-child {
+            margin-top: auto;
+            border-top: 1px solid var(--color-engineering);
+            border-bottom: none;
+        }
+
+        .btnbar-button-icon {
+            font-size: 1.75rem;
+            /* TODO: No idea why the icon is optically higher than the text */
+            transform: translateY(3px);
+            width: 35px;
+        }
+
+        .btn-pay-amount {
+            display: flex;
+            padding: 15px 30px;
+            border-radius: 15px;
+            color: var(--color-berry);
+            font-size: 2rem;
+            font-weight: bold;
+            background-color: #fafafa;
+        }
+
+        .btn-pay-amount::after {
+            content: "\00a0€";
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="d-flex flex-row w-100 h-100">
+        <div style="width: 200px">
+            <form method="post" class="h-100">
+                <div class="d-flex flex-column h-100 btnbar">
+                    <div class="" type="submit">
+                        <h4>IT'S PAY DAY!</h4>
+                    </div>
+                    <button type="submit" name="coffee">
+                        <span class="btnbar-button-icon fas fa-coffee"></span>
+                        <span>coffee</span>
+                    </button>
+                    <button type="submit" name="logout">
+                        <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
+                        <span>Logout</span>
+                        <div id="autologout-bar-container" class="d-flex flex-row">
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="d-flex flex-column ml-5 my-4 w-100">
+            <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
+            <code class="h5">{{ hexstr(user.tag) }}</code>
+            <h4 class="mt-4">Your bill:</h4>
+            <h1 class="color-berry">{{ "%.2f €" | format(user.unpayed) }}</h1>
+            <h4 class="my-4">Pay:</h4>
+            <div class="d-flex justify-content-around mr-5">
+                <button class="btn-pay-amount">5</button>
+                <button class="btn-pay-amount">10</button>
+                <button class="btn-pay-amount">20</button>
+                <button class="btn-pay-amount">50</button>
+                <button class="btn-pay-amount">X</button>
+            </div>
+            <p class="mt-3">Hint: If you want to undo a payment enter a custom negative value.</p>
+        </div>
+    </div>
+
+    <!-- Modal confirm -->
+    <div class=" modal fade" id="modal-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <div class="h2 modal-title"><i class="fas fa-exclamation-triangle"></i> Confirmation required
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <p class="h5 font-weight-normal">
+                        Note that this is not actual payment! Did you really deposit the amount of
+                        <span id="modal-confirm-amount" class="h4"></span> €?
+                    </p>
+                    <form id="modal-confirm-form" method="post"><input type="hidden" name="amount"></form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn font-weight-bold" style="color: var(--color-berry);"
+                        onclick="doPayment()">Confirm</button>
+                    <button type="button" class="btn font-weight-bold" data-dismiss="modal">Abort</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal keyboard -->
+    <div class="modal fade" id="modal-simple-keyboard" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-4">
+                <h2>Enter custom amount in €</h2>
+                <input id="simple-keyboard-input" class="input my-3 p-2 form-control" type="text" aria-label="Large"
+                    autofocus />
+                <div class="invalid-feedback">
+                    Not a number.
+                </div>
+                <div class="simple-keyboard"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal thanks-->
+    <div class="modal fade" id="modal-thanks" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <h3>Thanks for paying <span id="modal-thanks-amount" class="h2 color-berry"></span> €.</h3>
+                <div class="d-flex flex-column justify-content-center text-center h-100">
+                    <div class="display-1 color-berry fas fa-hand-holding-usd my-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
