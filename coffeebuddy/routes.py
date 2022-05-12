@@ -48,3 +48,7 @@ def init():
     import coffeebuddy.route_selectuser
 
     coffeebuddy.route_selectuser.init()
+
+    import coffeebuddy.route_pay
+
+    coffeebuddy.route_pay.init()

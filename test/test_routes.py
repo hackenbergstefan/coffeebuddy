@@ -152,22 +152,6 @@ class TestRouteCoffee(TestCoffeebuddy):
         response = self.client.post("/coffee.html?tag=01020304", data=dict(logout=""))
         self.assertEqual(response.status_code, 302)
 
-    def test_undopay(self):
-        from coffeebuddy.model import Pay
-
-        user, _ = self.add_default_user()
-        user.pays.append(Pay(amount=10))
-        self.db.session.commit()
-        response = self.client.post("/coffee.html?tag=01020304", data=dict(undopay=""))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(user.pays), 0)
-
-    def test_undopay_empty(self):
-        user, _ = self.add_default_user()
-        response = self.client.post("/coffee.html?tag=01020304", data=dict(undopay=""))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(user.pays), 0)
-
 
 class TestRouteOneSwipe(TestCoffeebuddy):
     def test(self):
@@ -181,3 +165,11 @@ class TestRouteWelcome(TestCoffeebuddy):
     def test(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
+
+
+class TestRoutePay(TestCoffeebuddy):
+    def test(self):
+        user, _ = self.add_default_user()
+        response = self.client.post(f"/pay.html?tag={user.tag.hex()}", data=dict(amount=1))
+        self.assertEqual(response.status_code, 302)
+        self.assertGreater(len(user.pays), 0)
