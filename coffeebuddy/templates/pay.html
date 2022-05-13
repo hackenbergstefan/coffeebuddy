@@ -183,23 +183,16 @@
 <body>
     <div class="d-flex flex-row w-100 h-100">
         <div style="width: 200px">
-            <form method="post" class="h-100">
-                <div class="d-flex flex-column h-100 btnbar">
-                    <div class="" type="submit">
-                        <h4>IT'S PAY DAY!</h4>
-                    </div>
-                    <button type="submit" name="coffee">
-                        <span class="btnbar-button-icon fas fa-coffee"></span>
-                        <span>coffee</span>
-                    </button>
-                    <button type="submit" name="logout">
-                        <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
-                        <span>Logout</span>
-                        <div id="autologout-bar-container" class="d-flex flex-row">
-                        </div>
-                    </button>
+            <div class="d-flex flex-column h-100 btnbar">
+                <div class="">
+                    <h4>IT'S PAY DAY!</h4>
                 </div>
-            </form>
+                <button
+                    onclick="window.location.href = `${window.location.origin}/coffee.html${window.location.search}`">
+                    <span class="btnbar-button-icon fas fa-arrow-alt-circle-left"></span>
+                    <span>Back</span>
+                </button>
+            </div>
         </div>
         <div class="d-flex flex-column ml-5 my-4 w-100">
             <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
