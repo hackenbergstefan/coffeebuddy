@@ -52,3 +52,7 @@ def init():
     import coffeebuddy.route_pay
 
     coffeebuddy.route_pay.init()
+
+    @flask.current_app.errorhandler(Exception)
+    def route_error(exception):
+        return flask.render_template("error.html", exception=exception), 400

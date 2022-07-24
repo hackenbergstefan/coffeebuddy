@@ -1,5 +1,3 @@
-import sqlalchemy.exc
-
 from . import TestCoffeebuddy
 
 
@@ -51,18 +49,18 @@ class TestRouteEdituser(TestCoffeebuddy):
         self.assertEqual(users[0].option_oneswipe, False)
 
     def test_adduser_tag2_fails(self):
-        with self.assertRaises(sqlalchemy.exc.IntegrityError):
-            self.client.post(
-                "/edituser.html",
-                data=dict(
-                    id="",
-                    tag="",
-                    tag2="01 02 03 04",
-                    last_name="Mustermann",
-                    first_name="Max",
-                    initial_bill="",
-                ),
-            )
+        response = self.client.post(
+            "/edituser.html",
+            data=dict(
+                id="",
+                tag="",
+                tag2="01 02 03 04",
+                last_name="Mustermann",
+                first_name="Max",
+                initial_bill="",
+            ),
+        )
+        self.assertEqual(response.status_code, 400)
 
     def test_edituser_nochange(self):
         user1, _ = self.add_default_user()
