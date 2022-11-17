@@ -16,9 +16,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
     <script>
         $(() => {
-            $('#add-btn').click(() => {
-                window.location.href = '../edituser.html?tag={{ uuid }}';
-            });
             $('#btn-back').click(() => {
                 window.location.href = '..';
             });
@@ -60,6 +57,10 @@
             </div>
             {% endfor %}
         </div>
+        <button id="btn-back" class="mt-auto align-self-end px-2" type="submit" name="logout">
+            <span class="btnbar-button-icon fas fa-backspace"></span>
+            <span>Back</span>
+        </button>
     </div>
 </body>
 
