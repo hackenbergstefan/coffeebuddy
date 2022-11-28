@@ -39,11 +39,11 @@ def create_app(config=None):
     return app
 
 
-def init_db():
+def init_db(app):
     flask.g.db = flask.current_app.db = db
     import coffeebuddy.model  # noqa: E402
 
-    flask.current_app.db.init_app(flask.current_app)
+    flask.current_app.db.init_app(app)
 
     if (
         (flask.current_app.config["DB_BACKEND"] == "sqlite" and not os.path.exists("coffee.db"))
@@ -74,8 +74,8 @@ def init_db():
     return flask.current_app.db
 
 
-def init_app_context():
-    init_db()
+def init_app_context(app):
+    init_db(app)
 
     import coffeebuddy.events  # noqa: E402
 

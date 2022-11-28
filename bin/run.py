@@ -20,7 +20,7 @@ if __name__ == "__main__":
     app = coffeebuddy.create_app()
     try:
         with app.app_context():
-            coffeebuddy.init_app_context()
+            coffeebuddy.init_app_context(app)
     except:  # noqa: E722
         raise
     app.socketio.run(
