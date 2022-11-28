@@ -29,8 +29,6 @@ def create_app(config=None):
 
     if app.config["ENV"] in ("development", "prefilled") or app.testing:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        app.config.pop("SQLALCHEMY_DATABASE_URI", None)
-        app.config.pop("SQLALCHEMY_ENGINE_OPTIONS", None)
 
     @app.teardown_appcontext
     def teardown_db(exception):
