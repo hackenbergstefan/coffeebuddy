@@ -10,8 +10,8 @@ class TestCoffeebuddy(unittest.TestCase):
         self.app = coffeebuddy.create_app({"TESTING": True})
         self.client = self.app.test_client().__enter__()
         self.ctx = self.app.app_context().__enter__()
-        coffeebuddy.init_db()
-        coffeebuddy.init_app_context()
+        coffeebuddy.init_db(self.app)
+        coffeebuddy.init_app_context(self.app)
         self.db = flask.current_app.db
         self.db.create_all()
 
