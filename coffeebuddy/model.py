@@ -27,7 +27,7 @@ class User(flask.current_app.db.Model, Serializer):
     tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True, default=None)
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    email = flask.current_app.db.Column(flask.current_app.db.String(50))
+    email = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean, default=False)
     pays = flask.current_app.db.relationship("Pay", backref="user", cascade="all, delete")
     drinks = flask.current_app.db.relationship("Drink", backref="user", cascade="all, delete")

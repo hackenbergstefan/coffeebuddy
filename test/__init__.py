@@ -29,9 +29,9 @@ class TestCoffeebuddy(unittest.TestCase):
     def add_default_user(self):
         from coffeebuddy.model import User
 
-        user1 = User(tag=b"\x01\x02\x03\x04", name="Mustermann", prename="Max")
+        user1 = User(tag=b"\x01\x02\x03\x04", name="Mustermann", prename="Max", email="Max.Mustermann@example.com")
         self.db.session.add(user1)
-        user2 = User(tag=b"\x05\x06\x07\x08", name="Doe", prename="Jane")
+        user2 = User(tag=b"\x05\x06\x07\x08", name="Doe", prename="Jane", email="Jane.Doe@example.com")
         self.db.session.add(user2)
         self.db.session.commit()
         return user1, user2

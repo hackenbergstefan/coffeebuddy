@@ -113,6 +113,22 @@
         }
     </script>
 
+    <script>
+        function validate_email(email) {
+            return true;
+        }
+
+        $(() => {
+            $("#edituser-form").submit((event) => {
+                if (!validate_email($("#form-item-email").val())) {
+                    $("#form-item-email").addClass("is-invalid");
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
+        });
+    </script>
+
     <style>
         .simple-keyboard-bigkey {
             color: var(--color-berry);
@@ -152,7 +168,6 @@
                     <input type="button" class="btn btn-secondary" onclick="updatetag(2)" value="Update Tag"></input>
                 </div>
             </div>
-            <h3>Name</h3>
             <div class="form-group row">
                 <div class="col">
                     <label>First name</label>
@@ -163,6 +178,19 @@
                     <label>Last name</label>
                     <input class="form-control" type="text" name="last_name" placeholder="Enter last name" required
                         value="{{ user.name }}" autocomplete="off" onclick="simple_keyboard_process(this)">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col">
+                    <label>E-Mail</label>
+                    <div class="input-group has-validation">
+                        <input class="form-control" id="form-item-email" type="email" name="email"
+                            placeholder="Enter E-Mail address" required value="{{ user.email }}" autocomplete="off"
+                            onclick="simple_keyboard_process(this)" </div>
+                        <div class="invalid-tooltip">
+                            E-Mail address could not be found.
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">

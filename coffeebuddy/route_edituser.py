@@ -1,6 +1,6 @@
 import flask
 
-from coffeebuddy.model import Pay, User, escapefromhex
+from coffeebuddy.model import User, escapefromhex
 
 
 def handle_post():
@@ -15,6 +15,7 @@ def handle_post():
             tag2=escapefromhex(flask.request.form["tag2"]),
             name=flask.request.form["last_name"],
             prename=flask.request.form["first_name"],
+            email=flask.request.form["email"],
             option_oneswipe="oneswipe" in flask.request.form,
         )
         flask.current_app.db.session.add(user)
@@ -25,6 +26,7 @@ def handle_post():
         user.tag2 = escapefromhex(flask.request.form["tag2"])
         user.name = flask.request.form["last_name"]
         user.prename = flask.request.form["first_name"]
+        user.email = flask.request.form["email"]
         user.option_oneswipe = "oneswipe" in flask.request.form
     flask.current_app.db.session.commit()
     return flask.redirect("/")

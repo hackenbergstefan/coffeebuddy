@@ -105,12 +105,12 @@ def prefill():
     import coffeebuddy.model
 
     demousers = [
-        {"prename": "Donald", "postname": "Duck", "oneswipe": True},
-        {"prename": "Dagobert", "postname": "Duck", "oneswipe": False},
-        {"prename": "Gyro", "postname": " Gearloose", "oneswipe": False},
-        {"prename": "Tick ", "postname": "Duck", "oneswipe": False},
-        {"prename": "Trick", "postname": "Duck", "oneswipe": False},
-        {"prename": "Truck", "postname": "Duck", "oneswipe": False},
+        {"prename": "Donald", "postname": "Duck", "email": "donald.duck@entenhausen.com", "oneswipe": True},
+        {"prename": "Dagobert", "postname": "Duck", "email": "dagobert.duck@entenhausen.com", "oneswipe": False},
+        {"prename": "Gyro", "postname": " Gearloose", "email": "gyro.gearloose@entenhausen.com", "oneswipe": False},
+        {"prename": "Tick ", "postname": "Duck", "email": "tick.duck@entenhausen.com", "oneswipe": False},
+        {"prename": "Trick", "postname": "Duck", "email": "trick.duck@entenhausen.com", "oneswipe": False},
+        {"prename": "Truck", "postname": "Duck", "email": "truck.duck@entenhausen.com", "oneswipe": False},
     ]
     for idx, data in enumerate(demousers):
         flask.current_app.db.session.add(
@@ -118,6 +118,7 @@ def prefill():
                 tag=idx.to_bytes(1, "big"),
                 name=data["postname"],
                 prename=data["prename"],
+                email=data["email"],
                 option_oneswipe=data["oneswipe"],
             )
         )
