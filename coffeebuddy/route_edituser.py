@@ -26,12 +26,6 @@ def handle_post():
         user.name = flask.request.form["last_name"]
         user.prename = flask.request.form["first_name"]
         user.option_oneswipe = "oneswipe" in flask.request.form
-    try:
-        bill = float(flask.request.form["initial_bill"].replace(",", "."))
-        if bill != user.unpayed:
-            flask.current_app.db.session.add(Pay(user=user, amount=user.unpayed - bill))
-    except ValueError:
-        pass
     flask.current_app.db.session.commit()
     return flask.redirect("/")
 

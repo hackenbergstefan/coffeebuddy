@@ -15,7 +15,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
             ),
         )
         self.assertEqual(response.status_code, 302)
@@ -38,7 +37,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="01 02 03 04",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
             ),
         )
         self.assertEqual(response.status_code, 302)
@@ -59,7 +57,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="01 02 03 04",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
             ),
         )
         self.assertEqual(response.status_code, 400)
@@ -75,7 +72,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2=(user1.tag2 or b"").hex(),
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
             ),
         )
 
@@ -99,7 +95,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="",
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
             ),
         )
 
@@ -123,7 +118,6 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="ff ff ff ff",
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
             ),
         )
 

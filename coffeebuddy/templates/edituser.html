@@ -174,24 +174,12 @@
                         <label class="form-check-label">One swipe</label>
                     </div>
                 </div>
-                <div class="col">
-                    <h3>Misc</h3>
-                    <label>Update bill</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">€</span>
-                        </div>
-                        <input class="form-control col-5" type="number" name="initial_bill" placeholder="Set bill in €"
-                            value="{{ user.unpayed }}" autocomplete="off" onclick="simple_keyboard_process(this)">
-                    </div>
-                </div>
             </div>
-    </div>
-    <div class="mt-3 text-right">
-        <button type="submit" class="btn btn-primary">Ok</button>
-        <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
-    </div>
-    </form>
+            <div class="mt-3 text-right">
+                <button type="submit" class="btn btn-primary">Ok</button>
+                <input type="button" class="btn btn-secondary" onclick="window.location.replace('/')" value="Cancel" />
+            </div>
+        </form>
     </div>
     <!-- Modal update tag -->
     <div class="modal fade" id="modal-tag" tabindex="-1" role="dialog" aria-hidden="true">
