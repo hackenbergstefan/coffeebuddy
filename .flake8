@@ -1,3 +1,4 @@
 [flake8]
-ignore = E203, E266, E501, W503
+extend-ignore =
+    W503, # line break before binary operator
 max-line-length = 120

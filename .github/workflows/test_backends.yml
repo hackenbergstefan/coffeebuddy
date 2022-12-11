@@ -47,7 +47,7 @@ jobs:
         sed -i 's/^FACERECOGNITION.*/FACERECOGNITION = False/' config.py
         sed -i 's/^PIR.*/PIR = False/' config.py
         sed -i 's/^ILLUMINATION.*/ILLUMINATION = False/' config.py
-        sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
+        sed -i 's/^DB_BACKEND.*/DB_BACKEND = "sqlite"/' config.py
         export FLASK_ENV=prefilled
         export FLASK_DEBUG=true
         ./bin/run.py &
