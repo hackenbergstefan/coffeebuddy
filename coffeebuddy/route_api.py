@@ -31,10 +31,10 @@ def init():
             flask.current_app.db.session.commit()
             return flask.jsonify(user.serialize())
         elif endpoint == "check_email":
-            data = flask.request.json
             if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
                 return "", 404
             api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+            data = flask.request.json
             people = api.people.list(email=data["email"])
             try:
                 people = list(people)
@@ -43,5 +43,11 @@ def init():
                 return {"valid": False}
             except webexteamssdk.exceptions.ApiError:
                 return {"valid": False}
+        elif endpoint == "send_message":
+            if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
+                return "", 404
+            api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+            data = flask.request.json
+            api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
         else:
             flask.abort(404)
