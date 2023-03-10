@@ -193,3 +193,11 @@ class TestRouteApi(TestCoffeebuddy):
                 )
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(json.loads(response.data), user1.serialize())
+
+    def test_check_email(self):
+        response = self.client.post(
+            "api/check_email",
+            data=json.dumps({"email": "jane.doe@example.com"}),
+            content_type="application/json",
+        )
+        self.assertIn(response.status_code, (200, 404))
