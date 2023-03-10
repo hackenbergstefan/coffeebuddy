@@ -9,7 +9,7 @@ def init():
     @flask.current_app.route("/api/<string:endpoint>", methods=["POST"])
     def api(endpoint: str):
         if endpoint == "get_users":
-            return flask.jsonify(list(map(User.serialize, User.query.all())))
+            return flask.jsonify([u.serialize() for u in User.query.all()])
         elif endpoint == "set_user":
             data = flask.request.json
             if "id" not in data:

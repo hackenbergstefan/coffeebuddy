@@ -88,6 +88,11 @@ class User(flask.current_app.db.Model, Serializer):
     def __repr__(self):
         return f"<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename} email={self.email}>"
 
+    def serialize(self):
+        serialized = super().serialize()
+        serialized["unpayed"] = self.unpayed
+        return serialized
+
 
 class Drink(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
