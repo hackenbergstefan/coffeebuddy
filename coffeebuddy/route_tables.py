@@ -10,9 +10,9 @@ def init():
     def tables():
         return flask.render_template(
             "tables.html",
-            bills=[(user.name, user.prename, round(user.unpayed, 2)) for user in User.query.all()],
+            bills=[(user.name, user.prename, user.email, round(user.unpayed, 2)) for user in User.query.all()],
             drinks=[
-                (str(drink.timestamp), drink.user.name, drink.user.prename, drink.price)
+                (str(drink.timestamp), drink.user.name, drink.user.prename, drink.user.email, drink.price)
                 for drink in Drink.query.filter(
                     flask.current_app.db.func.Date(Drink.timestamp)
                     >= datetime.date.today() - datetime.timedelta(days=30)
@@ -20,7 +20,7 @@ def init():
                 if drink.user
             ]
             + [
-                (str(pay.timestamp), pay.user.name, pay.user.prename, -pay.amount)
+                (str(pay.timestamp), pay.user.name, pay.user.prename, pay.user.email, -pay.amount)
                 for pay in Pay.query.all()
                 if pay.user
             ],
