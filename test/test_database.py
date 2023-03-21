@@ -12,12 +12,14 @@ class TestModelUser(TestCoffeebuddy):
                 tag=b"\x00\x00\x00\x00",
                 prename="Max",
                 name="Mustermann",
+                email="Max.Mustermann@example.com",
             )
         )
         self.db.session.commit()
         user = User.query.all()[-1]
         self.assertEqual(user.name, "Mustermann")
         self.assertEqual(user.prename, "Max")
+        self.assertEqual(user.email, "Max.Mustermann@example.com")
         self.assertEqual(user.tag, b"\x00\x00\x00\x00")
         self.assertEqual(user.id, 1)
         self.assertEqual(user.tag2, None)
@@ -70,6 +72,7 @@ class TestModelUser(TestCoffeebuddy):
                 tag=b"\x01\x02\x03\x04",
                 prename="Max",
                 name="Mustermann",
+                email="Max.Mustermann@example.com",
             )
         )
         with self.assertRaises(sqlalchemy.exc.IntegrityError):
@@ -84,6 +87,7 @@ class TestModelUser(TestCoffeebuddy):
                 tag2=b"\x00\x00\x00\x01",
                 prename="Max",
                 name="Mustermann",
+                email="Max.Mustermann@example.com",
             )
         )
         self.db.session.commit()
@@ -93,6 +97,7 @@ class TestModelUser(TestCoffeebuddy):
                 tag2=b"\x00\x00\x00\x01",
                 prename="Max",
                 name="Mustermann",
+                email="Max.Mustermann@example.com",
             )
         )
         with self.assertRaises(sqlalchemy.exc.IntegrityError):

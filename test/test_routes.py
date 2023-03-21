@@ -1,3 +1,5 @@
+import json
+
 from . import TestCoffeebuddy
 
 
@@ -13,7 +15,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
+                email="Max.Mustermann@example.com",
             ),
         )
         self.assertEqual(response.status_code, 302)
@@ -36,7 +38,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="01 02 03 04",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
+                email="Max.Mustermann@example.com",
             ),
         )
         self.assertEqual(response.status_code, 302)
@@ -57,7 +59,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="01 02 03 04",
                 last_name="Mustermann",
                 first_name="Max",
-                initial_bill="",
+                email="Max.Mustermann@example.com",
             ),
         )
         self.assertEqual(response.status_code, 400)
@@ -73,7 +75,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2=(user1.tag2 or b"").hex(),
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
+                email=user1.email,
             ),
         )
 
@@ -97,7 +99,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="",
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
+                email=user1.email,
             ),
         )
 
@@ -121,7 +123,7 @@ class TestRouteEdituser(TestCoffeebuddy):
                 tag2="ff ff ff ff",
                 last_name=user1.name,
                 first_name=user1.prename,
-                initial_bill="",
+                email=user1.email,
             ),
         )
 
@@ -171,3 +173,32 @@ class TestRoutePay(TestCoffeebuddy):
         response = self.client.post(f"/pay.html?tag={user.tag.hex()}", data=dict(amount=1))
         self.assertEqual(response.status_code, 302)
         self.assertGreater(len(user.pays), 0)
+
+
+class TestRouteApi(TestCoffeebuddy):
+    def test_get_users(self):
+        user1, user2 = self.add_default_user()
+        response = self.client.post("api/get_users")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data), [user1.serialize(), user2.serialize()])
+
+    def test_set_user(self):
+        user1, _ = self.add_default_user()
+        for arg in ("email", "name", "prename", "tag", "tag2"):
+            with self.subTest(arg=arg):
+                response = self.client.post(
+                    "api/set_user",
+                    data=json.dumps({"id": user1.id, arg: "01020304"}),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(json.loads(response.data), user1.serialize())
+
+    def test_check_email(self):
+        for method in ("post", "get"):
+            response = getattr(self.client, method)(
+                "api/check_email",
+                data=json.dumps({"email": "jane.doe@example.com"}),
+                content_type="application/json",
+            )
+            self.assertIn(response.status_code, (200, 404))

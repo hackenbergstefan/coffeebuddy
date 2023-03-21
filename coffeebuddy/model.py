@@ -6,12 +6,28 @@ import sqlalchemy
 from sqlalchemy import text
 
 
-class User(flask.current_app.db.Model):
+class Serializer:
+    @staticmethod
+    def escape(obj):
+        if isinstance(obj, bytes):
+            return obj.hex()
+        return obj
+
+    def serialize(self):
+        return {
+            c: self.escape(getattr(self, c))
+            for c in sqlalchemy.inspection.inspect(self).attrs.keys()
+            if c not in sqlalchemy.inspect(self.__class__).relationships.keys()
+        }
+
+
+class User(flask.current_app.db.Model, Serializer):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
     tag = flask.current_app.db.Column(flask.current_app.db.LargeBinary, nullable=False, unique=True)
     tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True, default=None)
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
+    email = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean, default=False)
     pays = flask.current_app.db.relationship("Pay", backref="user", cascade="all, delete")
     drinks = flask.current_app.db.relationship("Drink", backref="user", cascade="all, delete")
@@ -70,7 +86,12 @@ class User(flask.current_app.db.Model):
         )
 
     def __repr__(self):
-        return f"<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename}>"
+        return f"<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename} email={self.email}>"
+
+    def serialize(self):
+        serialized = super().serialize()
+        serialized["unpayed"] = self.unpayed
+        return serialized
 
 
 class Drink(flask.current_app.db.Model):

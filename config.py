@@ -37,3 +37,6 @@ NOTIMEOUT = False
 
 # Enable https
 SSL = False
+
+# Webex Access Token
+WEBEX_ACCESS_TOKEN = None

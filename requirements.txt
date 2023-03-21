@@ -4,3 +4,4 @@ sqlalchemy
 flask-sqlalchemy
 flask-socketio
 psycopg2-binary
+webexteamssdk

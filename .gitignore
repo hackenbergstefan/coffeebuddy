@@ -1,4 +1,6 @@
 .env
+.venv
+.vscode
 .idea
 __pycache__
 database/certs
