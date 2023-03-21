@@ -10,5 +10,8 @@ def init():
     def selectuser():
         return flask.render_template(
             "selectuser.html",
-            users=itertools.groupby(User.query.order_by(User.name).all(), key=lambda u: u.name[0].upper()),
+            users=itertools.groupby(
+                User.query.filter(User.enabled).order_by(User.name).all(),
+                key=lambda u: u.name[0].upper(),
+            ),
         )

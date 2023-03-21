@@ -10,9 +10,24 @@ def init():
     def tables():
         return flask.render_template(
             "tables.html",
-            bills=[(user.name, user.prename, user.email, round(user.unpayed, 2)) for user in User.query.all()],
+            bills=[
+                {
+                    "name": user.name,
+                    "prename": user.prename,
+                    "email": user.email,
+                    "bill": round(user.unpayed, 2),
+                    "tag": user.tag.hex(),
+                }
+                for user in User.query.filter(User.enabled).all()
+            ],
             drinks=[
-                (str(drink.timestamp), drink.user.name, drink.user.prename, drink.user.email, drink.price)
+                {
+                    "timestamp": str(drink.timestamp),
+                    "name": drink.user.name,
+                    "prename": drink.user.prename,
+                    "email": drink.user.email,
+                    "price": drink.price,
+                }
                 for drink in Drink.query.filter(
                     flask.current_app.db.func.Date(Drink.timestamp)
                     >= datetime.date.today() - datetime.timedelta(days=30)
@@ -20,8 +35,24 @@ def init():
                 if drink.user
             ]
             + [
-                (str(pay.timestamp), pay.user.name, pay.user.prename, pay.user.email, -pay.amount)
+                {
+                    "timestamp": str(pay.timestamp),
+                    "name": pay.user.name,
+                    "prename": pay.user.prename,
+                    "email": pay.user.email,
+                    "price": -pay.amount,
+                }
                 for pay in Pay.query.all()
                 if pay.user
+            ],
+            bills_disabled=[
+                {
+                    "name": user.name,
+                    "prename": user.prename,
+                    "email": user.email,
+                    "bill": round(user.unpayed, 2),
+                    "tag": user.tag.hex(),
+                }
+                for user in User.query.filter(User.enabled == False).all()  # noqa: E712
             ],
         )

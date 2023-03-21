@@ -1,3 +1,5 @@
+import math
+
 import flask
 
 from coffeebuddy.model import User, escapefromhex
@@ -10,6 +12,7 @@ def handle_post():
         userid = None
     user = User.query.filter(User.id == userid).first()
     if user is None:
+        # Add new User
         user = User(
             tag=escapefromhex(flask.request.form["tag"]),
             tag2=escapefromhex(flask.request.form["tag2"]),
@@ -19,17 +22,24 @@ def handle_post():
             option_oneswipe="oneswipe" in flask.request.form,
         )
         flask.current_app.db.session.add(user)
-        flask.current_app.db.session.commit()
     else:
-        # Edit existing new user
+        # Edit existing User
         user.tag = escapefromhex(flask.request.form["tag"])
         user.tag2 = escapefromhex(flask.request.form["tag2"])
         user.name = flask.request.form["last_name"]
         user.prename = flask.request.form["first_name"]
         user.email = flask.request.form["email"]
         user.option_oneswipe = "oneswipe" in flask.request.form
+
+    if "admin" in flask.request.args:
+        user.enabled = "enabled" in flask.request.form
+        unpayed = float(flask.request.form["unpayed"])
+        if not math.isclose(unpayed, user.unpayed):
+            user.update_bill(unpayed)
+
     flask.current_app.db.session.commit()
-    return flask.redirect("/")
+
+    return flask.redirect(flask.request.form.get("referrer", "/"))
 
 
 def handle_get():

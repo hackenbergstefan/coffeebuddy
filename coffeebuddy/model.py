@@ -29,6 +29,7 @@ class User(flask.current_app.db.Model, Serializer):
     prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     email = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
     option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean, default=False)
+    enabled = flask.current_app.db.Column(flask.current_app.db.Boolean, default=True)
     pays = flask.current_app.db.relationship("Pay", backref="user", cascade="all, delete")
     drinks = flask.current_app.db.relationship("Drink", backref="user", cascade="all, delete")
 
@@ -92,6 +93,9 @@ class User(flask.current_app.db.Model, Serializer):
         serialized = super().serialize()
         serialized["unpayed"] = self.unpayed
         return serialized
+
+    def update_bill(self, newbill):
+        flask.current_app.db.session.add(Pay(user=self, amount=self.unpayed - newbill))
 
 
 class Drink(flask.current_app.db.Model):
