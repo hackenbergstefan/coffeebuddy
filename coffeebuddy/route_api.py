@@ -6,7 +6,7 @@ from coffeebuddy.model import User
 
 
 def init():
-    @flask.current_app.route("/api/<string:endpoint>", methods=["POST"])
+    @flask.current_app.route("/api/<string:endpoint>", methods=["GET", "POST"])
     def api(endpoint: str):
         if endpoint == "get_users":
             return flask.jsonify([u.serialize() for u in User.query.all()])
