@@ -9,8 +9,8 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"
         integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg=="
@@ -88,6 +88,18 @@
                     ],
                 };
             }
+            else if (which == "messages") {
+                var data = {
+                    data: messages,
+                    columns: [
+                        { title: 'Timestamp', data: 'timestamp' },
+                        { title: 'Name', data: 'name' },
+                        { title: 'Prename', data: 'prename' },
+                        { title: 'Direction', data: 'direction' },
+                        { title: 'Message', data: 'message' },
+                    ],
+                };
+            }
             var table = $("#table");
             table.DataTable().clear().destroy();
             table.empty();
@@ -102,6 +114,7 @@
         const bills = {{ bills | tojson}};
         const drinks = {{ drinks | tojson}};
         const bills_disabled = {{ bills_disabled | tojson}};
+        const messages = {{ messages | tojson}};
         $(() => {
             $('#table').DataTable({
                 data: [("none")],
@@ -137,6 +150,10 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="bills_disabled"
                     aria-selected="false">Disabled Accounts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="messages"
+                    aria-selected="false">Webex Messages</a>
             </li>
         </ul>
         <table id="table" class="display"></table>
