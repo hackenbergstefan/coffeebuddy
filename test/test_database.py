@@ -24,6 +24,7 @@ class TestModelUser(TestCoffeebuddy):
         self.assertEqual(user.id, 1)
         self.assertEqual(user.tag2, None)
         self.assertEqual(user.option_oneswipe, False)
+        self.assertEqual(user.enabled, True)
         self.assertEqual(len(user.pays), 0)
         self.assertEqual(len(user.drinks), 0)
 

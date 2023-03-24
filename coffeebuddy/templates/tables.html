@@ -38,12 +38,12 @@
                 var data = {
                     data: drinks,
                     columns: [
-                        { title: 'Timestamp' },
-                        { title: 'Name' },
-                        { title: 'Prename' },
-                        { title: 'Email' },
+                        { title: 'Timestamp', data: 'timestamp' },
+                        { title: 'Name', data: 'name' },
+                        { title: 'Prename', data: 'prename' },
+                        { title: 'Email', data: 'email' },
                         {
-                            title: 'Price', render: (data, type, row) => {
+                            title: 'Price', data: 'price', render: (data, type, row) => {
                                 return formatEuro.format(data);
                             }
                         },
@@ -54,11 +54,34 @@
                 var data = {
                     data: bills,
                     columns: [
-                        { title: 'Name' },
-                        { title: 'Prename' },
-                        { title: 'Email' },
                         {
-                            title: 'Bill', render: (data, type, row) => {
+                            title: 'Name', data: 'name', render: (data, type, row) => {
+                                return `<a href="/edituser.html?tag=${row['tag']}&admin">${data}</a>`;
+                            }
+                        },
+                        { title: 'Prename', data: 'prename' },
+                        { title: 'Email', data: 'email' },
+                        {
+                            title: 'Bill', data: 'bill', render: (data, type, row) => {
+                                return formatEuro.format(data);
+                            }
+                        },
+                    ],
+                };
+            }
+            else if (which == "bills_disabled") {
+                var data = {
+                    data: bills_disabled,
+                    columns: [
+                        {
+                            title: 'Name', data: 'name', render: (data, type, row) => {
+                                return `<a href="/edituser.html?tag=${row['tag']}&admin">${data}</a>`;
+                            }
+                        },
+                        { title: 'Prename', data: 'prename' },
+                        { title: 'Email', data: 'email' },
+                        {
+                            title: 'Bill', data: 'bill', render: (data, type, row) => {
                                 return formatEuro.format(data);
                             }
                         },
@@ -78,6 +101,7 @@
         );
         const bills = {{ bills | tojson}};
         const drinks = {{ drinks | tojson}};
+        const bills_disabled = {{ bills_disabled | tojson}};
         $(() => {
             $('#table').DataTable({
                 data: [("none")],
@@ -109,6 +133,10 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="drinks"
                     aria-selected="false">Drinks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="bills_disabled"
+                    aria-selected="false">Disabled Accounts</a>
             </li>
         </ul>
         <table id="table" class="display"></table>
