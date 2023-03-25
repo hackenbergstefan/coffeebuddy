@@ -16,6 +16,7 @@ try:
 
     face_data_path = os.path.join(os.path.dirname(__file__), "face_encodings.pickle")
     """Path to binary face data."""
+    # pylint: disable=consider-using-with
     try:
         face_data = pickle.loads(open(face_data_path, "rb").read())
         """Binary data of captured faces."""
@@ -47,7 +48,7 @@ def detect_faces(img):
 
 def mark_faces(img, boxes, name=None):
     """Draw rectangles around given boxes."""
-    for (x, y, w, h) in boxes:
+    for x, y, w, h in boxes:
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
         if name:
             cv2.putText(img, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
@@ -129,7 +130,7 @@ class FaceCapturer:
         cap.release()
         cv2.destroyAllWindows()
 
-    def cv2_click_callback(self, event, x, y, flags, img):
+    def cv2_click_callback(self, _event, _x, _y, _flags, img):
         """Encode and save captured face on click/touch event."""
         if not self.capturing:
             return
@@ -167,7 +168,7 @@ class FaceRecognizer:
                     # Recognize
                     encoding = encode_face(img)
                     if encoding is not None:
-                        tag, name, detected_name = recognize_face(encoding)
+                        _tag, _name, detected_name = recognize_face(encoding)
             mark_faces(img, detected_faces, detected_name)
 
             # Wait until button is pressed

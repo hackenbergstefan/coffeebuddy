@@ -35,6 +35,7 @@ class User(flask.current_app.db.Model, Serializer):
 
     @staticmethod
     def by_tag(tag):
+        # pylint: disable=singleton-comparison
         return User.query.filter((User.tag == tag) | ((User.tag2 != None) & (User.tag2 == tag))).first()  # noqa: E711
 
     @property
@@ -113,9 +114,6 @@ class Drink(flask.current_app.db.Model):
         if "host" not in kwargs:
             kwargs["host"] = socket.gethostname()
         super().__init__(*args, **kwargs)
-
-    def by_date(date):
-        return Drink.query.filter(flask.current_app.db.func.Date(Drink.timestamp) == date)
 
     @staticmethod
     def drinks_vs_days(timedelta):

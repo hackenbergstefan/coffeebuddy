@@ -53,6 +53,7 @@ def init():
                     "bill": round(user.unpayed, 2),
                     "tag": user.tag.hex(),
                 }
+                # pylint: disable=singleton-comparison
                 for user in User.query.filter(User.enabled == False).all()  # noqa: E712
             ],
         )

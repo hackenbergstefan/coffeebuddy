@@ -10,13 +10,13 @@ def init():
     def api(endpoint: str):
         if endpoint == "get_users":
             return flask.jsonify([u.serialize() for u in User.query.all()])
-        elif endpoint == "set_user":
+        if endpoint == "set_user":
             data = flask.request.json
             if "id" not in data:
-                flask.abort(400)
+                return flask.abort(400)
             user: User = User.query.filter(User.id == data["id"]).first()
             if not user:
-                flask.abort(400)
+                return flask.abort(400)
 
             if "email" in data:
                 user.email = data["email"]
@@ -30,7 +30,7 @@ def init():
                 user.tag2 = bytes.fromhex(data["tag2"])
             flask.current_app.db.session.commit()
             return flask.jsonify(user.serialize())
-        elif endpoint == "check_email":
+        if endpoint == "check_email":
             if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
                 return "", 404
             api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
@@ -43,11 +43,12 @@ def init():
                 return {"valid": False}
             except webexteamssdk.exceptions.ApiError:
                 return {"valid": False}
-        elif endpoint == "send_message":
+        if endpoint == "send_message":
             if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
-                return "", 404
+                return flask.abort(404)
             api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
             data = flask.request.json
             api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
-        else:
-            flask.abort(404)
+            return ""
+
+        return flask.abort(404)

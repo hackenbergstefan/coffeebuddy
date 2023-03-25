@@ -31,7 +31,7 @@ def create_app(config=None):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
     @app.teardown_appcontext
-    def teardown_db(exception):
+    def teardown_db(_exception):
         flask.current_app.db.session.close()
 
     return app

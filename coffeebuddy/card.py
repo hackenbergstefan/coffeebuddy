@@ -23,10 +23,10 @@ class PCSCCard(threading.Thread):
                 service.connection.connect()
                 uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])[:4]
                 if len(uuid) == 4:
-                    self.socketio.emit("card_connected", data=dict(tag=uuid.hex()))
+                    self.socketio.emit("card_connected", data={"tag": uuid.hex()})
                 time.sleep(2)
                 service.connection.disconnect()
-            except:  # noqa: E722
+            except:  # noqa: E722 pylint: disable=bare-except
                 continue
 
 
@@ -43,9 +43,9 @@ class MRFC522Card(threading.Thread):
             try:
                 uuid, _ = reader.read()
                 uuid = (uuid >> 8).to_bytes(4, "big")
-                self.socketio.emit("card_connected", data=dict(tag=uuid.hex()))
+                self.socketio.emit("card_connected", data={"tag": uuid.hex()})
                 time.sleep(2)
-            except:  # noqa: E722
+            except:  # noqa: E722 pylint: disable=bare-except
                 continue
 
 
@@ -55,7 +55,7 @@ class PIRC522Card(threading.Thread):
         self.socketio = flask.current_app.socketio
 
     def run(self):
-        import RPi.GPIO as GPIO
+        from RPi import GPIO
         import pirc522
 
         pirc522.RFID.antenna_gain = 0x07
@@ -67,7 +67,7 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f"Card {uid} connected.")
-                    self.socketio.emit("card_connected", data=dict(tag=bytes(uid[:4]).hex()))
+                    self.socketio.emit("card_connected", data={"tag": bytes(uid[:4]).hex()})
                     break
 
 

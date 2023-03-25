@@ -1,2 +1,21 @@
 [tool.black]
 line-length = 120
+
+[tool.pylint.BASIC]
+good-names = ["x","y","w","h","n","r","g","b","k"]
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = """
+    import-outside-toplevel,
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    logging-fstring-interpolation,
+    import-error,
+    fixme,
+    too-many-arguments,
+    too-many-branches,
+    too-few-public-methods,
+    too-many-return-statements,
+    duplicate-code,
+"""

@@ -55,6 +55,6 @@ def init():
     def edit_user():
         if flask.request.method == "POST":
             return handle_post()
-        elif flask.request.method == "GET":
+        if flask.request.method == "GET":
             return handle_get()
         return flask.abort(404)

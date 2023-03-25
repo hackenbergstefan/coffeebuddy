@@ -9,12 +9,12 @@ class PirThread(threading.Thread):
         super().__init__()
         self.events = flask.current_app.events
         self.pin = flask.current_app.config["PIR"]
-        import RPi.GPIO as GPIO
+        from RPi import GPIO
 
         GPIO.setup(self.pin, GPIO.IN)
 
     def run(self):
-        import RPi.GPIO as GPIO
+        from RPi import GPIO
 
         while True:
             GPIO.wait_for_edge(self.pin, GPIO.BOTH)
@@ -26,7 +26,7 @@ def init():
     if flask.current_app.testing:
         return
     try:
-        import RPi.GPIO  # noqa: F401
+        import RPi.GPIO  # noqa: F401 pylint: disable=unused-import
     except ModuleNotFoundError:
         return
 

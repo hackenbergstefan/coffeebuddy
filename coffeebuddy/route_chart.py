@@ -29,8 +29,7 @@ def init():
         if flask.request.method == "POST":
             if "coffee" in flask.request.form:
                 return flask.redirect(f'coffee.html?tag={flask.request.args["tag"]}')
-            elif "logout" in flask.request.form:
-                return flask.redirect("/")
+            return flask.redirect("/")
 
         berry = Color(171, 55, 122)
 

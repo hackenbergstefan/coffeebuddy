@@ -9,7 +9,7 @@ import flask
 import coffeebuddy.facerecognition
 
 cameralock = queue.Queue(maxsize=1)
-thread = None
+thread = None  # pylint: disable=invalid-name
 
 
 class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer):
@@ -52,7 +52,7 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
                 tag = self.recognize_once()
                 if tag:
                     logging.getLogger(__name__).info(f"Face recognized {tag}.")
-                    self.socketio.emit("card_connected", data=dict(tag=tag.hex()))
+                    self.socketio.emit("card_connected", data={"tag": tag.hex()})
             elif detected:
                 last_motion_detected = datetime.datetime.now()
                 self.events.fire_reset("motion_lost")
@@ -63,14 +63,14 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
             time.sleep(0.05)
 
 
-def resume(**kwargs):
+def resume(**_kwargs):
     logging.getLogger(__name__).info("Camera resumed.")
     if not cameralock.empty():
         cameralock.get()
         cameralock.task_done()
 
 
-def pause(**kwargs):
+def pause(**_kwargs):
     logging.getLogger(__name__).info("Camera paused.")
     if cameralock.empty():
         cameralock.put(True)
@@ -105,7 +105,7 @@ def init():
         flask.current_app.events.register("camera_pause", pause)
         flask.current_app.events.register("camera_resume", resume)
 
-        global thread
+        global thread  # pylint: disable=global-statement
         cameralock.put(True)
         thread = CameraThread()
         thread.start()
