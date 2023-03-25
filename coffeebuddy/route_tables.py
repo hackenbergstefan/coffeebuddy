@@ -3,6 +3,7 @@ import itertools
 import logging
 
 import flask
+import flask_login
 import webexteamssdk
 
 from coffeebuddy.model import Drink, User, Pay
@@ -10,6 +11,7 @@ from coffeebuddy.model import Drink, User, Pay
 
 def init():
     @flask.current_app.route("/tables.html")
+    @flask_login.login_required
     def tables():
         api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
         coffeebuddy_email = api.people.me().emails[0]

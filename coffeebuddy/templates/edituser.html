@@ -125,7 +125,7 @@
             return JSON.parse(xhr.responseText);
         }
 
-        {% if not 'admin' in request.args %}
+        {% if not flask_login.current_user.is_authenticated %}
         $(() => {
             $("#edituser-form").submit((event) => {
                 var res = validate_email($("#form-item-email").val());
@@ -243,21 +243,27 @@
                     </div>
                 </div>
             </div>
-            <div class="row my-3 {{ 'd-none' if not 'admin' in request.args }}">
+            <div class="row my-3 py-3 {{ 'd-none' if not flask_login.current_user.is_authenticated }}"
+                style="border: 1px solid var(--color-berry); border-radius: 10px;">
                 <div class="col">
-                    <h3>Danger zone</h3>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="enabled" {{ 'checked' if user.enabled }}>
-                        <label class="form-check-label">Account Enabled</label>
-                    </div>
-                    <label>Bill</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">EUR</div>
+                    <h3 class="color-berry">Admin settings</h3>
+                    <div class="my-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="enabled" {{ 'checked' if user.enabled
+                                }}>
+                            <label class="form-check-label">Account Enabled</label>
                         </div>
-                        <input class="form-control" type="number" id="form-item-unpayed" name="unpayed" min="0"
-                            step="0.01" pattern="[0-9]+\.[0-9]+ €" placeholder="0.00 €" autocomplete="off"
-                            value="{{ '%0.02f' | format(user.unpayed) }}" />
+                    </div>
+                    <div class="my-3">
+                        <label>Bill</label>
+                        <div class="input-group w-50">
+                            <input class="form-control" type="number" id="form-item-unpayed" name="unpayed" min="0"
+                                step="0.01" pattern="[0-9]+\.[0-9]+ €" placeholder="0.00 €" autocomplete="off"
+                                value="{{ '%0.02f' | format(user.unpayed) }}" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">EUR</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

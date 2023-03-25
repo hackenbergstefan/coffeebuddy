@@ -18,4 +18,5 @@ disable = """
     too-few-public-methods,
     too-many-return-statements,
     duplicate-code,
+    cyclic-import,
 """

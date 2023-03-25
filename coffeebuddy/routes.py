@@ -57,6 +57,10 @@ def init():
 
     coffeebuddy.route_api.init()
 
+    import coffeebuddy.route_login
+
+    coffeebuddy.route_login.init()
+
     @flask.current_app.errorhandler(Exception)
     def route_error(exception):
         return flask.render_template("error.html", exception=exception), 400

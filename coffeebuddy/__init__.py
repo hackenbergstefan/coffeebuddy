@@ -1,16 +1,33 @@
 import datetime
+import dataclasses
 import logging
 import os
 import random
 import socket
 
 import flask
+import flask_login
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
+
 db = SQLAlchemy()
+login_manager = flask_login.LoginManager()
+
+
+@dataclasses.dataclass
+class AdminUser(flask_login.UserMixin):
+    user_id: str
+
+    def get_id(self):
+        return self.user_id
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return AdminUser(user_id=user_id)
 
 
 def create_app(config=None):
@@ -34,6 +51,7 @@ def create_app(config=None):
     def teardown_db(_exception):
         flask.current_app.db.session.close()
 
+    login_manager.init_app(app)
     return app
 
 

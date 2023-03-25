@@ -1,6 +1,7 @@
 import math
 
 import flask
+import flask_login
 
 from coffeebuddy.model import User, escapefromhex
 
@@ -31,7 +32,7 @@ def handle_post():
         user.email = flask.request.form["email"]
         user.option_oneswipe = "oneswipe" in flask.request.form
 
-    if "admin" in flask.request.args:
+    if flask_login.current_user.is_authenticated:
         user.enabled = "enabled" in flask.request.form
         unpayed = float(flask.request.form["unpayed"])
         if not math.isclose(unpayed, user.unpayed):
@@ -47,6 +48,7 @@ def handle_get():
     return flask.render_template(
         "edituser.html",
         user=User.by_tag(tag) or User(tag=tag, name="", prename=""),
+        flask_login=flask_login,
     )
 
 
