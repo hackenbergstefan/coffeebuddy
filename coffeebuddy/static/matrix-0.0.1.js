@@ -37,14 +37,22 @@ function coffee_prepare() {
     for (var i=0, max=all.length; i < max; i++) {
         all[i].style.color = matrix_fg_color;
     }
-    document.getElementById("coffeemeter-bar").style.background = matrix_fg_color;
+    let coffeemeter = document.getElementById("coffeemeter-bar");
+    if (coffeemeter) {
+        coffeemeter.style.background = matrix_fg_color;
+    }
 
     /* replace fontawesome coffee icon */
     document.getElementById("btn-coffee-icon").classList.remove('fa-coffee');
     document.getElementById("btn-coffee-icon").classList.add('fa-user-secret');
 
     /* replace coffee text */
-    document.getElementById("btn-coffee-text").textContent = "T4k3 a c4f3";
+    let buttonText = document.getElementById("btn-coffee-text");
+    buttonText.style.fontFamily = "monospace";
+    buttonText.textContent = {
+        "Take one coffee": "T4k3 a c4f3",
+        "Undo": "git revert HEAD",
+    }[buttonText.textContent];
     canvas.style.visibility = "visible";
 
 }
