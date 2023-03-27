@@ -1,6 +1,9 @@
 import datetime
+import itertools
+import logging
 
 import flask
+import webexteamssdk
 
 from coffeebuddy.model import Drink, User, Pay
 
@@ -8,6 +11,18 @@ from coffeebuddy.model import Drink, User, Pay
 def init():
     @flask.current_app.route("/tables.html")
     def tables():
+        api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+        coffeebuddy_email = api.people.me().emails[0]
+
+        def get_messages(email: str):
+            if not email:
+                return ()
+            try:
+                return list(api.messages.list_direct(personEmail=email))
+            except webexteamssdk.ApiError:
+                logging.getLogger(__name__).exception(f"Could not get webex messages for email={email}")
+                return ()
+
         return flask.render_template(
             "tables.html",
             bills=[
@@ -56,4 +71,20 @@ def init():
                 # pylint: disable=singleton-comparison
                 for user in User.query.filter(User.enabled == False).all()  # noqa: E712
             ],
+            messages=list(
+                itertools.chain.from_iterable(
+                    (
+                        {
+                            "timestamp": message.created,
+                            "name": user.name,
+                            "prename": user.prename,
+                            "email": user.email,
+                            "direction": "out" if message.personEmail == coffeebuddy_email else "in",
+                            "message": message.text,
+                        }
+                        for message in get_messages(user.email)
+                    )
+                    for user in User.query.filter(User.enabled).all()
+                )
+            ),
         )
