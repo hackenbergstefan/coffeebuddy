@@ -13,6 +13,9 @@
         integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='matrix.css') }}">
+
+    <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
     <script>
         $(() => {
             const timeout = 5;
@@ -50,6 +53,8 @@
             <div class="h2"> {{ "%.2f €" | format(user.unpayed) }}</div>
         </div>
     </div>
+    <canvas id="matrix"></canvas>
+
     <div class="position-absolute w-100 h-100 mt-4 d-flex flex-row align-items-center justify-content-center"
         style="top: 0; left: 0;">
         <div class="d-flex flex-column text-center">
