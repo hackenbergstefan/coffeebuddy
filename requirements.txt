@@ -3,5 +3,6 @@ flask
 sqlalchemy
 flask-sqlalchemy
 flask-socketio
+flask-login
 psycopg2-binary
 webexteamssdk

@@ -13,33 +13,26 @@
         integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-
-    <style>
-        .btn-back {
-            color: var(--color-berry) !important;
-            font-size: 2em;
-        }
-
-    </style>
 </head>
 
 <body>
-    <div class="d-flex flex-column justify-content-center align-items-center h-100 px-5 pt-5 pb-3">
-        {% if exception.code == 401 %}
-        <h1 class="display-2 text-center">Unauthorized. You must login first.</h1>
-        <button class="btn btn-back mt-5" onclick="window.location.href = 'login.html'">
-            Login
-        </button>
-        {% else %}
-        <h1 class="display-2 text-center">Oops, something went wrong.</h1>
-        <button class="btn btn-back mt-5" onclick="window.location.href = '..'">
-            Back to start
-        </button>
-        {% endif %}
-        <div class="mt-auto align-self-start">
-            <h5>Error message</h5>
-            <p>{{ exception }}</p>
+    <div class="d-flex flex-column w-100 h-100 p-5">
+        <div class="d-flex flex-row align-items-baseline mb-5">
+            <div class="display-1 fas fa-key mr-5"></div>
+            <h1>Login</h1>
         </div>
+        <form method="post">
+            <div class="form-group row">
+                <div class="col">
+                    <label>Password</label>
+                    <input name="password" class="form-control" type="password" placeholder="Enter Password here."
+                        autocomplete="off" />
+                </div>
+            </div>
+            <div class="mt-3 text-right">
+                <button type="submit" class="btn btn-primary">Ok</button>
+            </div>
+        </form>
     </div>
 </body>
 

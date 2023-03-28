@@ -43,3 +43,9 @@ WEBEX_ACCESS_TOKEN = None
 
 # Email default domains
 USER_EMAIL_DEFAULT_DOMAINS = ["@gmail.com", "@apple.com"]
+
+# Secret key for session cookies
+SECRET_KEY = "coffeebuddy"
+
+# Password for admin access
+ADMIN_PASSWORD = "coffeebuddy"
