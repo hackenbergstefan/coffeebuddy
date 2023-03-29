@@ -6,3 +6,6 @@ flask-socketio
 flask-login
 psycopg2-binary
 webexteamssdk
+apscheduler
+holidays
+pytz

@@ -1,3 +1,4 @@
+import pytz
 import socket
 
 # Price per cup in €
@@ -43,6 +44,10 @@ WEBEX_ACCESS_TOKEN = None
 
 # Email default domains
 USER_EMAIL_DEFAULT_DOMAINS = ["@gmail.com", "@apple.com"]
+
+# Localization
+TIMEZONE = "Europe/Berlin"
+COUNTRY = {"country": "DE", "subdiv": "BY"}
 
 # Secret key for session cookies
 SECRET_KEY = "coffeebuddy"
