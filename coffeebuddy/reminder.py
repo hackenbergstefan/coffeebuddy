@@ -128,11 +128,12 @@ def remind(app):
                     # no message by coffeebuddy yet (but maybe a message by the user)
                     last_reminder = REMINDER_NEVER
 
+            # if it's time, send reminder
             if (now - last_reminder) > reminder_interval:
-                # send reminder
-                message_text = random_debt_message(user.unpayed)
+                message_oneliner = random_debt_message(user.unpayed)
+                message_md = flask.current_app.config.get("REMINDER_MESSAGE").format(oneliner=message_oneliner)
                 try:
-                    api.messages.create(toPersonEmail=user.email, text=message_text)
+                    api.messages.create(toPersonEmail=user.email, markdown=message_md)
                 except webexteamssdk.ApiError:
                     logging.getLogger(__name__).exception(f"Could not send webex message for email={user.email}")
                     continue
