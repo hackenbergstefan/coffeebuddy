@@ -1,3 +1,4 @@
+import pytz
 import socket
 
 # Price per cup in €
@@ -43,6 +44,18 @@ WEBEX_ACCESS_TOKEN = None
 
 # Email default domains
 USER_EMAIL_DEFAULT_DOMAINS = ["@gmail.com", "@apple.com"]
+
+# Webex reminder message, where"{oneliner} is a randomized oneliner by coffeebuddy
+REMINDER_MESSAGE = """Beep bop - greetings from the Coffeebuddy bot!
+
+{oneliner}
+
+NAME ROOM is looking forward to seeing you(r money)!
+"""
+
+# Localization
+TIMEZONE = "Europe/Berlin"
+COUNTRY = {"country": "DE", "subdiv": "BY"}
 
 # Secret key for session cookies
 SECRET_KEY = "coffeebuddy"

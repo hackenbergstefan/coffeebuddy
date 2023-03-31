@@ -7,6 +7,7 @@ import socket
 
 import flask
 import flask_login
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
@@ -118,6 +119,8 @@ def init_app_context(app):
 
     coffeebuddy.pir.init()
 
+    start_scheduler(app)
+
 
 def prefill():
     import coffeebuddy.model
@@ -149,3 +152,19 @@ def prefill():
             )
         )
     flask.current_app.db.session.commit()
+
+
+def start_scheduler(app):
+    from coffeebuddy.reminder import remind
+
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+    scheduler.add_job(
+        func=remind,
+        args=(app,),
+        trigger="interval",
+        minutes=60,
+        id="webex dept reminder",
+        name="webex dept reminder",
+        replace_existing=True,
+    )
