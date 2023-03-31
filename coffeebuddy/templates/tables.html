@@ -4,136 +4,147 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+        integrity="sha256-m81NDyncZVbr7v9E6qCWXwx/cwjuWDlHCMzi9pjMobA=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha256-wLz3iY/cO4e6vKZ4zRmo4+9XDpMcgKOvv/zEU3OMlRo=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
         integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"
-        integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css"
-        integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css"
-        integrity="sha512-1k7mWiTNoyx2XtmI96o+hdjP8nn0f3Z2N4oF/9ZZRgijyV4omsKOXEnqL1gKQNPy2MTSP9rIEWGcH/CInulptA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/date-1.4.0/sp-2.1.2/datatables.min.css" rel="stylesheet" />
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/date-1.4.0/sp-2.1.2/datatables.min.js"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-    <script>
-        const settings = {
-            paging: false,
-            deferRender: true,
-            scroller: true,
-            scrollY: "50vh",
-        };
-        function setContent(which) {
-            if (which == "drinks") {
-                var data = {
-                    data: drinks,
-                    columns: [
-                        { title: 'Timestamp', data: 'timestamp' },
-                        { title: 'Name', data: 'name' },
-                        { title: 'Prename', data: 'prename' },
-                        { title: 'Email', data: 'email' },
-                        {
-                            title: 'Price', data: 'price', render: (data, type, row) => {
-                                return formatEuro.format(data);
-                            }
-                        },
-                    ],
-                };
-            }
-            else if (which == "bills") {
-                var data = {
-                    data: bills,
-                    columns: [
-                        {
-                            title: 'Name', data: 'name', render: (data, type, row) => {
-                                return `<a href="/edituser.html?tag=${row['tag']}">${data}</a>`;
-                            }
-                        },
-                        { title: 'Prename', data: 'prename' },
-                        { title: 'Email', data: 'email' },
-                        {
-                            title: 'Bill', data: 'bill', render: (data, type, row) => {
-                                return formatEuro.format(data);
-                            }
-                        },
-                    ],
-                };
-            }
-            else if (which == "bills_disabled") {
-                var data = {
-                    data: bills_disabled,
-                    columns: [
-                        {
-                            title: 'Name', data: 'name', render: (data, type, row) => {
-                                return `<a href="/edituser.html?tag=${row['tag']}&admin">${data}</a>`;
-                            }
-                        },
-                        { title: 'Prename', data: 'prename' },
-                        { title: 'Email', data: 'email' },
-                        {
-                            title: 'Bill', data: 'bill', render: (data, type, row) => {
-                                return formatEuro.format(data);
-                            }
-                        },
-                    ],
-                };
-            }
-            else if (which == "messages") {
-                var data = {
-                    data: messages,
-                    columns: [
-                        { title: 'Timestamp', data: 'timestamp' },
-                        { title: 'Name', data: 'name' },
-                        { title: 'Prename', data: 'prename' },
-                        {
-                            title: 'Direction', data: 'direction', render: (data, type, row) => {
-                                if (data == "in")
-                                    return '<i class="fa-solid fa-right-to-bracket color-berry"></i>';
-                                else
-                                    return '<i class="fa-solid fa-right-from-bracket"></i>';
-                            }
-                        },
-                        { title: 'Message', data: 'message' },
-                    ],
-                };
-            }
-            var table = $("#table");
-            table.DataTable().clear().destroy();
-            table.empty();
-            table.DataTable(Object.assign({}, settings, data));
-        };
-    </script>
     <script>
         const formatEuro = new Intl.NumberFormat(
             'de-DE',
             { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }
         );
-        const bills = {{ bills | tojson}};
-        const drinks = {{ drinks | tojson}};
-        const bills_disabled = {{ bills_disabled | tojson}};
-        const messages = {{ messages | tojson}};
+        const bills = {{ bills | tojson }};
+        const drinks = {{ drinks | tojson }};
+        const bills_disabled = {{ bills_disabled | tojson }};
+
         $(() => {
-            $('#table').DataTable({
-                data: [("none")],
-                columns: [{ title: "none" }],
+            $('#table-bills').DataTable({
+                data: bills,
+                columns: [
+                    {
+                        title: 'Name', data: 'name', render: (data, type, row) => {
+                            return `<a href="/edituser.html?tag=${row['tag']}">${data}</a>`;
+                        }
+                    },
+                    { title: 'Prename', data: 'prename' },
+                    { title: 'Email', data: 'email' },
+                    {
+                        title: 'Bill', data: 'bill', render: (data, type, row) => {
+                            return formatEuro.format(data);
+                        }
+                    },
+                ],
+                paging: false,
+                deferRender: true,
+                scroller: true,
+                scrollY: "50vh",
+                order: [[3, 'desc']],
             });
-            setContent("bills");
-        });
-    </script>
-    <script>
-        $(() => {
-            $("#tab-table-selector a").on("click", (e) => {
-                setContent(e.target.getAttribute("aria-controls"));
+
+            $('#table-drinks').DataTable({
+                data: drinks,
+                columns: [
+                    {
+                        title: 'Timestamp', data: 'timestamp', render: (data, type, row) => {
+                            return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                        }
+                    },
+                    { title: 'Name', data: 'name' },
+                    { title: 'Prename', data: 'prename' },
+                    { title: 'Email', data: 'email' },
+                    {
+                        title: 'Price', data: 'price', render: (data, type, row) => {
+                            return formatEuro.format(data);
+                        }
+                    },
+                ],
+                paging: false,
+                deferRender: true,
+                scroller: true,
+                scrollY: "50vh",
+                order: [[0, 'desc']],
+            });
+
+            $('#table-disabled').DataTable({
+                data: bills_disabled,
+                columns: [
+                    {
+                        title: 'Name', data: 'name', render: (data, type, row) => {
+                            return `<a href="/edituser.html?tag=${row['tag']}">${data}</a>`;
+                        }
+                    },
+                    { title: 'Prename', data: 'prename' },
+                    { title: 'Email', data: 'email' },
+                    {
+                        title: 'Bill', data: 'bill', render: (data, type, row) => {
+                            return formatEuro.format(data);
+                        }
+                    },
+                ],
+                paging: false,
+                deferRender: true,
+                scroller: true,
+                scrollY: "50vh",
+                order: [[0, 'desc']],
+            });
+
+            $('#table-webex').DataTable({
+                data: null,
+                columns: [
+                    {
+                        "title": "Timestamp", "data": "timestamp", render: (data, type, row) => {
+                            return moment(data).format('YYYY-MM-DD HH:mm:ss');
+                        }
+                    },
+                    { "title": "Name", "data": "name" },
+                    { "title": "Prename", "data": "prename" },
+                    {
+                        title: 'Direction', data: 'direction', render: (data, type, row) => {
+                            if (data == "in")
+                                return '<i class="fa-solid fa-right-to-bracket color-berry"></i>';
+                            else
+                                return '<i class="fa-solid fa-right-from-bracket"></i>';
+                        }
+                    },
+                    { "title": "Message", "data": "message" },
+                ],
+                paging: false,
+                deferRender: true,
+                scroller: true,
+                scrollY: "50vh",
+                order: [[0, 'desc']],
+            });
+
+            // Fill table-webex deferred using ajax stream
+            let previousLength = 0;
+            $.ajax('./table_data_messages', {
+                xhrFields: {
+                    onprogress: function (e) {
+                        const currentResponse = e.currentTarget.response;
+                        const newLength = currentResponse.length;
+                        const newData = currentResponse.substring(previousLength, newLength);
+                        for (const l of newData.split('\n')) {
+                            const line = l.trim();
+                            if (line == '')
+                                continue;
+                            const jsonData = JSON.parse(line.trim());
+                            $('#table-webex').DataTable().row.add(jsonData).draw();
+                        }
+                        previousLength = newLength;
+                    },
+                }
+            }).done(function (data) {
+                $('#nav-webex-spinner').addClass("d-none");
+            }).fail(function (data) {
+                $('#nav-webex-spinner').addClass("d-none");
             });
         });
     </script>
@@ -145,25 +156,41 @@
             <div class="display-1 fas fa-database mr-5"></div>
             <h1>Data Overview</h1>
         </div>
-        <ul id="tab-table-selector" class="nav nav-pills" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#" role="tab" aria-controls="bills"
-                    aria-selected="true">Bills</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="drinks"
-                    aria-selected="false">Drinks</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="bills_disabled"
-                    aria-selected="false">Disabled Accounts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#" role="tab" aria-controls="messages"
-                    aria-selected="false">Webex Messages</a>
-            </li>
-        </ul>
-        <table id="table" class="display"></table>
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-bills-tab" data-bs-toggle="tab" data-bs-target="#nav-bills"
+                    type="button" role="tab" aria-controls="nav-bills" aria-selected="true">Bills</button>
+                <button class="nav-link" id="nav-drinks-tab" data-bs-toggle="tab" data-bs-target="#nav-drinks"
+                    type="button" role="tab" aria-controls="nav-drinks" aria-selected="false">Drinks</button>
+                <button class="nav-link" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled"
+                    type="button" role="tab" aria-controls="nav-disabled" aria-selected="false">Disabled
+                    Accounts</button>
+                <button class="nav-link" id="nav-webex-tab" data-bs-toggle="tab" data-bs-target="#nav-webex"
+                    type="button" role="tab" aria-controls="nav-webex" aria-selected="false">
+                    <span id="nav-webex-spinner" class="spinner-border spinner-border-sm" role="status"
+                        aria-hidden="true"></span>
+                    Webex Messages</button>
+            </div>
+        </nav>
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active w-100" id="nav-bills" role="tabpanel" aria-labelledby="nav-bills-tab"
+                tabindex="0">
+                <table id="table-bills" class="display table table-striped table-hover" style="width: 100%;">
+                </table>
+            </div>
+            <div class="tab-pane fade w-100" id="nav-drinks" role="tabpanel" aria-labelledby="nav-drinks-tab"
+                tabindex="0">
+                <table id="table-drinks" class="display table table-striped table-hover" style="width: 100%;"></table>
+            </div>
+            <div class="tab-pane fade w-100" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab"
+                tabindex="0">
+                <table id="table-disabled" class="display table table-striped table-hover" style="width: 100%;"></table>
+            </div>
+            <div class="tab-pane fade w-100" id="nav-webex" role="tabpanel" aria-labelledby="nav-webex-tab"
+                tabindex="0">
+                <table id="table-webex" class="display table table-striped table-hover" style="width: 100%;"></table>
+            </div>
+        </div>
     </div>
 </body>
 
