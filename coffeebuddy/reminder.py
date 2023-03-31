@@ -103,20 +103,30 @@ def remind(app):
                 continue
 
             reminder_interval = reminder_interval_from_dept(user.unpayed)
+            last_reminder = None
+            # if there was no reminder yet, assume reminder ~2000 years ago (still smaller than interval 'never')
+            REMINDER_NEVER = datetime.datetime.min.replace(tzinfo=pytz.UTC)
 
+            # get messages with user
             try:
                 messages = list(api.messages.list_direct(personEmail=user.email))
-            except webexteamssdk.ApiError:
-                logging.getLogger(__name__).exception(f"Could not get webex messages for email={user.email}")
-                continue
+            except webexteamssdk.ApiError as error:
+                if error.message == "Failed to get one on one conversation":
+                    # no message with user, yet
+                    last_reminder = REMINDER_NEVER
+                else:
+                    logging.getLogger(__name__).exception(f"Could not get webex messages for email={user.email}")
+                    continue
 
-            reminder_messages = filter(lambda msg: msg.personEmail == coffeebuddy_email, messages)
-            reminder_messages = sorted(reminder_messages, key=lambda msg: msg.created)
-            try:
-                last_reminder = reminder_messages[-1].created
-            except StopIteration:
-                # if there was no reminder yet, assume reminder ~2000 years ago (still smaller than interval 'never')
-                last_reminder = datetime.datetime.min.replace(tzinfo=pytz.UTC)
+            # get date of last reminder (= message by coffeebuddy)
+            if last_reminder is None:
+                reminder_messages = filter(lambda msg: msg.personEmail == coffeebuddy_email, messages)
+                reminder_messages = sorted(reminder_messages, key=lambda msg: msg.created)
+                try:
+                    last_reminder = reminder_messages[-1].created
+                except StopIteration:
+                    # no message by coffeebuddy yet (but maybe a message by the user)
+                    last_reminder = REMINDER_NEVER
 
             if (now - last_reminder) > reminder_interval:
                 # send reminder

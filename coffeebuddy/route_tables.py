@@ -21,7 +21,10 @@ def init():
                 return ()
             try:
                 return list(api.messages.list_direct(personEmail=email))
-            except webexteamssdk.ApiError:
+            except webexteamssdk.ApiError as error:
+                if error.message == "Failed to get one on one conversation":
+                    # no prior conversation yet
+                    return()
                 logging.getLogger(__name__).exception(f"Could not get webex messages for email={email}")
                 return ()
 
