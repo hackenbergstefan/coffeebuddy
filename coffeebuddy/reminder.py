@@ -34,6 +34,7 @@ def reminder_interval_from_dept(dept):
 
 
 def random_debt_message(x):
+    # pylint: disable=line-too-long
     return random.choice(
         [
             f"Looks like you owe the coffee fund {x}. Time to break open that piggy bank!",
@@ -73,6 +74,7 @@ def random_debt_message(x):
 
 
 def remind(app):
+    # pylint: disable=too-many-locals
     with app.app_context():
         User.query.filter(User.enabled).all()
 
@@ -105,7 +107,7 @@ def remind(app):
             reminder_interval = reminder_interval_from_dept(user.unpayed)
             last_reminder = None
             # if there was no reminder yet, assume reminder ~2000 years ago (still smaller than interval 'never')
-            REMINDER_NEVER = datetime.datetime.min.replace(tzinfo=pytz.UTC)
+            remind_never = datetime.datetime.min.replace(tzinfo=pytz.UTC)
 
             # get messages with user
             try:
@@ -113,7 +115,7 @@ def remind(app):
             except webexteamssdk.ApiError as error:
                 if error.message == "Failed to get one on one conversation":
                     # no message with user, yet
-                    last_reminder = REMINDER_NEVER
+                    last_reminder = remind_never
                 else:
                     logging.getLogger(__name__).exception(f"Could not get webex messages for email={user.email}")
                     continue
@@ -126,7 +128,7 @@ def remind(app):
                     last_reminder = reminder_messages[-1].created
                 except IndexError:
                     # no message by coffeebuddy yet (but maybe a message by the user)
-                    last_reminder = REMINDER_NEVER
+                    last_reminder = remind_never
 
             # if it's time, send reminder
             if (now - last_reminder) > reminder_interval:
