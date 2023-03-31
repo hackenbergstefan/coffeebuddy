@@ -1,6 +1,5 @@
 import datetime
-import itertools
-import logging
+import json
 
 import flask
 import flask_login
@@ -13,21 +12,6 @@ def init():
     @flask.current_app.route("/tables.html")
     @flask_login.login_required
     def tables():
-        api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
-        coffeebuddy_email = api.people.me().emails[0]
-
-        def get_messages(email: str):
-            if not email:
-                return ()
-            try:
-                return list(api.messages.list_direct(personEmail=email))
-            except webexteamssdk.ApiError as error:
-                if error.message == "Failed to get one on one conversation":
-                    # no prior conversation yet
-                    return ()
-                logging.getLogger(__name__).exception(f"Could not get webex messages for email={email}")
-                return ()
-
         return flask.render_template(
             "tables.html",
             bills=[
@@ -76,20 +60,33 @@ def init():
                 # pylint: disable=singleton-comparison
                 for user in User.query.filter(User.enabled == False).all()  # noqa: E712
             ],
-            messages=list(
-                itertools.chain.from_iterable(
-                    (
-                        {
-                            "timestamp": message.created,
-                            "name": user.name,
-                            "prename": user.prename,
-                            "email": user.email,
-                            "direction": "out" if message.personEmail == coffeebuddy_email else "in",
-                            "message": message.text,
-                        }
-                        for message in get_messages(user.email)
-                    )
-                    for user in User.query.filter(User.enabled).all()
-                )
-            ),
+        )
+
+    @flask.current_app.route("/table_data_messages")
+    @flask_login.login_required
+    def table_data_messages():
+        api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+        coffeebuddy_email = api.people.me().emails[0]
+
+        def generate(users):
+            for user in users:
+                if not user.email:
+                    continue
+                try:
+                    for msg in api.messages.list_direct(personEmail=user.email):
+                        yield json.dumps(
+                            {
+                                "timestamp": str(msg.created),
+                                "name": user.name,
+                                "prename": user.prename,
+                                "direction": "out" if msg.personEmail == coffeebuddy_email else "in",
+                                "message": msg.html if msg.html else msg.text,
+                            }
+                        ).encode() + b"\n"
+                except webexteamssdk.ApiError:
+                    pass
+
+        return flask.current_app.response_class(
+            generate(User.query.filter(User.enabled).all()),
+            mimetype="application/json",
         )
