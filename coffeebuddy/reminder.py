@@ -124,7 +124,7 @@ def remind(app):
                 reminder_messages = sorted(reminder_messages, key=lambda msg: msg.created)
                 try:
                     last_reminder = reminder_messages[-1].created
-                except StopIteration:
+                except IndexError:
                     # no message by coffeebuddy yet (but maybe a message by the user)
                     last_reminder = REMINDER_NEVER
 
