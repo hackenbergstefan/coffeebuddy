@@ -119,7 +119,8 @@ def init_app_context(app):
 
     coffeebuddy.pir.init()
 
-    start_scheduler(app)
+    if "REMINDER_MESSAGE" in flask.current_app.config:
+        start_scheduler(app)
 
 
 def prefill():
