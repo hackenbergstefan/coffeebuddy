@@ -33,7 +33,8 @@ def reminder_interval_from_dept(dept):
     return datetime.timedelta(days=1)
 
 
-def random_debt_message(x):
+def random_debt_message(dept):
+    x = f"{dept:.2f}€"
     # pylint: disable=line-too-long
     return random.choice(
         [
