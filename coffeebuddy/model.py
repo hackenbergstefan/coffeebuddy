@@ -87,6 +87,9 @@ class User(flask.current_app.db.Model, Serializer):
             .order_by(Drink.timestamp)
         )
 
+    def __str__(self):
+        return f"{self.prename} {self.name} ({self.email})"
+
     def __repr__(self):
         return f"<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename} email={self.email}>"
 

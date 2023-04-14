@@ -53,6 +53,9 @@ REMINDER_MESSAGE = """Beep bop - greetings from the Coffeebuddy bot!
 NAME ROOM is looking forward to seeing you(r money)!
 """
 
+# List of peoples' emails who are notified when someone pays
+PAYMENT_NOTIFICATION_EMAILS = []
+
 # Localization
 TIMEZONE = "Europe/Berlin"
 COUNTRY = {"country": "DE", "subdiv": "BY"}
