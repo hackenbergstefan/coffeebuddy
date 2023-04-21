@@ -9,10 +9,11 @@ xset s noblank
 xset -dpms
 
 # Start server
-pushd ~/coffeebuddy
-source .env/bin/activate
-python bin/run.py &
-popd
+screen -S coffeebuddy_server -dm bash -c '
+  cd ~/coffeebuddy
+  . .env/bin/activate
+  python bin/run.py
+'
 
 # Open browser
 chromium-browser --kiosk http://127.0.0.1:5000
