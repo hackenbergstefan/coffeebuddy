@@ -76,7 +76,7 @@ def init_db(app):
     # Default database content
     if flask.current_app.config["ENV"] == "development":
         flask.current_app.db.session.add(
-            coffeebuddy.model.User(tag=bytes.fromhex("01020304"), name="Mustermann", prename="Max")
+            coffeebuddy.model.User(tag=bytes.fromhex("01020304"), name="Mustermann", prename="Max", email="Max.Mustermann@example.com")
         )
         flask.current_app.db.session.commit()
     elif flask.current_app.config["ENV"] == "prefilled":
