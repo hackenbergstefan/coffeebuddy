@@ -156,7 +156,9 @@ class TestRouteCoffee(TestCoffeebuddy):
 class TestRouteOneSwipe(TestCoffeebuddy):
     def test(self):
         user, _ = self.add_default_user()
-        response = self.client.post(f"/oneswipe.html?tag={user.tag.hex()}", data=dict(coffee=True))
+        response = self.client.post(
+            f"/oneswipe.html?tag={user.tag.hex()}", data=dict(coffee=True)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(user.drinks), 0)
 
@@ -170,7 +172,9 @@ class TestRouteWelcome(TestCoffeebuddy):
 class TestRoutePay(TestCoffeebuddy):
     def test(self):
         user, _ = self.add_default_user()
-        response = self.client.post(f"/pay.html?tag={user.tag.hex()}", data=dict(amount=1))
+        response = self.client.post(
+            f"/pay.html?tag={user.tag.hex()}", data=dict(amount=1)
+        )
         self.assertEqual(response.status_code, 302)
         self.assertGreater(len(user.pays), 0)
 
@@ -180,7 +184,9 @@ class TestRouteApi(TestCoffeebuddy):
         user1, user2 = self.add_default_user()
         response = self.client.post("api/get_users")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.data), [user1.serialize(), user2.serialize()])
+        self.assertEqual(
+            json.loads(response.data), [user1.serialize(), user2.serialize()]
+        )
 
     def test_set_user(self):
         user1, _ = self.add_default_user()

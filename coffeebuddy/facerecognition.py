@@ -4,13 +4,14 @@ import pickle
 
 import flask
 
-
 try:
     import cv2
     import face_recognition
 
     face_cascade = cv2.CascadeClassifier(
-        os.path.join(os.path.dirname(cv2.__file__), "data", "haarcascade_frontalface_default.xml")
+        os.path.join(
+            os.path.dirname(cv2.__file__), "data", "haarcascade_frontalface_default.xml"
+        )
     )
     """OpenCV cascade for frontal face detection. Used for fast face detection."""
 
@@ -51,7 +52,9 @@ def mark_faces(img, boxes, name=None):
     for x, y, w, h in boxes:
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
         if name:
-            cv2.putText(img, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
+            cv2.putText(
+                img, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2
+            )
 
 
 def every_nth(nth):
@@ -138,7 +141,9 @@ class FaceCapturer:
         encoded_face = encode_face(img)
         logging.getLogger(__name__).info(f"Encoded face: {encoded_face}")
         if encoded_face is not None:
-            logging.getLogger(__name__).info(f"Save face: {self.tag} {self.name} {self.prename} {encoded_face}")
+            logging.getLogger(__name__).info(
+                f"Save face: {self.tag} {self.name} {self.prename} {encoded_face}"
+            )
             add_face_data(self.tag, self.name, self.prename, encoded_face)
             self.capturing = False
 
@@ -225,7 +230,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("function", choices=["capture", "recognize"])
     parser.add_argument(
-        "--data", nargs="+", default=None, required=False, help='Tuple (TAG, PRENAME, NAME) for function "capture"'
+        "--data",
+        nargs="+",
+        default=None,
+        required=False,
+        help='Tuple (TAG, PRENAME, NAME) for function "capture"',
     )
     args = parser.parse_args()
 

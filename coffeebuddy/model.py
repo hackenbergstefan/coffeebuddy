@@ -23,26 +23,43 @@ class Serializer:
 
 class User(flask.current_app.db.Model, Serializer):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
-    tag = flask.current_app.db.Column(flask.current_app.db.LargeBinary, nullable=False, unique=True)
-    tag2 = flask.current_app.db.Column(flask.current_app.db.LargeBinary, unique=True, default=None)
+    tag = flask.current_app.db.Column(
+        flask.current_app.db.LargeBinary, nullable=False, unique=True
+    )
+    tag2 = flask.current_app.db.Column(
+        flask.current_app.db.LargeBinary, unique=True, default=None
+    )
     name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    prename = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
+    prename = flask.current_app.db.Column(
+        flask.current_app.db.String(50), nullable=False
+    )
     email = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    option_oneswipe = flask.current_app.db.Column(flask.current_app.db.Boolean, default=False)
+    option_oneswipe = flask.current_app.db.Column(
+        flask.current_app.db.Boolean, default=False
+    )
     enabled = flask.current_app.db.Column(flask.current_app.db.Boolean, default=True)
-    pays = flask.current_app.db.relationship("Pay", backref="user", cascade="all, delete")
-    drinks = flask.current_app.db.relationship("Drink", backref="user", cascade="all, delete")
+    pays = flask.current_app.db.relationship(
+        "Pay", backref="user", cascade="all, delete"
+    )
+    drinks = flask.current_app.db.relationship(
+        "Drink", backref="user", cascade="all, delete"
+    )
 
     @staticmethod
     def by_tag(tag):
         # pylint: disable=singleton-comparison
-        return User.query.filter((User.tag == tag) | ((User.tag2 != None) & (User.tag2 == tag))).first()  # noqa: E711
+        return User.query.filter(
+            # ruff: noqa: E711
+            (User.tag == tag) | ((User.tag2 != None) & (User.tag2 == tag))
+        ).first()  # noqa: E711
 
     @property
     def drinks_today(self):
         return (
             Drink.query.filter(Drink.user == self)
-            .filter(flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today())
+            .filter(
+                flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today()
+            )
             .all()
         )
 
@@ -63,7 +80,9 @@ class User(flask.current_app.db.Model, Serializer):
         return (
             flask.current_app.db.session.query(
                 flask.current_app.db.func.Date(Drink.timestamp),
-                flask.current_app.db.func.count(flask.current_app.db.func.Date(Drink.timestamp)),
+                flask.current_app.db.func.count(
+                    flask.current_app.db.func.Date(Drink.timestamp)
+                ),
             )
             .filter(self.id == Drink.userid)
             .group_by(flask.current_app.db.func.Date(Drink.timestamp))
@@ -81,7 +100,9 @@ class User(flask.current_app.db.Model, Serializer):
     def drink_days(self):
         return (
             tup[0]
-            for tup in flask.current_app.db.session.query(flask.current_app.db.func.Date(Drink.timestamp))
+            for tup in flask.current_app.db.session.query(
+                flask.current_app.db.func.Date(Drink.timestamp)
+            )
             .filter(self.id == Drink.userid)
             .distinct()
             .order_by(Drink.timestamp)
@@ -91,7 +112,10 @@ class User(flask.current_app.db.Model, Serializer):
         return f"{self.prename} {self.name} ({self.email})"
 
     def __repr__(self):
-        return f"<User tag={self.tag} tag2={self.tag2} name={self.name} prename={self.prename} email={self.email}>"
+        return (
+            f"<User tag={self.tag} tag2={self.tag2} "
+            f"name={self.name} prename={self.prename} email={self.email}>"
+        )
 
     def serialize(self):
         serialized = super().serialize()
@@ -107,7 +131,9 @@ class Drink(flask.current_app.db.Model):
     timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime)
     price = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
     userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer, flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+        flask.current_app.db.Integer,
+        flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
     )
     host = flask.current_app.db.Column(flask.current_app.db.String(50))
 
@@ -122,7 +148,9 @@ class Drink(flask.current_app.db.Model):
     def drinks_vs_days(timedelta):
         return (
             flask.current_app.db.session.query(
-                flask.current_app.db.func.count(flask.current_app.db.func.Date(Drink.timestamp)),
+                flask.current_app.db.func.count(
+                    flask.current_app.db.func.Date(Drink.timestamp)
+                ),
                 flask.current_app.db.func.Date(Drink.timestamp),
             )
             .filter(Drink.timestamp > datetime.datetime.now() - timedelta)
@@ -134,7 +162,9 @@ class Drink(flask.current_app.db.Model):
 
 class Pay(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
-    timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime, nullable=False)
+    timestamp = flask.current_app.db.Column(
+        flask.current_app.db.DateTime, nullable=False
+    )
     userid = flask.current_app.db.Column(
         flask.current_app.db.Integer,
         flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),

@@ -17,9 +17,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install libpcsclite-dev
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
+        pip install --user pdm
+        pdm sync -G dev
     - name: Test with pytest
       run: |
-        pytest -v test/*
+        pdm run pytest -v

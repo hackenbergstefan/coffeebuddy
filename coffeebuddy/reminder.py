@@ -35,8 +35,8 @@ def reminder_interval_from_dept(dept):
 
 def random_debt_message(dept):
     x = f"{dept:.2f}€"
-    # pylint: disable=line-too-long
     return random.choice(
+        # ruff: noqa: E501
         [
             f"Looks like you owe the coffee fund {x}. Time to break open that piggy bank!",
             f"Hey, remember that time you drank all that coffee? Yeah, it's going to cost you {x}.",
@@ -87,7 +87,9 @@ def remind(app):
         country = flask.current_app.config.get("COUNTRY")
         local_holidays = holidays.country_holidays(**country)
 
-        api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+        api = webexteamssdk.WebexTeamsAPI(
+            access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+        )
         coffeebuddy_email = api.people.me().emails[0]
 
         now = datetime.datetime.now(timezone)
@@ -118,13 +120,19 @@ def remind(app):
                     # no message with user, yet
                     last_reminder = remind_never
                 else:
-                    logging.getLogger(__name__).exception(f"Could not get webex messages for email={user.email}")
+                    logging.getLogger(__name__).exception(
+                        f"Could not get webex messages for email={user.email}"
+                    )
                     continue
 
             # get date of last reminder (= message by coffeebuddy)
             if last_reminder is None:
-                reminder_messages = filter(lambda msg: msg.personEmail == coffeebuddy_email, messages)
-                reminder_messages = sorted(reminder_messages, key=lambda msg: msg.created)
+                reminder_messages = filter(
+                    lambda msg: msg.personEmail == coffeebuddy_email, messages
+                )
+                reminder_messages = sorted(
+                    reminder_messages, key=lambda msg: msg.created
+                )
                 try:
                     last_reminder = reminder_messages[-1].created
                 except IndexError:
@@ -134,9 +142,13 @@ def remind(app):
             # if it's time, send reminder
             if (now - last_reminder) > reminder_interval:
                 message_oneliner = random_debt_message(user.unpayed)
-                message_md = flask.current_app.config.get("REMINDER_MESSAGE").format(oneliner=message_oneliner)
+                message_md = flask.current_app.config.get("REMINDER_MESSAGE").format(
+                    oneliner=message_oneliner
+                )
                 try:
                     api.messages.create(toPersonEmail=user.email, markdown=message_md)
                 except webexteamssdk.ApiError:
-                    logging.getLogger(__name__).exception(f"Could not send webex message for email={user.email}")
+                    logging.getLogger(__name__).exception(
+                        f"Could not send webex message for email={user.email}"
+                    )
                     continue
