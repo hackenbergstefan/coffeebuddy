@@ -18,10 +18,14 @@ class PCSCCard(threading.Thread):
 
         while True:
             try:
-                request = smartcard.CardRequest.CardRequest(timeout=100, newcardonly=True)
+                request = smartcard.CardRequest.CardRequest(
+                    timeout=100, newcardonly=True
+                )
                 service = request.waitforcard()
                 service.connection.connect()
-                uuid = bytes(service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0])[:4]
+                uuid = bytes(
+                    service.connection.transmit(list(self.PCSC_GET_UUID_APDU))[0]
+                )[:4]
                 if len(uuid) == 4:
                     self.socketio.emit("card_connected", data={"tag": uuid.hex()})
                 time.sleep(2)
@@ -55,8 +59,8 @@ class PIRC522Card(threading.Thread):
         self.socketio = flask.current_app.socketio
 
     def run(self):
-        from RPi import GPIO
         import pirc522
+        from RPi import GPIO
 
         pirc522.RFID.antenna_gain = 0x07
         reader = pirc522.RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
@@ -67,7 +71,9 @@ class PIRC522Card(threading.Thread):
                 if not error:
                     (_, uid) = reader.anticoll()
                     logging.getLogger(__name__).info(f"Card {uid} connected.")
-                    self.socketio.emit("card_connected", data={"tag": bytes(uid[:4]).hex()})
+                    self.socketio.emit(
+                        "card_connected", data={"tag": bytes(uid[:4]).hex()}
+                    )
                     break
 
 

@@ -1,5 +1,4 @@
 import flask
-
 import webexteamssdk
 
 from coffeebuddy.model import User
@@ -33,20 +32,28 @@ def init():
         if endpoint == "check_email":
             if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
                 return "", 404
-            api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+            api = webexteamssdk.WebexTeamsAPI(
+                access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+            )
             data = flask.request.json
             people = api.people.list(email=data["email"])
             try:
                 people = list(people)
                 if len(people) > 0:
-                    return {"valid": True, "firstname": people[0].firstName, "lastname": people[0].lastName}
+                    return {
+                        "valid": True,
+                        "firstname": people[0].firstName,
+                        "lastname": people[0].lastName,
+                    }
                 return {"valid": False}
             except webexteamssdk.exceptions.ApiError:
                 return {"valid": False}
         if endpoint == "send_message":
             if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
                 return flask.abort(404)
-            api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+            api = webexteamssdk.WebexTeamsAPI(
+                access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+            )
             data = flask.request.json
             api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
             return ""

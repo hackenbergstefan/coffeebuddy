@@ -24,7 +24,9 @@ def init():
     def chart():
         user = User.by_tag(escapefromhex(flask.request.args["tag"]))
         if user is None:
-            return flask.render_template("cardnotfound.html", uuid=flask.request.args["tag"])
+            return flask.render_template(
+                "cardnotfound.html", uuid=flask.request.args["tag"]
+            )
 
         if flask.request.method == "POST":
             if "coffee" in flask.request.form:
@@ -38,7 +40,10 @@ def init():
         datasets = [
             {
                 "x": x,
-                "y": [f"1970-01-01T{user.nth_drink(date, i).timestamp.time().isoformat()}" for date in x],
+                "y": [
+                    f"1970-01-01T{user.nth_drink(date, i).timestamp.time().isoformat()}"
+                    for date in x
+                ],
                 "fill": "tozeroy",
                 "name": f"{i}. Coffee",
                 "mode": "markers",

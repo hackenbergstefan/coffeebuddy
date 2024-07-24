@@ -18,7 +18,9 @@ class PirThread(threading.Thread):
 
         while True:
             GPIO.wait_for_edge(self.pin, GPIO.BOTH)
-            self.events.fire("motion_detected" if GPIO.input(self.pin) else "motion_lost")
+            self.events.fire(
+                "motion_detected" if GPIO.input(self.pin) else "motion_lost"
+            )
 
 
 def init():

@@ -18,5 +18,7 @@ def init():
             "welcome.html",
             dataset=data,
             hostname=socket.gethostname(),
-            githash=subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode("ascii").strip(),
+            githash=subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
+            .decode("ascii")
+            .strip(),
         )

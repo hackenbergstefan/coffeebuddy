@@ -5,7 +5,7 @@ import flask
 import flask_login
 import webexteamssdk
 
-from coffeebuddy.model import Drink, User, Pay
+from coffeebuddy.model import Drink, Pay, User
 
 
 def init():
@@ -65,7 +65,9 @@ def init():
     @flask.current_app.route("/table_data_messages")
     @flask_login.login_required
     def table_data_messages():
-        api = webexteamssdk.WebexTeamsAPI(access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"])
+        api = webexteamssdk.WebexTeamsAPI(
+            access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+        )
         coffeebuddy_email = api.people.me().emails[0]
 
         def generate(users):
@@ -74,15 +76,20 @@ def init():
                     continue
                 try:
                     for msg in api.messages.list_direct(personEmail=user.email):
-                        yield json.dumps(
-                            {
-                                "timestamp": str(msg.created),
-                                "name": user.name,
-                                "prename": user.prename,
-                                "direction": "out" if msg.personEmail == coffeebuddy_email else "in",
-                                "message": msg.html if msg.html else msg.text,
-                            }
-                        ).encode() + b"\n"
+                        yield (
+                            json.dumps(
+                                {
+                                    "timestamp": str(msg.created),
+                                    "name": user.name,
+                                    "prename": user.prename,
+                                    "direction": "out"
+                                    if msg.personEmail == coffeebuddy_email
+                                    else "in",
+                                    "message": msg.html if msg.html else msg.text,
+                                }
+                            ).encode()
+                            + b"\n"
+                        )
                 except webexteamssdk.ApiError:
                     pass
 

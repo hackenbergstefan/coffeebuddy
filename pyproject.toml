@@ -1,22 +1,33 @@
-[tool.black]
-line-length = 120
+[project]
+name = "coffeebuddy"
+version = "1.0.0"
+description = "WebApp for Raspi to track your teams' coffee consumption digitally."
+authors = [{ name = "Stefan Hackenberg", email = "mail@stefan-hackenberg.de" }]
+dependencies = [
+    "config>=0.5.1",
+    "flask>=3.0.3",
+    "sqlalchemy>=2.0.31",
+    "flask-sqlalchemy>=3.1.1",
+    "flask-socketio>=5.3.6",
+    "flask-login>=0.6.3",
+    "psycopg2-binary>=2.9.9",
+    "webexteamssdk>=1.7",
+    "apscheduler>=3.10.4",
+    "holidays>=0.53",
+    "pytz>=2024.1",
+]
+requires-python = "==3.10.*"
+readme = "README.md"
+license = { text = "MIT" }
 
-[tool.pylint.BASIC]
-good-names = ["x","y","w","h","n","r","g","b","k"]
-[tool.pylint.'MESSAGES CONTROL']
-max-line-length = 120
-disable = """
-    import-outside-toplevel,
-    missing-class-docstring,
-    missing-function-docstring,
-    missing-module-docstring,
-    logging-fstring-interpolation,
-    import-error,
-    fixme,
-    too-many-arguments,
-    too-many-branches,
-    too-few-public-methods,
-    too-many-return-statements,
-    duplicate-code,
-    cyclic-import,
-"""
+[project.optional-dependencies]
+rpi = ["mfrc522~=0.0.7", "pi-rc522~=2.3.0", "pigpio~=1.78"]
+pcsc = ["pyscard>=2.0.10"]
+camera = ["opencv-python>=4.10.0.84"]
+dev = ["ruff>=0.5.4", "pytest>=8.3.1"]
+
+[tool.pdm]
+distribution = false
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "PLC", "PLE", "W"]

@@ -57,7 +57,9 @@ class CameraThread(threading.Thread, coffeebuddy.facerecognition.FaceRecognizer)
                 last_motion_detected = datetime.datetime.now()
                 self.events.fire_reset("motion_lost")
                 self.events.fire("motion_detected")
-                logging.getLogger(__name__).info(f"Motion detected {last_motion_detected}.")
+                logging.getLogger(__name__).info(
+                    f"Motion detected {last_motion_detected}."
+                )
             else:
                 self.events.fire_once("motion_lost")
             time.sleep(0.05)
@@ -95,7 +97,9 @@ def init():
             elif flask.current_app.config["CAMERA_ROTATION"] == 180:
                 flask.current_app.config["CAMERA_ROTATION"] = cv2.ROTATE_180
             elif flask.current_app.config["CAMERA_ROTATION"] == 270:
-                flask.current_app.config["CAMERA_ROTATION"] = cv2.ROTATE_90_COUNTERCLOCKWISE
+                flask.current_app.config["CAMERA_ROTATION"] = (
+                    cv2.ROTATE_90_COUNTERCLOCKWISE
+                )
         else:
             flask.current_app.config["CAMERA_ROTATION"] = None
 
