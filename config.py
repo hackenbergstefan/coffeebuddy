@@ -66,3 +66,6 @@ SECRET_KEY = "coffeebuddy"
 
 # Password for admin access
 ADMIN_PASSWORD = "coffeebuddy"
+
+# Whether to prefill the database
+PREFILLED = True

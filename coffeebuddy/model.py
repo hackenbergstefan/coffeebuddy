@@ -1,5 +1,6 @@
 import datetime
 import socket
+from typing import Optional
 
 import flask
 import sqlalchemy
@@ -125,6 +126,11 @@ class User(flask.current_app.db.Model, Serializer):
     def update_bill(self, newbill):
         flask.current_app.db.session.add(Pay(user=self, amount=self.unpayed - newbill))
 
+    def count_selected_manually(self, host: Optional[str] = None) -> int:
+        """Return how often this user logged in using 'Select manually'."""
+        host = host or socket.gethostname()
+        return sum(d.selected_manually for d in self.drinks if d.host == host)
+
 
 class Drink(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
@@ -136,6 +142,9 @@ class Drink(flask.current_app.db.Model):
         nullable=False,
     )
     host = flask.current_app.db.Column(flask.current_app.db.String(50))
+    selected_manually = flask.current_app.db.Column(
+        flask.current_app.db.Boolean, default=False
+    )
 
     def __init__(self, *args, **kwargs):
         if "timestamp" not in kwargs:

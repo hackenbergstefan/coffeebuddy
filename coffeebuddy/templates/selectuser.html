@@ -50,14 +50,29 @@
             <div class="display-1 fas fa-user mr-5"></div>
             <h1>Users</h1>
         </div>
-        <div class="d-flex flex-column scroll">
+
+        {% if top_manual_users|length > 0 %}
+        <h3>Most frequent users</h3>
+        <div class="d-flex flex-column scroll-y">
+            <div class="d-flex flex-row flex-wrap">
+                {% for user in top_manual_users %}
+                <div class="item" onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
+                    {{ user.name }} {{ user.prename }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <h3 class="mt-5">All users</h3>
+        <div class="d-flex flex-column scroll-y">
             {% for char, userlist in users %}
             <div class="d-flex justify-content-start my-2">
                 <div class="h3 py-2 pr-2 mr-2 color-berry" style="border-right: 2px solid; min-width: 2.5ch;">{{char}}
                 </div>
                 <div class="d-flex flex-row flex-wrap">
                     {% for user in userlist %}
-                    <div class="item" onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}'">
+                    <div class="item" onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
                         {{ user.name }} {{ user.prename }}
                     </div>
                     {% endfor %}
