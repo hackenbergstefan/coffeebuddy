@@ -13,6 +13,8 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
+__version__ = "1.1.0"
+
 db = SQLAlchemy()
 login_manager = flask_login.LoginManager()
 
@@ -46,7 +48,7 @@ def create_app(config=None):
     if config:
         app.config.update(config)
 
-    if app.config.get("ENV") in ("development", "prefilled") or app.testing:
+    if app.config.get("PREFILLED") or app.testing:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
     @app.teardown_appcontext
@@ -68,7 +70,7 @@ def init_db(app):
             flask.current_app.config["DB_BACKEND"] == "sqlite"
             and not os.path.exists("coffee.db")
         )
-        or flask.current_app.config.get("ENV") in ("development", "prefilled")
+        or flask.current_app.config.get("PREFILLED")
         or flask.current_app.testing
     ):
         try:
@@ -78,7 +80,10 @@ def init_db(app):
             os._exit(1)
 
     # Default database content
-    if flask.current_app.config.get("ENV") == "development":
+    if not flask.current_app.testing and flask.current_app.config.get("PREFILLED"):
+        flask.current_app.debug = True
+        prefill()
+    elif flask.current_app.debug:
         flask.current_app.db.session.add(
             coffeebuddy.model.User(
                 tag=bytes.fromhex("01020304"),
@@ -88,9 +93,6 @@ def init_db(app):
             )
         )
         flask.current_app.db.session.commit()
-    elif flask.current_app.config.get("ENV") == "prefilled":
-        flask.current_app.debug = True
-        prefill()
 
     if flask.current_app.config["GUEST"]:
         if not coffeebuddy.model.User.query.filter(

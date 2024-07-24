@@ -16,7 +16,7 @@ jobs:
       run: |
         sudo apt-get install libpcsclite-dev
         pip install --user pdm
-        pdm sync
+        pdm sync --prod
     - name: Test backend sqlite
       run: |
         sed -i 's/^CARD.*/CARD = ""/' config.py
