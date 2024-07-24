@@ -45,7 +45,7 @@ def create_app(config=None):
     if config:
         app.config.update(config)
 
-    if app.config["ENV"] in ("development", "prefilled") or app.testing:
+    if app.config.get("ENV") in ("development", "prefilled") or app.testing:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
     @app.teardown_appcontext
@@ -64,7 +64,7 @@ def init_db(app):
 
     if (
         (flask.current_app.config["DB_BACKEND"] == "sqlite" and not os.path.exists("coffee.db"))
-        or flask.current_app.config["ENV"] in ("development", "prefilled")
+        or flask.current_app.config.get("ENV") in ("development", "prefilled")
         or flask.current_app.testing
     ):
         try:
@@ -74,12 +74,14 @@ def init_db(app):
             os._exit(1)
 
     # Default database content
-    if flask.current_app.config["ENV"] == "development":
+    if flask.current_app.config.get("ENV") == "development":
         flask.current_app.db.session.add(
-            coffeebuddy.model.User(tag=bytes.fromhex("01020304"), name="Mustermann", prename="Max", email="Max.Mustermann@example.com")
+            coffeebuddy.model.User(
+                tag=bytes.fromhex("01020304"), name="Mustermann", prename="Max", email="Max.Mustermann@example.com"
+            )
         )
         flask.current_app.db.session.commit()
-    elif flask.current_app.config["ENV"] == "prefilled":
+    elif flask.current_app.config.get("ENV") == "prefilled":
         flask.current_app.debug = True
         prefill()
 

@@ -18,11 +18,17 @@ def handle_post():
     flask.current_app.db.session.commit()
 
     for payment_notification_email in payment_notification_emails:
-        message_md = f"{user} with bill of {user.unpayed + amount:.2f}€ just entered a payment of **{amount:.2f}€**. Their bill is now {user.unpayed:.2f}€."
+        message_md = (
+            f"{user} with bill of {user.unpayed + amount:.2f}€ "
+            "just entered a payment of **{amount:.2f}€**. Their bill is now {user.unpayed:.2f}€."
+        )
         try:
+            # pylint: disable=possibly-used-before-assignment
             api.messages.create(toPersonEmail=payment_notification_email, markdown=message_md)
         except webexteamssdk.ApiError:
-            logging.getLogger(__name__).exception(f"Could not send webex message for email={payment_notification_email}")
+            logging.getLogger(__name__).exception(
+                f"Could not send webex message for email={payment_notification_email}"
+            )
 
     return flask.redirect(f'coffee.html?tag={flask.request.args["tag"]}')
     # return flask.abort(404)
