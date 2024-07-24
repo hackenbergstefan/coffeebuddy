@@ -1,6 +1,6 @@
 [project]
 name = "coffeebuddy"
-version = "1.0.0"
+dynamic = ["version"]
 description = "WebApp for Raspi to track your teams' coffee consumption digitally."
 authors = [{ name = "Stefan Hackenberg", email = "mail@stefan-hackenberg.de" }]
 dependencies = [

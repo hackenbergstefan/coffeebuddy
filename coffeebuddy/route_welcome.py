@@ -1,9 +1,9 @@
 import datetime
 import socket
-import subprocess
 
 import flask
 
+import coffeebuddy
 from coffeebuddy.model import Drink
 
 
@@ -18,7 +18,5 @@ def init():
             "welcome.html",
             dataset=data,
             hostname=socket.gethostname(),
-            githash=subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
-            .decode("ascii")
-            .strip(),
+            version=coffeebuddy.__version__,
         )
