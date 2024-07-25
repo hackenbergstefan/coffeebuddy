@@ -25,7 +25,7 @@ if __name__ == "__main__":
         raise
     app.socketio.run(
         app,
-        use_reloader=False,
+        use_reloader=app.debug,
         host=app.config["HOST"] if "HOST" in app.config else "",
         ssl_context="adhoc" if app.config["SSL"] else None,
         allow_unsafe_werkzeug=True,
