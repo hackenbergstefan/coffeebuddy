@@ -13,7 +13,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-__version__ = "1.1.5"
+__version__ = "1.2.0"
 
 db = SQLAlchemy()
 login_manager = flask_login.LoginManager()
@@ -44,7 +44,7 @@ def create_app(config=None):
     else:
         logging.getLogger(__name__).info('Using config file "config"')
         app.config.from_object("config")
-    # app.config['SQLALCHEMY_ECHO'] = True
+    # app.config["SQLALCHEMY_ECHO"] = True
     if config:
         app.config.update(config)
 

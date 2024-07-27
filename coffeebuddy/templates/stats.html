@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js" integrity="sha512-94titNdENTKSvhQZbcdBcW6kMstfKZsWqGBRCAF0UUmzPx2DKYRHIsAxXJnXxiyvbBD3eMxwotX9rccAjgkVPg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js" integrity="sha512-pH45RLZKz14g8UuQC8days10TDtKG3vXHpDH0UHjnF9HKxGYGzKELe1ship9QXFekhfRfRFEcpemtSvqT5E4oQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
         <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
         <script>
 {% if not config['NOTIMEOUT'] %}
@@ -18,22 +18,58 @@
          });
 {% endif %}
 
-         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
-             data = {{ datasets|tojson }};
+         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js", () => {
+             const drinks_this_week = {{ user.drinks_this_week() | tojson }};
+             const drinks_avg_week = {{ user.drinks_last_weeks() | tojson }};
+             const drinks_avg_week_all = {{ user.drinks_last_weeks_all() | tojson }};
+             const data = [
+                 {
+                     x: drinks_avg_week_all[0],
+                     y: drinks_avg_week_all[1],
+                     type: 'bar',
+                     name: 'All (3 month average)',
+                     marker: {
+                        color: 'rgba(136, 204 238, 0.8)',
+                        line: {
+                            color: 'rgba(136, 204 238, 1.0)',
+                            width: 1.5,
+                        }
+                     },
+                 },
+                 {
+                     x: drinks_avg_week[0],
+                     y: drinks_avg_week[1],
+                     type: 'bar',
+                     name: 'You (3 month average)',
+                     marker: {
+                        color: 'rgba(204, 102, 119, 0.8)',
+                        line: {
+                            color: 'rgba(204, 102, 119, 1.0)',
+                            width: 1.5,
+                        }
+                     },
+                 },
+                 {
+                     x: drinks_this_week[0],
+                     y: drinks_this_week[1],
+                     type: 'bar',
+                     name: 'You (this week)',
+                     marker: {
+                        color: 'rgba(221, 204, 119, 0.8)',
+                        line: {
+                            color: 'rgba(221, 204, 119, 1.0)',
+                            width: 1.5,
+                        }
+                     },
+                 },
+             ];
              layout = {
-                 title: "Your Coffee Stats",
-                 showlegend: false,
-                 xaxis: {
-                     tickfont: {
-                         size: 16,
-                     }
+                 title: 'Your Coffee Stats',
+                 showlegend: true,
+                 legend: {
+                    orientation: 'h',
                  },
-                 yaxis: {
-                     tickformat: '%H:%M',
-                     tickfont: {
-                         size: 16,
-                     }
-                 },
+                 barcornerradius: 5,
                  plot_bgcolor: 'rgba(0,0,0,0)',
                  paper_bgcolor: 'rgba(0,0,0,0)',
                  margin: {
