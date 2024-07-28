@@ -17,3 +17,4 @@ services:
         - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
         - ./certs:/_certs
         - ./users.txt:/users.txt
+        - /mnt/ssd/postgresql-data:/var/lib/postgresql/data

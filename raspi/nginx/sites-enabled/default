@@ -2,7 +2,7 @@ server {
   listen 443 ssl default_server;
   listen [::]:443 ssl default_server;
 
-  ssl_certificate /etc/ssl/root.crt;
+  ssl_certificate /etc/ssl/root.pem;
   ssl_certificate_key /etc/ssl/root.key;
   root /var/www/html;
   server_name _;
