@@ -13,7 +13,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 db = SQLAlchemy()
 login_manager = flask_login.LoginManager()
