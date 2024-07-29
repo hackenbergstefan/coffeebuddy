@@ -9,6 +9,12 @@ Do you use a paper based tally sheet to count your team's coffee consumption? Th
 
 Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python dependencies.
 
+0. Install pdm
+
+   ```sh
+   curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+   ```
+
 1. Install dependencies
 
     ```sh
@@ -45,39 +51,94 @@ Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python d
 
 Run tests with `pytest -v tests`
 
-
 ## Application
 
 The final application uses a Raspberry Pi attached to a 7" touchscreen. Thus, the HTML an CSS is optimized for a display with a resolution of 1024x600.
 
-### Configuration for Raspberry Pi
+### How to setup a client Raspberry Pi
 
-#### Misc
+1. Flash latest RapberryPi OS
+2. Fix screen resolution:
 
-At least I had to adjust the following settings:
+   ```conf
+   # /boot/firmware/config.txt
+   [all]
+   max_usb_current=1
 
-* Fix screen resolution
+   hdmi_force_hotplug=1
+   hdmi_group=2
+   hdmi_mode=87
+   hdmi_cvt 1024 600 60 3 0 0 1
+   hdmi_drive=2
 
-  ```conf
-  hdmi_group=2
-  hdmi_mode=87
-  hdmi_cvt 1024 600 60 3 0 0 1
-  hdmi_drive=2
-  ```
+   start_x=1
+   ```
 
-* If display has to be rotated by 180° adjust `/etc/X11/xorg.conf.d/40-libinput.conf`
+   And change `dtoverlay=vc4-kms-v3d` to
 
-  ```conf
-  Section "InputClass"
-      Identifier "libinput touchscreen catchall"
-      MatchIsTouchscreen "on"
-      MatchDevicePath "/dev/input/event*"
-      Driver "libinput"
-      Option "CalibrationMatrix" "-1 0 1 0 -1 1 0 0 1"
-  EndSection
-  ```
+   ```conf
+   dtoverlay=vc4-fkms-v3d
+   ```
 
-* Disable translation option in chrome
+3. If display has to be rotated by 180° adjust `/etc/X11/xorg.conf.d/40-libinput.conf`
+
+   ```conf
+   Section "InputClass"
+       Identifier "libinput touchscreen catchall"
+       MatchIsTouchscreen "on"
+       MatchDevicePath "/dev/input/event*"
+       Driver "libinput"
+       Option "CalibrationMatrix" "-1 0 1 0 -1 1 0 0 1"
+   EndSection
+   ```
+
+   Rotate the display by using an autostart file
+
+   ```conf
+   # ~/.config/autostart/rotate.desktop
+
+   [Desktop Entry]
+   Name=Rotate
+   Type=Application
+   Exec=xrandr --output HDMI-1 --rotate inverted
+   ```
+
+4. Install required or helpful packages:
+
+   ```sh
+   sudo apt install swig libpcsclite-dev pcscd pcsc-tools  vim screen unclutter
+   ```
+
+5. Start chrome once and disable translation option.
+6. Clone this repo and install requirements:
+
+   ```sh
+   git clone https://github.com/hackenbergstefan/coffeebuddy.git
+   cd coffeebuddy
+   curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+   pdm sync
+   ```
+
+7. Create and copy certificates for database connection:
+
+   ```sh
+   scp coffeebuddyserver:~/coffeebuddy/database/certs/ca/root.crt coffeebuddy01:~/.postgresql/
+   scp coffeebuddyserver:"~/coffeebuddy/database/certs/client_coffeebuddy01/postgresql.*" coffeebuddy01:~/.postgresql/
+   ```
+
+8. Create and adjust `config_<client>.py`.
+9. Enable autostart:
+
+   ```sh
+   mkdir ~/.config/autostart
+   cp raspi/coffeebuddy.desktop ~/.config/autostart/
+   ```
+
+10. Enable gpio service:
+
+    ```sh
+    sudo systemctl enable pigpiod
+    ```
 
 #### Card reader
 
