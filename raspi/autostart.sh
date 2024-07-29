@@ -11,7 +11,7 @@ xset -dpms
 # Start server
 screen -S coffeebuddy_server -dm bash -c '
   cd ~/coffeebuddy
-  . .env/bin/activate
+  . .venv/bin/activate
   python bin/run.py
 '
 
