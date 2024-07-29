@@ -66,8 +66,18 @@ class User(flask.current_app.db.Model, Serializer):
 
     @property
     def unpayed(self):
-        # TODO: Fast enough?
-        return sum(c.price for c in self.drinks) - sum(p.amount for p in self.pays)
+        db = flask.current_app.db
+        return (
+            db.session.scalar(
+                db.select(db.func.sum(Drink.price)).where(Drink.userid == self.id),
+            )
+            or 0.0
+        ) - (
+            db.session.scalar(
+                db.select(db.func.sum(Pay.amount)).where(Pay.userid == self.id),
+            )
+            or 0.0
+        )
 
     def nth_drink(self, date, n):
         return (
@@ -129,7 +139,14 @@ class User(flask.current_app.db.Model, Serializer):
     def count_selected_manually(self, host: Optional[str] = None) -> int:
         """Return how often this user logged in using 'Select manually'."""
         host = host or socket.gethostname()
-        return sum(d.selected_manually for d in self.drinks if d.host == host)
+        db = flask.current_app.db
+        return db.session.scalar(
+            db.select(db.func.count("*")).where(
+                (Drink.userid == self.id)
+                & (Drink.host == host)
+                & Drink.selected_manually
+            )
+        )
 
 
 class Drink(flask.current_app.db.Model):
