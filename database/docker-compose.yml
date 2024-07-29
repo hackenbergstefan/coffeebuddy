@@ -1,7 +1,8 @@
 version: "3.3"
 services:
     coffeebuddydb:
-      image: postgres
+      restart: always
+      image: postgres:16
       command: |
         -c ssl=on
         -c ssl_ca_file=/certs/ca/root.crt
