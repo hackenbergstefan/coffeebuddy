@@ -1,19 +1,9 @@
 # Setup reverse proxy for https with docker-compose and nginx
 
-## docker-compose.yml
+## Install nginx
 
-```yml
-version: "3.3"
-
-services:
-  nginx:
-    image: tobi312/rpi-nginx:latest
-    volumes:
-      - ./sites-enabled:/etc/nginx/sites-enabled
-      - ./ssl:/etc/ssl/
-    ports:
-      - 443:443
-    network_mode: host
+```shell
+sudo apt install nginx
 ```
 
 ## Create self-signed ssl certificate
@@ -49,10 +39,4 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for ;
   }
 }
-```
-
-## Run
-
-```shell
-sudo docker-compose up
 ```
