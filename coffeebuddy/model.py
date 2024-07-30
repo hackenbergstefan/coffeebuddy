@@ -1,6 +1,7 @@
 import datetime
 import socket
-from typing import Optional
+import string
+from typing import List
 
 import flask
 import sqlalchemy
@@ -136,17 +137,36 @@ class User(flask.current_app.db.Model, Serializer):
     def update_bill(self, newbill):
         flask.current_app.db.session.add(Pay(user=self, amount=self.unpayed - newbill))
 
-    def count_selected_manually(self, host: Optional[str] = None) -> int:
-        """Return how often this user logged in using 'Select manually'."""
-        host = host or socket.gethostname()
+    @staticmethod
+    def top_selected_manually(limit: int = 5) -> List["User"]:
         db = flask.current_app.db
-        return db.session.scalar(
-            db.select(db.func.count("*")).where(
-                (Drink.userid == self.id)
-                & (Drink.host == host)
-                & Drink.selected_manually
+        return list(
+            db.session.scalars(
+                db.select(User)
+                .where(
+                    (Drink.userid == User.id)
+                    & (Drink.host == socket.gethostname())
+                    & (Drink.selected_manually)
+                )
+                .limit(limit)
+                .order_by(User.name)
             )
         )
+
+    @staticmethod
+    def all_enabled() -> List["User"]:
+        db = flask.current_app.db
+        return [
+            (
+                letter,
+                db.session.scalars(
+                    db.select(User)
+                    .filter(db.func.upper(User.name).startswith(letter) & User.enabled)
+                    .order_by(User.name)
+                ),
+            )
+            for letter in string.ascii_uppercase
+        ]
 
 
 class Drink(flask.current_app.db.Model):
