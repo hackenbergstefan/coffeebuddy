@@ -16,7 +16,7 @@ dependencies = [
     "holidays>=0.53",
     "pytz>=2024.1",
 ]
-requires-python = "==3.10.*"
+requires-python = ">=3.12.*"
 readme = "README.md"
 license = { text = "MIT" }
 
@@ -24,11 +24,7 @@ license = { text = "MIT" }
 rpi = ["mfrc522~=0.0.7", "pi-rc522~=2.3.0", "pigpio~=1.78"]
 pcsc = ["pyscard>=2.0.10"]
 camera = ["opencv-python>=4.10.0.84"]
-dev = [
-    "ruff>=0.5.4",
-    "pytest>=8.3.1",
-    "ipython>=8.26.0",
-]
+dev = ["ruff>=0.5.4", "pytest>=8.3.1", "ipython>=8.26.0"]
 
 [tool.pdm]
 distribution = false
