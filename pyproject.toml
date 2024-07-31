@@ -16,7 +16,7 @@ dependencies = [
     "holidays>=0.53",
     "pytz>=2024.1",
 ]
-requires-python = ">=3.12.*"
+requires-python = ">=3.12"
 readme = "README.md"
 license = { text = "MIT" }
 

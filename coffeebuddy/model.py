@@ -140,32 +140,36 @@ class User(flask.current_app.db.Model, Serializer):
     @staticmethod
     def top_selected_manually(limit: int = 5) -> List["User"]:
         db = flask.current_app.db
-        return list(
-            db.session.scalars(
-                db.select(User)
-                .where(
-                    (Drink.userid == User.id)
-                    & (Drink.host == socket.gethostname())
-                    & (Drink.selected_manually)
-                )
-                .limit(limit)
-                .order_by(User.name)
+        return db.session.scalars(
+            db.select(User)
+            .where(
+                (Drink.userid == User.id)
+                & (Drink.host == socket.gethostname())
+                & (Drink.selected_manually)
             )
-        )
+            .group_by(User.id)
+            .limit(limit)
+            .order_by(db.func.count(Drink.selected_manually).desc())
+        ).all()
 
     @staticmethod
     def all_enabled() -> List["User"]:
         db = flask.current_app.db
-        return [
+        users = [
             (
                 letter,
                 db.session.scalars(
                     db.select(User)
                     .filter(db.func.upper(User.name).startswith(letter) & User.enabled)
                     .order_by(User.name)
-                ),
+                ).all(),
             )
             for letter in string.ascii_uppercase
+        ]
+        return [
+            (letter, users_letter)
+            for (letter, users_letter) in users
+            if len(users_letter) > 0
         ]
 
 

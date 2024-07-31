@@ -13,7 +13,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 
 db = SQLAlchemy()
 login_manager = flask_login.LoginManager()
@@ -198,6 +198,7 @@ def prefill():
                 price=flask.current_app.config["PRICE"],
                 timestamp=datetime.datetime.now()
                 - datetime.timedelta(seconds=random.randint(0, 365 * 24 * 60 * 60)),
+                selected_manually=random.randint(0, 1),
             )
         )
     flask.current_app.db.session.commit()
