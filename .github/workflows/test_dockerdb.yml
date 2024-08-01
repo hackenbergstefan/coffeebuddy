@@ -8,6 +8,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Patch docker-compose.yml
+      run: sed -i 's,.*/mnt/ssd/postgresql.*,#\\0,' database/docker-compose.yml
     - name: Setup certificates
       run: |
         cd database
@@ -17,11 +19,11 @@ jobs:
     - name: Create container
       run: |
         cd database
-        docker-compose up
+        docker compose up
     - name: Start container again
       run: |
         cd database
-        docker-compose up -d
+        docker compose up -d
         sleep 5
         PGSSLMODE=require \
           PGSSLROOTCERT=certs/ca/root.crt \
@@ -32,4 +34,4 @@ jobs:
       if: always()
       run: |
         cd database
-        docker-compose down
+        docker compose down
