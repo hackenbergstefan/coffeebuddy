@@ -5,7 +5,7 @@
 
 Do you use a paper based tally sheet to count your team's coffee consumption? Throw it away and use `coffeebuddy`!
 
-## Usage
+## Setup
 
 Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python dependencies.
 
@@ -17,23 +17,45 @@ Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python d
 
 1. Install dependencies
 
-    ```sh
-    pdm sync
-    ```
+### Server
 
-    If `pyscard` fails building you might need to install dependencies. For Debian based distributions this would be
+#### Hardware (recommendation)
 
-    ```sh
-    sudo apt install swig libpcsclite-dev
-    ```
+- RaspberryPi 4
+- External SSD to store database
 
-2. Connect a pcsc smart card reader.
-   I use a [uTrust 4701f](https://support.identiv.com/4701f/).
-   Drivers for Ubuntu can be installed for example by
+#### Software
 
-    ```sh
-    sudo apt install pcscd pcsc-tools
-    ```
+The server runs postgresql and uses certificated based authentication on client side.
+Details are described in [Setting up postgresql database](./doc/postgresql.md).
+
+### Client
+
+#### Hardware (recommendation)
+
+- RaspberryPi 3
+- 7" touchscreen with 1024x600 pixel resolution
+- Identiv uTrust 1401f PCSC cardreader
+- 3D printed housing (see [doc/housing.md](./doc/housing.md)) including:
+  - a PIR for presence detection (see [coffeebuddy/pir.py](./coffeebuddy/pir.py))
+  - a multicolor LED for status indication (see [coffeebuddy/illumination.py](./coffeebuddy/illumination.py))
+
+#### Software
+
+1. Install cardreader dependencies
+   If using a PCSC cardreader and a Debian based distributions:
+
+   ```sh
+   sudo apt install swig libpcsclite-dev pcscd pcsc-tools
+   ```
+
+2. Install Python dependencies
+
+   ```sh
+   pip install --user pdm
+
+   pdm sync
+   ```
 
 3. Start `production` environment
 
@@ -41,11 +63,13 @@ Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python d
     ./bin/run.py
     ```
 
-    or `development` environment
+##### Debugging
 
-    ```sh
-    FLASK_ENV=development ./bin/run.py
-    ```
+The `development` environment can be run using
+
+```sh
+FLASK_DEBUG=1 ./bin/run.py
+```
 
 ## Tests
 

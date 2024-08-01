@@ -1,11 +1,33 @@
-import datetime
+import calendar
 import socket
 import string
-from typing import List
+from datetime import date, datetime, timedelta
+from typing import List, Tuple
 
 import flask
 import sqlalchemy
 from sqlalchemy import text
+
+
+def db_weekday(column):
+    """Helper to extract weekday for different database backends"""
+    if flask.current_app.db.engine.name == "postgresql":
+        return sqlalchemy.func.extract("dow", column)
+    else:
+        return sqlalchemy.func.strftime("%w", column)
+
+
+def weekday(number):
+    """
+    Helper to return the name of the weekday for given day number.
+    0: Sunday
+    1: Monday
+    ..
+    """
+    if number == 0:
+        return calendar.day_name[6]
+    else:
+        return calendar.day_name[number - 1]
 
 
 class Serializer:
@@ -59,9 +81,7 @@ class User(flask.current_app.db.Model, Serializer):
     def drinks_today(self):
         return (
             Drink.query.filter(Drink.user == self)
-            .filter(
-                flask.current_app.db.func.Date(Drink.timestamp) == datetime.date.today()
-            )
+            .filter(flask.current_app.db.func.Date(Drink.timestamp) == date.today())
             .all()
         )
 
@@ -172,6 +192,93 @@ class User(flask.current_app.db.Model, Serializer):
             if len(users_letter) > 0
         ]
 
+    def drinks_this_week(self) -> Tuple[List[str], List[int]]:
+        db = flask.current_app.db
+        now = date.today()
+        start_of_week = datetime.combine(
+            now - timedelta(now.weekday()), datetime.min.time()
+        )
+
+        data = tuple(
+            zip(
+                *db.session.execute(
+                    db.select(
+                        db_weekday(Drink.timestamp).label("weekday"),
+                        db.func.count(db.func.Date(Drink.timestamp)),
+                    )
+                    .where(Drink.userid == self.id)
+                    .where(Drink.timestamp >= start_of_week)
+                    .group_by("weekday")
+                    .order_by("weekday")
+                ).all()
+            )
+        )
+
+        if not data:
+            return [], []
+        return [weekday(int(i)) for i in data[0]], list(data[1])
+
+    def drinks_last_weeks(
+        self,
+        since=timedelta(weeks=12),
+    ) -> Tuple[List[str], List[int]]:
+        db = flask.current_app.db
+        now = date.today()
+        number_of_weeks = since.days / 7
+        since = (
+            datetime.combine(now - timedelta(now.weekday()), datetime.min.time())
+            - since
+        )
+        data = tuple(
+            zip(
+                *db.session.execute(
+                    db.select(
+                        db_weekday(Drink.timestamp).label("weekday"),
+                        db.func.count(db.func.Date(Drink.timestamp)) / number_of_weeks,
+                    )
+                    .where(
+                        (Drink.userid == self.id)
+                        & (db.func.Date(Drink.timestamp) >= since)
+                    )
+                    .group_by("weekday")
+                    .order_by("weekday")
+                ).all()
+            )
+        )
+        return [weekday(int(i)) for i in data[0]], list(data[1])
+
+    @staticmethod
+    def drinks_last_weeks_all(since=timedelta(weeks=12)) -> Tuple[List[str], List[int]]:
+        db = flask.current_app.db
+
+        now = date.today()
+        number_of_weeks = since.days / 7
+        since = (
+            datetime.combine(now - timedelta(now.weekday()), datetime.min.time())
+            - since
+        )
+
+        number_of_consumers = db.session.scalar(
+            db.select(db.func.count(Drink.userid.distinct())).where(
+                db.func.Date(Drink.timestamp) >= since
+            )
+        )
+
+        data = tuple(
+            zip(
+                *db.session.execute(
+                    db.select(
+                        db_weekday(Drink.timestamp).label("weekday"),
+                        db.func.count("*") / number_of_consumers / number_of_weeks,
+                    )
+                    .where(db.func.Date(Drink.timestamp) >= since)
+                    .group_by("weekday")
+                    .order_by("weekday")
+                ).all()
+            )
+        )
+        return [weekday(int(i)) for i in data[0]], list(data[1])
+
 
 class Drink(flask.current_app.db.Model):
     id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
@@ -189,7 +296,7 @@ class Drink(flask.current_app.db.Model):
 
     def __init__(self, *args, **kwargs):
         if "timestamp" not in kwargs:
-            kwargs["timestamp"] = datetime.datetime.now()
+            kwargs["timestamp"] = datetime.now()
         if "host" not in kwargs:
             kwargs["host"] = socket.gethostname()
         super().__init__(*args, **kwargs)
@@ -203,7 +310,7 @@ class Drink(flask.current_app.db.Model):
                 ),
                 flask.current_app.db.func.Date(Drink.timestamp),
             )
-            .filter(Drink.timestamp > datetime.datetime.now() - timedelta)
+            .filter(Drink.timestamp > datetime.now() - timedelta)
             .order_by(sqlalchemy.asc(flask.current_app.db.func.Date(Drink.timestamp)))
             .group_by(flask.current_app.db.func.Date(Drink.timestamp))
             .all()
@@ -225,7 +332,7 @@ class Pay(flask.current_app.db.Model):
 
     def __init__(self, *args, **kwargs):
         if "timestamp" not in kwargs:
-            kwargs["timestamp"] = datetime.datetime.now()
+            kwargs["timestamp"] = datetime.now()
         if "host" not in kwargs:
             kwargs["host"] = socket.gethostname()
         super().__init__(*args, **kwargs)
