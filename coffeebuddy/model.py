@@ -158,14 +158,23 @@ class User(flask.current_app.db.Model, Serializer):
         flask.current_app.db.session.add(Pay(user=self, amount=self.unpayed - newbill))
 
     @staticmethod
-    def top_selected_manually(limit: int = 5) -> List["User"]:
+    def top_selected_manually(
+        limit: int = 5,
+        since=timedelta(weeks=4),
+    ) -> List["User"]:
         db = flask.current_app.db
+        now = date.today()
+        since = (
+            datetime.combine(now - timedelta(now.weekday()), datetime.min.time())
+            - since
+        )
         return db.session.scalars(
             db.select(User)
             .where(
                 (Drink.userid == User.id)
                 & (Drink.host == socket.gethostname())
                 & (Drink.selected_manually)
+                & (db.func.Date(Drink.timestamp) >= since)
             )
             .group_by(User.id)
             .limit(limit)
