@@ -1,6 +1,14 @@
+import datetime
+
 import flask
 
 from coffeebuddy.model import Drink, User, escapefromhex
+
+
+def last_mondays(weeks=4):
+    now = datetime.datetime.now().date()
+    monday = now - datetime.timedelta(days=now.weekday())
+    return [monday - datetime.timedelta(weeks=i) for i in range(weeks)]
 
 
 def init():
@@ -41,4 +49,7 @@ def init():
             "coffee.html",
             user=user,
             referer=flask.request.form if flask.request.method == "POST" else [],
+            today_name=datetime.datetime.now().strftime("%A"),
+            datetime=datetime,
+            last_mondays=last_mondays(),
         )

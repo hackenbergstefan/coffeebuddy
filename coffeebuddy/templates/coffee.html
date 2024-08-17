@@ -46,6 +46,64 @@
             {% endif %}
         });
     </script>
+    <script>
+         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js", () => {
+             const drinks_last_weeks = {{ user.drinks_last_weeks(since=datetime.timedelta(weeks=4), group_by="day") | tojson }};
+             const data = [
+                 {
+                     x: drinks_last_weeks[0],
+                     y: drinks_last_weeks[1],
+                     type: 'bar',
+                     marker: {
+                        color: 'rgba(171, 55, 122, 0.6)',
+                     },
+                 },
+             ];
+             const shapes = [
+             {% for monday in last_mondays %}
+                {
+                    type: 'line',
+                    x0: '{{ monday }}',
+                    y0: 0,
+                    x1: '{{ monday }}',
+                    yref: 'paper',
+                    y1: 1,
+                    line: {
+                        color: 'grey',
+                        width: 1.5,
+                        dash: 'dot'
+                    }
+                },
+             {% endfor %}
+             ];
+             layout = {
+                 plot_bgcolor: 'rgba(0,0,0,0)',
+                 paper_bgcolor: 'rgba(0,0,0,0)',
+                 margin: {
+                     t: 0,
+                     b: 50,
+                     l: 30,
+                     r: 0,
+                 },
+                 xaxis: {
+                    rangebreaks: [{
+                        bounds: ['sat', 'mon'],
+                        pattern: 'day of week'
+                    }],
+                    tickformat: '%d %b',
+                    dtick: 7 * 86400000.0,
+                 },
+                 yaxis: {
+                    dtick: 1,
+                 },
+                 barcornerradius: 4,
+                 bargap: 0.01,
+                 shapes: shapes,
+             };
+             Plotly.newPlot('stats', data, layout);
+         });
+        </script>
+    </script>
     <style>
         .btnbar {
             width: 200px;
@@ -149,14 +207,13 @@
                 </div>
             </form>
         </div>
-        <div class="d-flex flex-column flex-grow text-center w-100 mx-5 my-4">
+        <div class="d-flex flex-column flex-grow text-center mx-5 my-4">
             <div class="text-left">
                 <h3>Hi</h3>
                 <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
                 <code class="h5">{{ hexstr(user.tag) }}</code>
             </div>
-            <div class="my-auto">
-                <div id="stats" class="flex-grow-1"></div>
+            <div class="my-auto align-self-end">
                 <form method="post">
                     <button id="btn-coffee" type="submit" class="btn-coffee" name="coffee" value="coffee">
                         <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
@@ -165,7 +222,20 @@
                 </form>
             </div>
         </div>
-        <div class="d-flex m-4" style="width: 500px;">
+        <div class="d-flex flex-column m-4" style="width: 350px;">
+            <div class="h4 pb-2 mb-4 border-bottom border-dark">Your <div class="fas fa-coffee"></div> in numbers</div>
+            <div class="h4">Today you already had</div>
+            <div class="h3 color-berry font-weight-bold">{{ user.drinks_today | length }}</div>
+            <div class="my-3"></div>
+
+            <div class="h5">On {{ today_name }} you usually have</div>
+            <div class="h4 color-berry font-weight-bold">{{ '%0.1f' | format(user.drinks_avg_today()) }}</div>
+            <div class="my-3"></div>
+
+            <div class="h5">Your last month</div>
+            <div id="stats" class="w-100" style="height: 200px">
+            </div>
+            </div>
         </div>
     </div>
     <canvas id="matrix"></canvas>

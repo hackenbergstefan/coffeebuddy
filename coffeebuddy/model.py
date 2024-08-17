@@ -9,7 +9,7 @@ import sqlalchemy
 from sqlalchemy import text
 
 
-def db_weekday(column):
+def db_weekday(column) -> str:
     """Helper to extract weekday for different database backends"""
     if flask.current_app.db.engine.name == "postgresql":
         return sqlalchemy.func.extract("dow", column)
@@ -230,6 +230,7 @@ class User(flask.current_app.db.Model, Serializer):
     def drinks_last_weeks(
         self,
         since=timedelta(weeks=12),
+        group_by="week",
     ) -> Tuple[List[str], List[int]]:
         db = flask.current_app.db
         now = date.today()
@@ -238,23 +239,42 @@ class User(flask.current_app.db.Model, Serializer):
             datetime.combine(now - timedelta(now.weekday()), datetime.min.time())
             - since
         )
-        data = tuple(
-            zip(
-                *db.session.execute(
-                    db.select(
-                        db_weekday(Drink.timestamp).label("weekday"),
-                        db.func.count(db.func.Date(Drink.timestamp)) / number_of_weeks,
-                    )
-                    .where(
-                        (Drink.userid == self.id)
-                        & (db.func.Date(Drink.timestamp) >= since)
-                    )
-                    .group_by("weekday")
-                    .order_by("weekday")
-                ).all()
+        if group_by == "week":
+            data = tuple(
+                zip(
+                    *db.session.execute(
+                        db.select(
+                            db_weekday(Drink.timestamp).label("weekday"),
+                            db.func.count(db.func.Date(Drink.timestamp))
+                            / number_of_weeks,
+                        )
+                        .where(
+                            (Drink.userid == self.id)
+                            & (db.func.Date(Drink.timestamp) >= since)
+                        )
+                        .group_by("weekday")
+                        .order_by("weekday")
+                    ).all()
+                )
             )
-        )
-        return [weekday(int(i)) for i in data[0]], list(data[1])
+            return [weekday(int(i)) for i in data[0]], list(data[1])
+        elif group_by == "day":
+            return tuple(
+                zip(
+                    *db.session.execute(
+                        db.select(
+                            db.func.Date(Drink.timestamp).label("day"),
+                            db.func.count(db.func.Date(Drink.timestamp)),
+                        )
+                        .where(
+                            (Drink.userid == self.id)
+                            & (db.func.Date(Drink.timestamp) >= since)
+                        )
+                        .group_by("day")
+                        .order_by("day")
+                    ).all()
+                )
+            )
 
     @staticmethod
     def drinks_last_weeks_all(since=timedelta(weeks=12)) -> Tuple[List[str], List[int]]:
@@ -287,6 +307,18 @@ class User(flask.current_app.db.Model, Serializer):
             )
         )
         return [weekday(int(i)) for i in data[0]], list(data[1])
+
+    def drinks_avg_today(self) -> float:
+        db = flask.current_app.db
+        today_weekday = str(date.today().weekday())
+
+        data = db.session.scalars(
+            db.select(db.func.count("*"))
+            .where(Drink.userid == self.id)
+            .where(db_weekday(db.func.Date(Drink.timestamp)) == today_weekday)
+            .group_by(db.func.Date(Drink.timestamp))
+        ).all()
+        return sum(data) / len(data) if data else 0
 
 
 class Drink(flask.current_app.db.Model):
