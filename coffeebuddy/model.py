@@ -17,6 +17,13 @@ def db_weekday(column) -> str:
         return sqlalchemy.func.strftime("%w", column)
 
 
+def db_date_format(column):
+    if flask.current_app.db.engine.name == "postgresql":
+        return sqlalchemy.func.to_char(column, "YYYY-MM-DD")
+    else:
+        return sqlalchemy.func.strftime("%Y-%m-%d", column)
+
+
 def weekday(number):
     """
     Helper to return the name of the weekday for given day number.
@@ -263,15 +270,15 @@ class User(flask.current_app.db.Model, Serializer):
                 zip(
                     *db.session.execute(
                         db.select(
-                            db.func.Date(Drink.timestamp).label("day"),
+                            db_date_format(db.func.Date(Drink.timestamp)),
                             db.func.count(db.func.Date(Drink.timestamp)),
                         )
                         .where(
                             (Drink.userid == self.id)
                             & (db.func.Date(Drink.timestamp) >= since)
                         )
-                        .group_by("day")
-                        .order_by("day")
+                        .group_by(db.func.Date(Drink.timestamp))
+                        .order_by(db.func.Date(Drink.timestamp))
                     ).all()
                 )
             )
@@ -310,7 +317,7 @@ class User(flask.current_app.db.Model, Serializer):
 
     def drinks_avg_today(self) -> float:
         db = flask.current_app.db
-        today_weekday = str(date.today().weekday())
+        today_weekday = str(date.today().isoweekday() % 7)
 
         data = db.session.scalars(
             db.select(db.func.count("*"))
