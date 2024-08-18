@@ -56,6 +56,9 @@ REMINDER_MESSAGE = """Beep bop - greetings from the Coffeebuddy bot!
 NAME ROOM is looking forward to seeing you(r money)!
 """
 
+# If not False, the webex roomid where to post database backup files
+WEBEX_DATABASE_BACKUP = False
+
 # List of peoples' emails who are notified when someone pays
 PAYMENT_NOTIFICATION_EMAILS = []
 

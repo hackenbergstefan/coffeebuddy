@@ -4,6 +4,9 @@ import logging
 import os
 import random
 import socket
+import subprocess
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import flask
 import flask_login
@@ -13,7 +16,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 db = SQLAlchemy()
 login_manager = flask_login.LoginManager()
@@ -136,7 +139,10 @@ def init_app_context(app):
 
     coffeebuddy.pir.init()
 
-    if "REMINDER_MESSAGE" in flask.current_app.config:
+    if (
+        "WEBEX_DATABASE_BACKUP" in flask.current_app.config
+        or "REMINDER_MESSAGE" in flask.current_app.config
+    ):
         start_scheduler(app)
 
 
@@ -205,16 +211,53 @@ def prefill():
 
 
 def start_scheduler(app):
-    from coffeebuddy.reminder import remind
-
     scheduler = BackgroundScheduler()
     scheduler.start()
-    scheduler.add_job(
-        func=remind,
-        args=(app,),
-        trigger="interval",
-        minutes=60,
-        id="webex dept reminder",
-        name="webex dept reminder",
-        replace_existing=True,
-    )
+
+    if flask.current_app.config.get("REMINDER_MESSAGE"):
+        from coffeebuddy.reminder import remind
+
+        scheduler.add_job(
+            func=remind,
+            args=(app,),
+            trigger="interval",
+            minutes=60,
+            id="webex dept reminder",
+            name="webex dept reminder",
+            replace_existing=True,
+        )
+
+    if flask.current_app.config.get("WEBEX_DATABASE_BACKUP"):
+        import webexteamssdk
+
+        @scheduler.scheduled_job("cron", day_of_week="sun")
+        def backup_database():
+            with TemporaryDirectory() as tmpdir, app.app_context():
+                backupfile = Path(tmpdir) / "coffeebuddydb-backup-{}".format(
+                    datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S.sql")
+                )
+                backupfile.write_text(
+                    subprocess.check_output(
+                        [
+                            "sudo",
+                            "docker-compose",
+                            "exec",
+                            "coffeebuddydb",
+                            "pg_dump",
+                            "-U",
+                            "coffeebuddydb",
+                            "-d",
+                            "coffeebuddy",
+                        ],
+                        cwd="database",
+                        universal_newlines=True,
+                    )
+                )
+
+                api = webexteamssdk.WebexTeamsAPI(
+                    access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+                )
+                api.messages.create(
+                    roomId=flask.current_app.config["WEBEX_DATABASE_BACKUP"],
+                    files=[str(backupfile)],
+                )
