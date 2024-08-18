@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import sqlalchemy.exc
 
 from . import TestCoffeebuddy
@@ -158,6 +160,35 @@ class TestModelUser(TestCoffeebuddy):
         user1, user2 = self.add_default_user()
         self.assertIsNone(User.by_tag(None))
         self.assertIsNone(User.by_tag(b""))
+
+    def test_drinks_last_weeks(self):
+        from coffeebuddy.model import Drink
+
+        user1, _ = self.add_default_user()
+        user1.drinks.append(Drink(price=1))
+        self.db.session.commit()
+        self.assertEqual(
+            user1.drinks_last_weeks(group_by="day"),
+            ((datetime.now().strftime("%Y-%m-%d"),), (1,)),
+        )
+
+    def test_drinks_avg_today(self):
+        from coffeebuddy.model import Drink
+
+        user1, _ = self.add_default_user()
+        user1.drinks.append(Drink(price=1))
+        self.db.session.commit()
+        self.assertEqual(user1.drinks_avg_today(), 1.0)
+        user1.drinks.extend(
+            (
+                Drink(price=1, timestamp=datetime.now() - timedelta(weeks=1)),
+                Drink(price=1, timestamp=datetime.now() - timedelta(weeks=1)),
+                Drink(price=1, timestamp=datetime.now() - timedelta(weeks=2)),
+                Drink(price=1, timestamp=datetime.now() - timedelta(weeks=3)),
+            )
+        )
+        self.db.session.commit()
+        self.assertEqual(user1.drinks_avg_today(), 1.25)
 
 
 class TestModelDrink(TestCoffeebuddy):
