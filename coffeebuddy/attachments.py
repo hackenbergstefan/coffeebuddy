@@ -7,7 +7,7 @@ def init():
     if flask.current_app.testing:
         return
 
-    if flask.current_app.config["ILLUMINATION"] is True:
+    if flask.current_app.config["ILLUMINATION"]:
         import coffeebuddy.illumination
 
         coffeebuddy.illumination.init()

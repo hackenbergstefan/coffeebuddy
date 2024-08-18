@@ -22,7 +22,9 @@ CAMERA = False
 # Enable Facerecognition
 FACERECOGNITION = False
 
-# Illumination
+# Illumination.
+# If set: `{"pins": (1, 2, 3), "color_motion_detected": "rose", "color_X": ...}`.
+# See ./coffeebuddy/illumination.py for details
 ILLUMINATION = False
 
 # PIR motion detection (None if not used, BCM pin number otherwise)

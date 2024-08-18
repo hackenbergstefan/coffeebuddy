@@ -11,7 +11,12 @@ PIN_RED = 21
 pi = pigpio.pi()
 
 
-def setup():
+def setup(pin_red, pin_green, pin_blue):
+    global PIN_RED, PIN_GREEN, PIN_BLUE
+    PIN_RED = pin_red
+    PIN_GREEN = pin_green
+    PIN_BLUE = pin_blue
+
     pi.set_PWM_frequency(PIN_RED, 10_000)
     pi.set_PWM_frequency(PIN_GREEN, 10_000)
     pi.set_PWM_frequency(PIN_BLUE, 10_000)
@@ -41,22 +46,37 @@ def color_named(name):
         "lightsteelblue": (0.1, 0.05, 0.1),
         "lime": (1, 1, 0),
     }
-    color(*names[name])
+    color(*names.get(name, (0, 0, 0)))
 
 
 def init():
     logging.getLogger(__name__).info("Init")
-    setup()
+    config = flask.current_app.config.get("ILLUMINATION")
+    setup(*config["pins"])
 
-    flask.current_app.events.register("motion_detected", lambda: color_named("rose"))
-    flask.current_app.events.register("motion_lost", lambda: color_named("lightrose"))
-    flask.current_app.events.register("route_coffee", lambda: color_named("green"))
-    flask.current_app.events.register("route_welcome", lambda: color_named("rose"))
     flask.current_app.events.register(
-        "facerecognition_face_detected", lambda: color_named("violet")
+        "motion_detected",
+        lambda: color_named(config.get("color_motion_detected")),
     )
     flask.current_app.events.register(
-        "facerecognition_face_lost", lambda: color_named("rose")
+        "motion_lost",
+        lambda: color_named(config.get("color_motion_lost")),
+    )
+    flask.current_app.events.register(
+        "route_coffee",
+        lambda: color_named(config.get("color_route_coffee")),
+    )
+    flask.current_app.events.register(
+        "route_welcome",
+        lambda: color_named(config.get("color_route_welcome")),
+    )
+    flask.current_app.events.register(
+        "facerecognition_face_detected",
+        lambda: color_named(config.get("color_facerecognition_face_detected")),
+    )
+    flask.current_app.events.register(
+        "facerecognition_face_lost",
+        lambda: color_named(config.get("color_facerecognition_face_lost")),
     )
 
 
@@ -69,6 +89,6 @@ if __name__ == "__main__":
     parser.add_argument("color", help="Color in RGB (0-1) or (0-255). E.g. 255 255 0")
     args = parser.parse_args()
 
-    setup()
+    setup(16, 20, 21)
     color(*[float(i) for i in args.color.split(" ")])
     IPython.embed()
