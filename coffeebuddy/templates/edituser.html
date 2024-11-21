@@ -257,8 +257,8 @@
                     <div class="my-3">
                         <label>Bill</label>
                         <div class="input-group w-50">
-                            <input class="form-control" type="number" id="form-item-unpayed" name="unpayed" min="0"
-                                step="0.01" pattern="[0-9]+\.[0-9]+ €" placeholder="0.00 €" autocomplete="off"
+                            <input class="form-control" type="number" id="form-item-unpayed" name="unpayed"
+                                step="0.01" pattern="[+-][0-9]+\.[0-9]+ €" placeholder="0.00 €" autocomplete="off"
                                 value="{{ '%0.02f' | format(user.unpayed) }}" />
                             <div class="input-group-append">
                                 <div class="input-group-text">EUR</div>

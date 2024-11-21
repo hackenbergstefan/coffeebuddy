@@ -40,7 +40,7 @@ def handle_post():
 
     flask.current_app.db.session.commit()
 
-    return flask.redirect(flask.request.form.get("referrer", "/"))
+    return flask.redirect(flask.request.form.get("referrer", "/") or "/")
 
 
 def handle_get():
