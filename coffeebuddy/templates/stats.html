@@ -18,7 +18,7 @@
          });
 {% endif %}
 
-         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js", () => {
+         function plotlyLoaded() {
              const drinks_this_week = {{ user.drinks_this_week() | tojson }};
              const drinks_avg_week = {{ user.drinks_last_weeks() | tojson }};
              const drinks_avg_week_all = {{ user.drinks_last_weeks_all() | tojson }};
@@ -80,8 +80,11 @@
                  },
              };
              Plotly.newPlot('stats', data, layout);
-         });
+         }
         </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
+            integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <style>
             .btnbar {
                 width: 200px;
