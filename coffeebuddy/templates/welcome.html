@@ -24,7 +24,7 @@
                 window.location.href = `../coffee.html?tag=${msg['tag']}`;
             });
         });
-        $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.3.0/plotly-basic.min.js", () => {
+        function plotlyLoaded() {
             var data = [{
                 x: {{ dataset| map(attribute = 1) | list | tojson }},
             y: {{ dataset| map(attribute = 0) | list | tojson }},
@@ -38,24 +38,27 @@
             color: {{ dataset| map(attribute = 0) | list | tojson }},
                  },
              }];
-        var layout = {
-            showlegend: false,
-            plot_bgcolor: "rgba(0,0,0,0)",
-            paper_bgcolor: "rgba(0,0,0,0)",
-            bargap: 0,
-            margin: {
-                t: "20",
-            },
-            autosize: true,
+            var layout = {
+                showlegend: false,
+                plot_bgcolor: "rgba(0,0,0,0)",
+                paper_bgcolor: "rgba(0,0,0,0)",
+                bargap: 0,
+                margin: {
+                    t: "20",
+                },
+                autosize: true,
+            };
+            Plotly.newPlot("stats", data, layout);
         };
-        Plotly.newPlot("stats", data, layout);
-         });
 
         setInterval(() => {
             var d = new Date();
             $("#clock").text(d.toLocaleString('de-DE', { hour: '2-digit', minute: '2-digit' }));
         }, 1000)
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
+        integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         #clock {
             position: absolute;

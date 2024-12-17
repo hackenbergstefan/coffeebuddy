@@ -47,7 +47,7 @@
         });
     </script>
     <script>
-         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js", () => {
+         function plotlyLoaded() {
              const drinks_last_weeks = {{ user.drinks_last_weeks(since=datetime.timedelta(weeks=4), group_by="day") | tojson }};
              const data = [
                  {
@@ -101,9 +101,11 @@
                  shapes: shapes,
              };
              Plotly.newPlot('stats', data, layout);
-         });
-        </script>
+         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
+        integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         .btnbar {
             width: 200px;
