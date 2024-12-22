@@ -1,160 +1,90 @@
-<html lang="en">
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
+{% extends "_basic.html" %}
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js" integrity="sha512-pH45RLZKz14g8UuQC8days10TDtKG3vXHpDH0UHjnF9HKxGYGzKELe1ship9QXFekhfRfRFEcpemtSvqT5E4oQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-        <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
-        <script>
-{% if not config['NOTIMEOUT'] %}
-         $(() => {
-             if (window.location.search.search('notimeout') == -1)
-             {
-                 startAutologout(autologoutTime = 20);
-             }
-         });
-{% endif %}
-
-         function plotlyLoaded() {
-             const drinks_this_week = {{ user.drinks_this_week() | tojson }};
-             const drinks_avg_week = {{ user.drinks_last_weeks() | tojson }};
-             const drinks_avg_week_all = {{ user.drinks_last_weeks_all() | tojson }};
-             const data = [
-                 {
-                     x: drinks_avg_week_all[0],
-                     y: drinks_avg_week_all[1],
-                     type: 'bar',
-                     name: 'All (3 month average)',
-                     marker: {
-                        color: 'rgba(136, 204 238, 0.8)',
-                        line: {
-                            color: 'rgba(136, 204 238, 1.0)',
-                            width: 1.5,
-                        }
-                     },
-                 },
-                 {
-                     x: drinks_avg_week[0],
-                     y: drinks_avg_week[1],
-                     type: 'bar',
-                     name: 'You (3 month average)',
-                     marker: {
-                        color: 'rgba(204, 102, 119, 0.8)',
-                        line: {
-                            color: 'rgba(204, 102, 119, 1.0)',
-                            width: 1.5,
-                        }
-                     },
-                 },
-                 {
-                     x: drinks_this_week[0],
-                     y: drinks_this_week[1],
-                     type: 'bar',
-                     name: 'You (this week)',
-                     marker: {
-                        color: 'rgba(221, 204, 119, 0.8)',
-                        line: {
-                            color: 'rgba(221, 204, 119, 1.0)',
-                            width: 1.5,
-                        }
-                     },
-                 },
-             ];
-             layout = {
-                 title: 'Your Coffee Stats',
-                 showlegend: true,
-                 legend: {
+{% block header %}
+    <script>
+        function plotlyLoaded() {
+            /* beautify ignore:start */
+            const drinks_this_week = {{ user.drinks_this_week() | tojson }};
+            const drinks_avg_week = {{ user.drinks_last_weeks() | tojson }};
+            const drinks_avg_week_all = {{ user.drinks_last_weeks_all() | tojson }};
+            /* beautify ignore:end */
+            const data = [{
+                x: drinks_avg_week_all[0],
+                y: drinks_avg_week_all[1],
+                type: 'bar',
+                name: 'All (3 month average)',
+                marker: {
+                    color: '#ecd9d1b0',
+                    line: {
+                        color: '#ecd9d1',
+                        width: 1.5,
+                    }
+                },
+            }, {
+                x: drinks_avg_week[0],
+                y: drinks_avg_week[1],
+                type: 'bar',
+                name: 'You (3 month average)',
+                marker: {
+                    color: '#985e49b0',
+                    line: {
+                        color: '#985e49',
+                        width: 1.5,
+                    }
+                },
+            }, {
+                x: drinks_this_week[0],
+                y: drinks_this_week[1],
+                type: 'bar',
+                name: 'You (this week)',
+                marker: {
+                    color: '#c6978eb0',
+                    line: {
+                        color: '#c6978e',
+                        width: 1.5,
+                    }
+                },
+            }, ];
+            const layout = {
+                font: {
+                    color: "#ecd9d1",
+                },
+                title: 'Your Coffee Stats',
+                showlegend: true,
+                legend: {
                     orientation: 'h',
-                 },
-                 barcornerradius: 5,
-                 plot_bgcolor: 'rgba(0,0,0,0)',
-                 paper_bgcolor: 'rgba(0,0,0,0)',
-                 margin: {
-                     t: 75,
-                     b: 50,
-                     l: 45,
-                     r: 30,
-                 },
-             };
-             Plotly.newPlot('stats', data, layout);
-         }
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
+                },
+                barcornerradius: 30,
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                margin: {
+                    t: 75,
+                    b: 50,
+                    l: 45,
+                    r: 30,
+                },
+                xaxis: {
+                    color: "#ecd9d1",
+                },
+                yaxis: {
+                    color: "#ecd9d1",
+                    gridcolor: "#ecd9d150",
+                }
+            };
+            const config = {
+                displayModeBar: false
+            };
+            Plotly.newPlot('stats', data, layout, config);
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"
+            async
+            onload="plotlyLoaded();"
             integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <style>
-            .btnbar {
-                width: 200px;
-            }
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+{% endblock header %}
 
-            .btnbar > * {
-                border: none;
-                border-bottom: 1px solid var(--color-engineering);
-                border-radius: 0;
-                padding: 1.5rem 0.3rem 1.5rem 1rem ;
-                font-size: 1.2rem;
-                width: 100%;
-                text-align: left;
-                white-space: nowrap;
-            }
-
-            .btnbar > button:last-child {
-                margin-top: auto;
-                border-top: 1px solid var(--color-engineering);
-                border-bottom: none;
-            }
-
-            .btnbar-button-icon {
-                font-size: 1.75rem;
-                /* TODO: No idea why the icon is optically higher than the text */
-                transform: translateY(3px);
-                width: 35px;
-            }
-
-            .btn-coffee {
-                padding: 25px 40px 20px 40px;
-                border-radius: 15px;
-                color: var(--color-berry);
-            }
-         }
-        </style>
-    </head>
-    <body>
-        <div class="d-flex flex-row w-100 h-100">
-            <div style="width: 200px">
-                <form method="post" class="h-100">
-                    <div class="d-flex flex-column h-100 btnbar">
-                        <div class="" type="submit">
-                            <span>Your bill:
-                                <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
-                            </span>
-                        </div>
-                        <button type="submit" name="coffee">
-                            <span class="btnbar-button-icon fas fa-coffee"></span>
-                            <span>coffee</span>
-                        </button>
-                        <button type="submit" name="logout">
-                            <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
-                            <span>Logout</span>
-                            <div id="autologout-bar-container" class="d-flex flex-row">
-                            </div>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div class="d-flex flex-column flex-grow text-center text-center ml-5 my-4">
-                <div class="text-left">
-                    <h3>Hi</h3>
-                    <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
-                    <code class="h5">{{ hexstr(user.tag) }}</code>
-                </div>
-                <div id="stats" style="width: 700px; height: 500px;">
-                    <canvas id="myChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+{% block main_content %}
+    <div id="stats"></div>
+{% endblock main_content %}

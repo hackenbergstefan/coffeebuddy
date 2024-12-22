@@ -1,93 +1,26 @@
-<!doctype html>
-<html lang="en">
+{% extends "_basic.html" %}
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-    <script>
-        $(() => {
-            $('#add-btn').click(() => {
-                window.location.href = '../edituser.html?tag={{ uuid }}';
-            });
-            $('#btn-back').click(() => {
-                window.location.href = '..';
-            });
-        });
-    </script>
-    <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
-    <script>
-        $(() => {
-            if (window.location.search.search('notimeout') == -1) {
-                // startAutologout();
-            }
-        });
-    </script>
+{% block header %}
     <style>
-        .btnbar>* {
-            border: none;
-            border-bottom: 1px solid var(--color-engineering);
-            border-radius: 0;
-            padding: 1.5rem 0.3rem 1.5rem 1rem;
-            font-size: 1.2rem;
-            width: 100%;
-            text-align: left;
-            white-space: nowrap;
+        #uuid {
+            font-size: 5rem;
+            font-weight: bold;
+            flex-grow: 1;
+            text-align: center;
+            align-self: center;
         }
-
-        .btnbar>button:last-child {
-            margin-top: auto;
-            border-top: 1px solid var(--color-engineering);
-            border-bottom: none;
-        }
-
-        .btn-register {
-            color: var(--color-berry);
-            background: none;
-            border: 1px solid var(--color-engineering);
-            border-radius: 5px;
-            font-size: 2rem;
-        }
-
-        .btn-register-icon {
-            font-size: 6rem;
-        }
-
     </style>
-</head>
+{% endblock header %}
 
-<body>
-    <div class="d-flex flex-row w-100 h-100">
-        <div class="d-flex flex-column justify-content-center text-center h-100 flex-grow-1">
-            <h1 class="display-1">Card not found</h1>
-            <code class="display-1">{{ uuid }}</code>
-            <div class="d-flex justify-content-center text-center">
-                <button id="add-btn" class="px-5 pt-3 pb-2 btn-register">
-                    <div class="fas fa-user-plus btn-register-icon"></div>
-                    <div class="mt-2">Register</div>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div style="position: absolute; top: 0; width: 200px; height: 100%;">
-        <div class="d-flex flex-column h-100 btnbar">
-            <button id="btn-back" class="mb-2" type="submit" name="logout">
-                <span class="btnbar-button-icon fas fa-backspace"></span>
-                <span>Back</span>
-                <div id="autologout-bar-container" class="d-flex flex-row">
-                </div>
-            </button>
-        </div>
-    </div>
-</body>
+{% block title %}
+    <h1>Card not found</h1>
+{% endblock title %}
 
-</html>
+{% block main_nav_items %}
+    {{ nav_item("adduser", "fas fa-user-plus", type="button", onclick="window.location.href='../edituser.html?tag="+uuid+"'") }}
+    {{ nav_item("back", "fas fa-left-long", class="mt-auto", type="button", onclick="window.location.href='..'") }}
+{% endblock main_nav_items %}
+
+{% block main_content %}
+    <code id="uuid">{{ uuid }}</code>
+{% endblock main_content %}

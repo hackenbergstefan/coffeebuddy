@@ -15,10 +15,17 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import DeclarativeBase
 
-__version__ = "1.5.1"
+__version__ = "2.0.0"
 
-db = SQLAlchemy()
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
+Base.query = db.session.query_property()
 login_manager = flask_login.LoginManager()
 
 
@@ -139,6 +146,10 @@ def init_app_context(app):
 
     coffeebuddy.pir.init()
 
+    import coffeebuddy.coffeemaker
+
+    coffeebuddy.coffeemaker.init()
+
     if (
         "WEBEX_DATABASE_BACKUP" in flask.current_app.config
         or "REMINDER_MESSAGE" in flask.current_app.config
@@ -207,6 +218,42 @@ def prefill():
                 selected_manually=random.randint(0, 1),
             )
         )
+
+    import xml.etree.ElementTree as ET
+
+    tree = ET.parse(Path(__file__).parent / "static" / "8xc_pro_1.0.xml")
+    for product in tree.findall(".//{*}PRODUCT"):
+        if product.attrib["DoubleProduct"] == "true":
+            continue
+        settings = {
+            name: int(item.attrib.get("Value", 0) or item.attrib.get("Default", 0))
+            if (item := product.find(f"{{*}}{setting.xml_name}")) is not None
+            else 0
+            for name, setting in coffeebuddy.model.CoffeeVariant.settings.items()
+        }
+        icon = {
+            "espresso_1": "espresso",
+            "ristretto_1": "espresso",
+            "kaffee_1": "coffee",
+            "cappuccino_1": "cappuccino",
+            "milchkaffee_1": "flat-white",
+            "latte_macchiato_1": "latte-macchiato",
+            "latte_macchiato_long_1": "latte-macchiato",
+            "milchschaum_long_1": "latte-macchiato",
+            "milchportion_long_1": "latte-macchiato",
+            "espresso_macchiato_1": "espresso-macchiato",
+        }.get(product.attrib["PictureIdle"].replace(".png", ""), None)
+        if not icon:
+            continue
+
+        variant = coffeebuddy.model.CoffeeVariant(
+            name=product.attrib["Name"],
+            icon=icon,
+            editable=False,
+            **settings,
+        )
+        flask.current_app.db.session.add(variant)
+
     flask.current_app.db.session.commit()
 
 

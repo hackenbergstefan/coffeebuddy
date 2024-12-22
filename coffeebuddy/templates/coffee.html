@@ -1,258 +1,86 @@
-<!doctype html>
-{% set coffee_state = {
-0: 'fa-meh-blank',
-1: 'fa-surprise',
-2: 'fa-smile-wink',
-3: 'fa-smile-beam',
-4: 'fa-grin',
-5: 'fa-grin-wink',
-6: 'fa-grin-stars',
-7: 'fa-grimace',
-} %}
-<html lang="en">
+{% extends "_basic.html" %}
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='matrix.css') }}">
-
-    <script src="{{ url_for('static', filename='matrix-0.0.1.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='autologout.js') }}" defer></script>
-    {% if not config['NOTIMEOUT'] %}
-    <script>
-        $(() => {
-            if (window.location.search.search('notimeout') == -1) {
-                startAutologout();
-            }
-        });
-    </script>
-    {% endif %}
-    <script>
-        $(() => {
-            {% if 'coffee' in referer %}
-            $("#modal-enjoy").modal("show");
-            window.setTimeout(() => {
-                $("#modal-enjoy").modal("hide");
-            }, 1000);
-            {% endif %}
-        });
-    </script>
-    <script>
-         function plotlyLoaded() {
-             const drinks_last_weeks = {{ user.drinks_last_weeks(since=datetime.timedelta(weeks=4), group_by="day") | tojson }};
-             const data = [
-                 {
-                     x: drinks_last_weeks[0],
-                     y: drinks_last_weeks[1],
-                     type: 'bar',
-                     marker: {
-                        color: 'rgba(171, 55, 122, 0.6)',
-                     },
-                 },
-             ];
-             const shapes = [
-             {% for monday in last_mondays %}
-                {
-                    type: 'line',
-                    x0: '{{ monday }}',
-                    y0: 0,
-                    x1: '{{ monday }}',
-                    yref: 'paper',
-                    y1: 1,
-                    line: {
-                        color: 'grey',
-                        width: 1.5,
-                        dash: 'dot'
-                    }
-                },
-             {% endfor %}
-             ];
-             layout = {
-                 plot_bgcolor: 'rgba(0,0,0,0)',
-                 paper_bgcolor: 'rgba(0,0,0,0)',
-                 margin: {
-                     t: 0,
-                     b: 50,
-                     l: 30,
-                     r: 0,
-                 },
-                 xaxis: {
-                    rangebreaks: [{
-                        bounds: ['sat', 'mon'],
-                        pattern: 'day of week'
-                    }],
-                    tickformat: '%d %b',
-                    dtick: 7 * 86400000.0,
-                 },
-                 yaxis: {
-                    dtick: 1,
-                 },
-                 barcornerradius: 4,
-                 bargap: 0.01,
-                 shapes: shapes,
-             };
-             Plotly.newPlot('stats', data, layout);
-         }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
-        integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% block header %}
     <style>
-        .btnbar {
-            width: 200px;
+        .coffee-container {
+            display: flex;
+            margin-right: 80px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 50px 50px;
+            overflow-y: auto;
         }
 
-        .btnbar>* {
-            border: none;
-            border-bottom: 1px solid var(--color-engineering);
-            border-radius: 0;
-            padding: 1.5rem 0.3rem 1.5rem 1rem;
-            font-size: 1.2rem;
-            width: 100%;
-            text-align: left;
-            white-space: nowrap;
+        ::-webkit-scrollbar {
+            width: 0;
         }
 
-        .btnbar>button:last-child {
+        .coffee-icon-container {
+            width: 170px;
+            height: 170px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+            position: relative;
+        }
+
+        .coffee-icon-container:active,
+        .coffee-icon-container:focus {
+            filter: saturate(2);
+        }
+
+        .coffee-icon-container .coffee-icon-icon {
+            filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.25));
+        }
+
+        .coffee-icon-text {
             margin-top: auto;
-            border-top: 1px solid var(--color-engineering);
-            border-bottom: none;
-        }
-
-        .btnbar-button-icon {
-            font-size: 1.75rem;
-            /* TODO: No idea why the icon is optically higher than the text */
-            transform: translateY(3px);
-            width: 35px;
-        }
-
-        .btn-coffee {
-            padding: 25px 40px 20px 40px;
-            border-radius: 15px;
-            color: var(--color-berry);
-        }
-
-        .coffeemeter-title {
-            position: absolute;
-            bottom: 0;
-            font-size: 1.3rem;
-            margin-left: 0.5rem;
-            transform-origin: 0 100%;
-            transform: rotate(-90deg);
-            color: var(--color-engineering);
-        }
-
-        .coffeemeter-tag {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            font-size: 1.75rem;
-            color: var(--color-engineering-light);
+            font-size: 15px;
+            text-transform: uppercase;
             text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .modal-dialog {
-            max-width: 300px;
-        }
-
-        #modal-enjoy .modal-content {
-            width: 300px;
-            height: 300px;
+            line-height: 0.9;
         }
     </style>
-</head>
+    <script>
+        $(document).ready(() => {
+            $('.coffee-icon-container').click(event => {
+                const coffeeId = $(event.currentTarget).attr('coffee-id');
+                var form = $('.coffee-container').first();
+                form.append($(`<input type="hidden" name="coffeeid" value="${coffeeId}">`));
+                form.submit();
+            });
+        });
+    </script>
+{% endblock header %}
 
-<body>
-    <div class="d-flex flex-row w-100 h-100">
-        <div style="width: 200px">
-            <form method="post" class="h-100">
-                <div class="d-flex flex-column h-100 btnbar">
-                    <div class="" type="submit">
-                        <span>Your bill:
-                            <span class="h3"> {{ "%.2f €" | format(user.unpayed) }}</span>
-                        </span>
-                    </div>
-                    <button type="submit" name="pay" value={{ config['PAY'] }}>
-                        <span class="btnbar-button-icon fas fa-euro-sign"></span>
-                        <span>pay</span>
-                    </button>
-                    <button type="submit" name="edituser">
-                        <span class="btnbar-button-icon fas fa-edit"></span>
-                        <span>edit user</span>
-                    </button>
-                    <button type="submit" name="stats">
-                        <span class="btnbar-button-icon fas fa-chart-line"></span>
-                        <span>stats</span>
-                    </button>
-                    {% if config['FACERECOGNITION'] %}
-                    <button type="submit" name="capture">
-                        <span class="btnbar-button-icon fas fa-camera"></span>
-                        <span>capture</span>
-                    </button>
-                    {% endif %}
-                    <button type="submit" name="logout">
-                        <span class="btnbar-button-icon fas fa-sign-out-alt"></span>
-                        <span>Logout</span>
-                        <div id="autologout-bar-container" class="d-flex flex-row">
-                        </div>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="d-flex flex-column flex-grow text-center mx-5 my-4">
-            <div class="text-left">
-                <h3>Hi</h3>
-                <h1 id="user-name">{{ user.prename }} {{ user.name }}</h1>
-                <code class="h5">{{ hexstr(user.tag) }}</code>
-            </div>
-            <div class="my-auto align-self-end">
-                <form method="post">
-                    <button id="btn-coffee" type="submit" class="btn-coffee" name="coffee" value="coffee">
-                        <div id="btn-coffee-icon" class="display-1 fas fa-coffee"></div>
-                        <div id="btn-coffee-text" class="h3">Take one coffee</div>
-                    </button>
-                </form>
-            </div>
-        </div>
-        <div class="d-flex flex-column m-4" style="width: 350px;">
-            <div class="h4 pb-2 mb-4 border-bottom border-dark">Your <div class="fas fa-coffee"></div> in numbers</div>
-            <div class="h4">Today you already had</div>
-            <div class="h3 color-berry font-weight-bold">{{ user.drinks_today | length }}</div>
-            <div class="my-3"></div>
+{% block main_nav_items %}
+    {{ nav_item('pay', 'fas fa-euro') }}
+    {{ nav_item('edituser', 'fas fa-user-pen') }}
+    {{ nav_item('stats', 'fas fa-chart-line') }}
+    {{ nav_item("logout", "fas fa-right-to-bracket flipx",
+        class="mt-auto", type="button", onclick="window.location.href='..'") }}
+{% endblock main_nav_items %}
 
-            <div class="h5">On {{ today_name }} you usually have</div>
-            <div class="h4 color-berry font-weight-bold">{{ '%0.1f' | format(user.drinks_avg_today()) }}</div>
-            <div class="my-3"></div>
-
-            <div class="h5">Your last month</div>
-            <div id="stats" class="w-100" style="height: 200px">
-            </div>
-            </div>
-        </div>
-    </div>
-    <canvas id="matrix"></canvas>
-
-    <!-- Modal -->
-    <div class="modal fade" id="modal-enjoy" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content p-3">
-                <h2 class="color-berry">Enjoy!</h2>
-                <div class="d-flex flex-column justify-content-center text-center h-100">
-                    <div class="display-1 color-berry far fa-smile mb-3"></div>
+{% block main_content %}
+    <form method="post" class="coffee-container">
+        {% for variant in variants_favorites %}
+            <div type="submit"
+                 class="coffee-icon-container"
+                 coffee-id="{{ variant.id }}">
+                <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
+                <div class="coffee-icon-text">
+                    {{ variant.name }}
+                    <sup class="fas fa-heart"></sup>
                 </div>
             </div>
-        </div>
-    </div>
-</body>
-
-</html>
+        {% endfor %}
+        {% for variant in variants %}
+            <div type="submit"
+                 class="coffee-icon-container"
+                 coffee-id="{{ variant.id }}">
+                <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
+                <div class="coffee-icon-text">{{ variant.name }}</div>
+            </div>
+        {% endfor %}
+    </form>
+{% endblock main_content %}

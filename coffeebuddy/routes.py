@@ -21,6 +21,10 @@ def init():
                 flask.current_app.events.fire("route_notwelcome")
         return response
 
+    import coffeebuddy.route_brew
+
+    coffeebuddy.route_brew.init()
+
     import coffeebuddy.route_coffee
 
     coffeebuddy.route_coffee.init()
@@ -60,6 +64,10 @@ def init():
     import coffeebuddy.route_login
 
     coffeebuddy.route_login.init()
+
+    import coffeebuddy.route_editvariant
+
+    coffeebuddy.route_editvariant.init()
 
     @flask.current_app.errorhandler(Exception)
     def route_error(exception):

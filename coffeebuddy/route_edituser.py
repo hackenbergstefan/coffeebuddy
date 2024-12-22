@@ -40,8 +40,6 @@ def handle_post():
 
     flask.current_app.db.session.commit()
 
-    return flask.redirect(flask.request.form.get("referrer", "/") or "/")
-
 
 def handle_get():
     tag = escapefromhex(flask.request.args["tag"])

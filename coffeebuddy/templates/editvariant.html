@@ -1,0 +1,170 @@
+{% extends "_basic.html" %}
+
+{% block header %}
+    <style>
+        .coffee-icon {
+            position: absolute;
+            top: calc(50% - 150px);
+            right: 50px;
+            width: 300px;
+            height: 300px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+
+        .settings-container {
+            display: flex;
+            width: calc(100% - 300px);
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .settings-name {
+            font-size: 1rem;
+        }
+
+        .settings-slider {
+            height: 10px;
+        }
+
+        .edit-variant-name {
+            display: inline-block;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+    </style>
+    <script>
+        /* beautify ignore:start */
+        const settings = {{ variant.settings | tojson }};
+        /* beautify ignore:end */
+
+        function sliderDrag() {
+            let slider = $(this);
+            let min = parseFloat(slider.attr('aria-valuemin'));
+            let max = parseFloat(slider.attr('aria-valuemax'));
+            let step = parseFloat(slider.attr('aria-valuestep'));
+            let width = slider.width();
+            let x = (event.touches[0].clientX - slider.offset().left) / width;
+            let percent = Math.min(1.0, Math.max(0.0, x));
+            let value = min + (Math.round((max - min) * percent / step) * step);
+            let valuePercent = (value - min) / (max - min);
+            let setting = settings[slider.attr('name')];
+            let valueDisplay = (setting["names"] != null) ?
+                setting["names"][Math.round(valuePercent * (setting["names"].length - 1))] :
+                value;
+            slider.siblings('.settings-name').find('strong').text(valueDisplay);
+            slider.find('.progress-bar').css('width', (valuePercent * 100) + '%');
+            slider.attr('aria-valuenow', value);
+        }
+
+        $(() => {
+            $('.settings-slider').on("touchmove", sliderDrag);
+        });
+    </script>
+    <script>
+        function submitVariant() {
+            newVariant = {
+                name: $('#variant-name').val()
+            };
+            $('.settings-slider').map(function() {
+                let slider = $(this);
+                newVariant[slider.attr('name')] = slider.attr('aria-valuenow');
+            });
+            $.post(window.location.href, newVariant, (data) => {
+                $('#modal-updated').modal('show');
+                console.log(data);
+                const table = $('#modal-updated-content tbody');
+                table.empty();
+                for (const item in data) {
+                    const [
+                        val_old,
+                        val_new
+                    ] = data[item];
+                    line = $(`<tr><td>${item}</td><td>${val_old}</td><td>${val_new}</td></tr>`);
+                    line.addClass(val_old != val_new ? 'table-active' : '');
+                    table.append(line);
+                }
+            });
+        }
+
+        function goToBrew() {
+            window.location.href = '../brew.html?tag={{ user.tag.hex() }}&coffeeid={{ variant.id }}';
+        }
+    </script>
+{% endblock header %}
+
+{% block title %}
+    <h1>{{ title_text }}</h1>
+{% endblock title %}
+
+{% block main_nav_items %}
+    {{ nav_item('save', 'fas fa-save', type='button', onclick='submitVariant();') }}
+    {{ super() }}
+{% endblock main_nav_items %}
+
+{% block main_content %}
+    <div class="coffee-icon icon-{{ variant.icon }}"></div>
+    <form id="variant-settings" class="settings-container">
+        <div class="form-group row">
+            <div class="col">
+                <label>Name</label>
+                <input class="form-control"
+                       id="variant-name"
+                       type="text"
+                       name="name"
+                       required
+                       value="{{ variant.name }}"
+                       autocomplete="off"
+                       onclick="simple_keyboard_process(this)">
+            </div>
+        </div>
+        {% for setting_name, setting in variant.settings.items() %}
+            <div class="d-flex flex-column">
+                <div class="settings-name">
+                    {{ setting.display_name }}:
+                    <strong>{{ variant.setting_display(setting_name) }}</strong>
+                </div>
+                <div class="progress settings-slider"
+                     aria-valuemin="{{ setting.min }}"
+                     aria-valuemax="{{ setting.max }}"
+                     aria-valuestep="{{ setting.step }}"
+                     aria-valuenow="{{ variant|attr(setting_name) }}"
+                     name="{{ setting_name }}">
+                    <div class="progress-bar"
+                         style="width: {{ variant.setting_in_percent(setting_name) }}%"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </form>
+{% endblock main_content %}
+
+{% block post_body %}
+    <div class="modal fade"
+         id="modal-updated"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-5">
+                <h3>Saved</h3>
+                <table id="modal-updated-content" class="table">
+                    <thead>
+                        <tr>
+                            <th>Setting</th>
+                            <th>Old</th>
+                            <th>New</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+                <div>
+                    <button class="btn btn-primary" onclick="goToBrew();">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ simple_keyboard() }}
+{% endblock post_body %}

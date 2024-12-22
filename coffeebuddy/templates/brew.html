@@ -1,0 +1,122 @@
+{% extends "_basic.html" %}
+
+{% block header %}
+    <style>
+        .coffee-icon {
+            width: 230px;
+            height: 230px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+
+        #fact {
+            background: var(--color-fg);
+            color: var(--color-bg);
+            padding: 20px 25px;
+            border-radius: 100px;
+            margin-top: 20px;
+            text-align: center;
+            font-style: italic;
+            font-size: 2rem;
+            box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        #fact p {
+            margin: 0;
+        }
+
+        #coffee-settings-icon-container {
+            display: flex;
+            flex-direction: row;
+            gap: 100px;
+        }
+
+        #coffee-settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 200px;
+        }
+
+        .setting-name {
+            font-size: 12px;
+        }
+
+        .setting-slider {
+            height: 5px;
+        }
+    </style>
+    <script>
+        var socket;
+        $(() => {
+            socket = io.connect(window.location.host);
+            socket.on('brew', (msg) => {
+                console.log(msg);
+                switch (msg['state']) {
+                    case 'started':
+                        $('#brew-normal').addClass('visually-hidden');
+                        $('#main-nav').children().toggleClass('visually-hidden');
+                        $(`<p>${msg['fact']}</p>`).appendTo('#fact');
+                        $('#brew-brewing').removeClass('visually-hidden');
+                        break;
+                    case 'finished':
+                        $('#main-nav button[name="abort"]').first().click();
+                        var form = $('#main-nav').first();
+                        var btn = $('<button class="visually-hidden" name="brewed"></button>')
+                        form.append(btn);
+                        btn.click();
+                        break;
+                }
+            });
+            $('#main-nav button[name="abort"]').click(() => {
+                socket.emit('brew', 'abort');
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block main_nav_items %}
+    {{ nav_item('new', 'fas fa-plus') }}
+    {{ nav_item("edit", "icon-coffee-edit", disabled=not variant.editable) }}
+    {{ nav_item("fav", "fas fa-heart-circle-minus" if variant in user.variant_favorites else "fas fa-heart-circle-plus") }}
+    {{ nav_item("abort", "fas fa-xmark", class="mt-auto visually-hidden") }}
+{% endblock main_nav_items %}
+
+{% block main_content %}
+    <div id="brew-normal" class="d-flex flex-column flex-grow-1 gap-4">
+        <h2>Brew {{ variant.name }}?</h2>
+        <div id="coffee-settings-icon-container">
+            <div id="coffee-settings-container">
+                {% for setting_name, setting in variant.settings.items() %}
+                    <div class="d-flex flex-column">
+                        <div class="setting-name">
+                            {{ setting.display_name }}:
+                            <strong>{{ variant.setting_display(setting_name) }}</strong>
+                        </div>
+                        <div class="progress setting-slider">
+                            <div class="progress-bar"
+                                 style="width: {{ variant.setting_in_percent(setting_name) }}%"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="coffee-icon icon-{{ variant.icon }} flex-grow-2"></div>
+        </div>
+        <form method="post" class="d-flex flex-row justify-content-around">
+            <button type="button"
+                    name="yes"
+                    class="btn-big fas fa-check"
+                    onclick="socket.emit('brew', 'start');"></button>
+            <button type="submit" name="no" class="btn-big fas fa-xmark"></button>
+        </form>
+    </div>
+    <div id="brew-brewing"
+         class="d-flex flex-column flex-grow-1 visually-hidden">
+        <h2>Brewing {{ variant.name }} ...</h2>
+        <div class="d-flex justify-content-center align-items-center my-4">
+            <div class="spinner-border" role="status"></div>
+        </div>
+        <div id="fact"></div>
+    </div>
+{% endblock main_content %}
