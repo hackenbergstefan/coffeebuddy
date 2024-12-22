@@ -1,0 +1,213 @@
+{% macro nav_item(name, icon, type="submit", class="", disabled=False) %}
+    <button {{ 'disabled' if disabled }}
+            type="{{ type }}"
+            name="{{ name }}"
+            class="main-nav-btn {{ class }}"
+            {% for k, v in kwargs | items %}{{ k ~ "=" ~ v }}{% endfor %}>
+        <div class="main-nav-btn-text {{ icon }}"></div>
+    </button>
+{% endmacro %}
+
+{# Simple Keyboard: Call somewhere to enable on-screen keyboard #}
+{% macro simple_keyboard(layout="ascii") %}
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+    <script>
+        var simple_keyboard_element = null;
+        var myKeyboard;
+
+        $(() => {
+            const Keyboard = window.SimpleKeyboard.default;
+
+            myKeyboard = new Keyboard({
+                onChange: input => onChange(input),
+                onKeyPress: button => onKeyPress(button),
+                /* beautify ignore:start */
+                {% if layout == "ascii" %}
+                /* beautify ignore:end */
+                layout: {
+                    'default': [
+                        "1 2 3 4 5 6 7 8 9 0 \u00DF {bksp}",
+                        "q w e r t z u i o p \u00FC",
+                        "a s d f g h j k l \u00F6 \u00E4",
+                        "{shift} y x c v b n m , . -",
+                        ".com @ {{ config['USER_EMAIL_DEFAULT_DOMAINS'] | join(' ') }} {space} {enter}",
+                    ],
+                    'shift': [
+                        "1 2 3 4 5 6 7 8 9 0 \u00DF {bksp}",
+                        "Q W E R T Z U I O P \u00DC",
+                        "A S D F G H J K L \u00D6 \u00C4",
+                        "{shift} Y X C V B N M , . -",
+                        ".com @ {{ config['USER_EMAIL_DEFAULT_DOMAINS'] | join(' ') }} {space} {enter}",
+                    ]
+                },
+                /* beautify ignore:start */
+                {% else %}
+                /* beautify ignore:end */
+                layout: {
+                    'default': [
+                        "1 2 3",
+                        "4 5 6",
+                        "7 8 9",
+                        ". - 0 {bksp}",
+                        "{enter} {abort}",
+                    ],
+                },
+                /* beautify ignore:start */
+                {% endif %}
+                /* beautify ignore:end */
+                display: {
+                    "{bksp}": "\u232B",
+                    "{enter}": "OK",
+                    "{space}": "space",
+                    "{shift}": "shift",
+                    "{abort}": "Abort",
+                },
+                buttonTheme: [{
+                    class: "simple-keyboard-bigkey",
+                    buttons: "{enter}"
+                }]
+            });
+
+            function onChange(input) {
+                $("#simple-keyboard-input").val(input);
+            }
+
+            function onKeyPress(button) {
+                if (button == "{enter}") {
+                    simple_keyboard_element.val($("#simple-keyboard-input").val());
+                    $("#modal-simple-keyboard").modal("hide");
+                }
+                if (button === "{shift}") handle_shift();
+            }
+        });
+
+        function handle_shift() {
+            let currentLayout = myKeyboard.options.layoutName;
+            let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+            myKeyboard.setOptions({
+                layoutName: shiftToggle
+            });
+        }
+
+        function simple_keyboard_process(el) {
+            simple_keyboard_element = $(el);
+            $("#modal-simple-keyboard").modal("show");
+            $("#modal-simple-keyboard h2").html($(el).attr("placeholder"));
+            myKeyboard.setInput($(el).val());
+            $("#simple-keyboard-input").val(myKeyboard.getInput());
+        }
+    </script>
+    <!-- Modal keyboard -->
+    <div class="modal fade"
+         id="modal-simple-keyboard"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered mw-100" role="document">
+            <div class="modal-content p-4">
+                <h2>
+                    <!-- Filled by JS -->
+                </h2>
+                <input id="simple-keyboard-input"
+                       class="input my-3 p-2"
+                       type="text"
+                       aria-label="Large"
+                       autofocus />
+                <div class="simple-keyboard"></div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+<!DOCTYPE html>
+<!-- djlint:off H016 H030 H031 -->
+<html lang="en">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+                integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+              crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+                crossorigin="anonymous"></script>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+              integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+              crossorigin="anonymous"
+              referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"
+                integrity="sha512-8BHxHDLsOHx+flIrQ0DrZcea7MkHqRU5GbTHmbdzMRnAaoCIkZ97PqZcXJkKZckMMhqfoeaJE+DNUVuyoQsO3Q=="
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Code+Pro&display=swap"
+              rel="stylesheet">
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='coffeebuddy.css') }}">
+        <script>
+            // Adjust main title font size to fit in container
+            $(() => {
+                const main_title = $("#main-title-user h1");
+                if (main_title != undefined) {
+                    // main_title.css("font-size", `calc(0.06vw * ${main_title.text().length})`);
+                }
+            });
+        </script>
+
+        {% block header %}
+        {% endblock header %}
+    </head>
+    <body class="w-100 h-100">
+        <div id="bg"></div>
+        <div id="main">
+            <div id="main-title">
+                <div class="icon-beans"></div>
+
+                {% block title %}
+                    <div id="main-title-user">
+                        <h1>{{ user.prename }} {{ user.name }}</h1>
+                        <div class="mx-1 d-flex flex-row column-gap-3 align-items-baseline">
+                            <div class="main-title-id">{{ hexstr(user.tag) }}</div>
+                            {% if user.tag2 %}
+                                <div>-</div>
+                                <div class="main-title-id">{{ hexstr(user.tag2) }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="main-title-coffeemeter">
+                        {% for _ in user.drinks_today %}<div class="icon-bean"></div>{% endfor %}
+                    </div>
+                    <div class="main-title-balance-container {{ "color-bg-warning" if user.balance < 0 else "" }}">
+                        <div class="main-title-balance-label">Balance</div>
+                        <div class="main-title-balance">{{ "%.2f €" | format(user.balance) }}</div>
+                    </div>
+                {% endblock title %}
+            </div>
+            <div id="main-nav-and-content">
+                <form method="post" id="main-nav">
+
+                    {% block main_nav_items %}
+                        {# Add "back" as default nav item #}
+                        {{ nav_item("back", "fas fa-left-long", class="mt-auto", type="button", onclick="history.back()") }}
+                    {% endblock main_nav_items %}
+                </form>
+                <div id="main-content">
+
+                    {% block main_content %}
+                    {% endblock main_content %}
+                </div>
+            </div>
+        </div>
+    </body>
+
+    {% block post_body %}
+        {# Add e.g. keyboard here #}
+    {% endblock post_body %}
+</html>

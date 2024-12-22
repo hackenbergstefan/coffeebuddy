@@ -1,12 +1,16 @@
 import calendar
 import socket
 import string
+from dataclasses import dataclass
 from datetime import date, datetime, timedelta
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import flask
 import sqlalchemy
-from sqlalchemy import text
+from sqlalchemy import Column, ForeignKey, Integer, Table, text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from . import Base
 
 
 def db_weekday(column) -> str:
@@ -37,6 +41,12 @@ def weekday(number):
         return calendar.day_name[number - 1]
 
 
+def escapefromhex(data):
+    if not data:
+        return None
+    return bytes.fromhex(data)
+
+
 class Serializer:
     @staticmethod
     def escape(obj):
@@ -50,6 +60,18 @@ class Serializer:
             for c in sqlalchemy.inspection.inspect(self).attrs.keys()
             if c not in sqlalchemy.inspect(self.__class__).relationships.keys()
         }
+
+
+coffee_variant_favorites = Table(
+    "coffee_variant_favorites",
+    Base.metadata,
+    Column("user", Integer, ForeignKey("user.id", ondelete="CASCADE")),
+    Column(
+        "variant",
+        Integer,
+        ForeignKey("coffee_variant.id", ondelete="CASCADE"),
+    ),
+)
 
 
 class User(flask.current_app.db.Model, Serializer):
@@ -74,6 +96,10 @@ class User(flask.current_app.db.Model, Serializer):
     )
     drinks = flask.current_app.db.relationship(
         "Drink", backref="user", cascade="all, delete"
+    )
+    variant_favorites = relationship(
+        "CoffeeVariant",
+        secondary=coffee_variant_favorites,
     )
 
     @staticmethod
@@ -106,6 +132,10 @@ class User(flask.current_app.db.Model, Serializer):
             )
             or 0.0
         )
+
+    @property
+    def balance(self):
+        return -self.unpayed
 
     def nth_drink(self, date, n):
         return (
@@ -341,6 +371,11 @@ class Drink(flask.current_app.db.Model):
     selected_manually = flask.current_app.db.Column(
         flask.current_app.db.Boolean, default=False
     )
+    coffeeid = flask.current_app.db.Column(
+        flask.current_app.db.Integer,
+        flask.current_app.db.ForeignKey("coffee_variant.id", ondelete="SET NULL"),
+        default=None,
+    )
 
     def __init__(self, *args, **kwargs):
         if "timestamp" not in kwargs:
@@ -386,7 +421,122 @@ class Pay(flask.current_app.db.Model):
         super().__init__(*args, **kwargs)
 
 
-def escapefromhex(data):
-    if not data:
-        return None
-    return bytes.fromhex(data)
+@dataclass
+class CoffeeSettings:
+    display_name: str
+    xml_name: str
+    xml_argument_number: int
+    min: int
+    max: int
+    step: int
+    names: List[str] = None
+
+
+class CoffeeVariant(Base, Serializer):
+    __tablename__ = "coffee_variant"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    derived_from: Mapped[Optional[int]] = mapped_column(ForeignKey("coffee_variant.id"))
+    name: Mapped[str] = mapped_column(unique=True)
+    icon: Mapped[str]
+    strength: Mapped[int]
+    grinder_ratio: Mapped[int]
+    water: Mapped[int]
+    temperature: Mapped[int]
+    bypass: Mapped[int]
+    milk_foam: Mapped[int]
+    milk: Mapped[int]
+
+    editable: Mapped[bool] = mapped_column(default=True)
+
+    settings = {
+        "strength": CoffeeSettings(
+            "Strength",
+            "COFFEE_STRENGTH",
+            xml_argument_number=3,
+            min=1,
+            max=5,
+            step=1,
+            names=["XMild", "Mild", "Normal", "Strong", "XStrong"],
+        ),
+        "grinder_ratio": CoffeeSettings(
+            "Grinder ratio",
+            "GRINDER_RATIO",
+            xml_argument_number=2,
+            min=0,
+            max=4,
+            step=1,
+            names=["100/0", "75/25", "50/50", "25/75", "0/100"],
+        ),
+        "water": CoffeeSettings(
+            "Water amount",
+            "WATER_AMOUNT",
+            xml_argument_number=4,
+            min=25,
+            max=290,
+            step=5,
+        ),
+        "temperature": CoffeeSettings(
+            "Temperature",
+            "TEMPERATURE",
+            xml_argument_number=7,
+            min=0,
+            max=2,
+            step=1,
+            names=["Low", "Normal", "High"],
+        ),
+        "bypass": CoffeeSettings(
+            "Bypass",
+            "BYPASS",
+            xml_argument_number=10,
+            min=0,
+            max=580,
+            step=5,
+        ),
+        "milk_foam": CoffeeSettings(
+            "Milk foam",
+            "MILK_FOAM_AMOUNT",
+            xml_argument_number=6,
+            min=0,
+            max=120,
+            step=1,
+        ),
+        "milk": CoffeeSettings(
+            "Milk",
+            "MILK_AMOUNT",
+            xml_argument_number=5,
+            min=0,
+            max=120,
+            step=1,
+        ),
+    }
+
+    def setting_in_percent(self, setting_name: str) -> int:
+        setting = self.settings[setting_name]
+        return int(
+            (getattr(self, setting_name) - setting.min)
+            / (setting.max - setting.min)
+            * 100
+        )
+
+    def setting_display(self, setting_name: str, value: Optional[float] = None) -> str:
+        setting = self.settings[setting_name]
+        value = getattr(self, setting_name)
+        return setting.names[value - setting.min] if setting.names else value
+
+    def __str__(self):
+        return (
+            "<CoffeeVariant "
+            + " ".join(
+                f"{setting_name}={self.setting_display(setting_name)}"
+                for setting_name in self.settings
+            )
+            + ">"
+        )
+
+    def all_for_user(user: User) -> List["CoffeeVariant"]:
+        return user.variant_favorites, [
+            variant
+            for variant in CoffeeVariant.query.all()
+            if variant not in user.variant_favorites
+        ]

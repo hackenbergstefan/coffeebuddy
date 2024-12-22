@@ -1,22 +1,6 @@
-<!doctype html>
-<html lang="en">
+{% extends "_basic.html" %}
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"
-        integrity="sha512-fB746S+jyTdN2LSWbYSGP2amFYId226wpOeV4ApumcDpIttPxvk1ZPOgnwqwQziRAtZkiFJVx9F64GLAtoIlCQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-
+{% block header %}
     <script>
         $(() => {
             var socket = io.connect(window.location.host);
@@ -24,21 +8,24 @@
                 window.location.href = `../coffee.html?tag=${msg['tag']}`;
             });
         });
+
         function plotlyLoaded() {
-            var data = [{
-                x: {{ dataset| map(attribute = 1) | list | tojson }},
-            y: {{ dataset| map(attribute = 0) | list | tojson }},
-            type: "bar",
-            mode: "lines",
-            marker: {
-            colorscale: [
-                ["0.0", "#ab377a10"],
-                ["1.0", "#ab377aff"],
-            ],
-            color: {{ dataset| map(attribute = 0) | list | tojson }},
-                 },
-             }];
-            var layout = {
+            const data = [{
+                /* beautify ignore:start */
+                x: {{ dataset | map(attribute = 1) | list | tojson }},
+                y: {{ dataset | map(attribute = 0) | list | tojson }},
+                /* beautify ignore:end */
+                type: "scatter",
+                mode: "lines",
+                line: {
+                    shape: 'spline'
+                },
+                fill: 'tozeroy',
+                marker: {
+                    color: "#c6978e",
+                },
+            }];
+            const layout = {
                 showlegend: false,
                 plot_bgcolor: "rgba(0,0,0,0)",
                 paper_bgcolor: "rgba(0,0,0,0)",
@@ -47,66 +34,99 @@
                     t: "20",
                 },
                 autosize: true,
+                xaxis: {
+                    color: "#ecd9d1",
+                    gridcolor: "#ecd9d150",
+                },
+                yaxis: {
+                    color: "#ecd9d1",
+                    showgrid: false,
+                    zeroline: false,
+                    showline: false,
+                    autotick: true,
+                    ticks: '',
+                    showticklabels: false
+                },
+                barcornerradius: 20,
             };
-            Plotly.newPlot("stats", data, layout);
+            const config = {
+                displayModeBar: false
+            };
+            Plotly.newPlot('stats', data, layout, config);
         };
 
         setInterval(() => {
             var d = new Date();
-            $("#clock").text(d.toLocaleString('de-DE', { hour: '2-digit', minute: '2-digit' }));
+            $("#clock").text(d.toLocaleString('de-DE', {
+                hour: '2-digit',
+                minute: '2-digit'
+            }));
         }, 1000)
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js" async onload="plotlyLoaded();"
-        integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"
+            async
+            onload="plotlyLoaded();"
+            integrity="sha512-7H/XbvOmUsf6mawBvmmx9BsPt9ew2NTwQ3QDSzNe6iyacDbCJU+7pBbZY1NdmTpuj7snxSsXasMYMiR2tv906g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
     <style>
         #clock {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-weight: 100;
-            font-size: 50px;
-            color: var(--color-engineering-light);
+            margin-left: auto;
+            align-self: flex-start;
+            padding: 10px 20px;
+            border-radius: 300px 0 0 300px;
+            background: var(--color-highlight);
+            font-size: 20px;
         }
 
         #info {
-            color: var(--color-berry);
             position: absolute;
-            top: 20px;
-            left: 20px;
+            background: var(--color-highlight);
+            bottom: 20px;
+            right: 0px;
             text-align: left;
+            padding: 10px 20px;
+            border-radius: 300px 0 0 300px;
+            font-size: 10px;
         }
 
         #info .info-label {
-            font-size: 8pt;
-            color: var(--color-engineering);
-            margin-top: 8px;
+            font-size: 8px;
+            margin-top: 5px;
             line-height: 0.8;
         }
 
+        #stats {
+            margin: 0 20px 0 -20px;
+        }
+
+        #title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 10vw;
+        }
     </style>
-</head>
+{% endblock header %}
 
-<body>
-    <div class="d-flex flex-column justify-content-center text-center h-100">
-        <h1 class="display-1" style="margin-top: 100px;">Welcome</h1>
-        <h3>Tap your card to continue</h3>
-        <div id="clock"></div>
-        <div id="info">
-            <div class="info-label">Hostname</div>
-            <div class="info-field">{{ hostname }}</div>
-            <div class="info-label">Version</div>
-            <div class="info-field">{{ version }}</div>
-            {% if config['GUEST'] %}
-            <button class="btn btn-primary mt-3 d-block"
-                onclick="window.location.href = '../coffee.html?tag=ffffffff'">Guest</button>
-            {% endif %}
-            <button class="btn btn-primary mt-3 d-block" onclick="window.location.href = '../selectuser.html'">
-                Select manually
-            </button>
-        </div>
-        <div id="stats" class="flex-grow-1"></div>
+{% block title %}
+    <div id="title">
+        <h1 class="display-1">Welcome</h1>
+        <h3>Tap your card or select manually to continue</h3>
     </div>
-</body>
+    <div id="clock"></div>
+{% endblock title %}
 
-</html>
+{% block main_nav_items %}
+    {{ nav_item("selectuser", "fas fa-list", type="button", onclick="window.location.href='../selectuser.html'") }}
+{% endblock main_nav_items %}
+
+{% block main_content %}
+    <div id="info">
+        <div class="info-label">Hostname</div>
+        <div class="info-field">{{ hostname }}</div>
+        <div class="info-label">Version</div>
+        <div class="info-field">{{ version }}</div>
+    </div>
+    <div id="stats" class="flex-grow-1"></div>
+{% endblock main_content %}

@@ -1,26 +1,6 @@
-<!doctype html>
-<html lang="en">
+{% extends "_basic.html" %}
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='coffeebuddy.css') }}">
-    <script>
-        $(() => {
-            $('#btn-back').click(() => {
-                window.location.href = '..';
-            });
-        });
-    </script>
+{% block header %}
     <style>
         .scroll {
             max-height: 100%;
@@ -30,64 +10,58 @@
         }
 
         .item {
-            color: var(--color-engineering-dark);
             background: none;
             border: none;
             font-size: 1.3rem;
-            border: 1px solid var(--color-engineering);
-            border-radius: 5px;
+            border-radius: 500px;
             padding: 5px 10px;
             max-width: 250px;
             margin: 5px;
             cursor: pointer;
         }
 
+        .item:active {
+            color: var(--color-highlight);
+        }
     </style>
-</head>
+{% endblock header %}
 
-<body>
-    <div class="d-flex flex-column w-100 h-100 px-5 pt-5 pb-3">
-        <div class="d-flex flex-row align-items-baseline mb-1">
-            <div class="display-1 fas fa-user mr-5"></div>
-            <h1>Users</h1>
-        </div>
+{% block title %}
+    <h1>Users</h1>
+{% endblock title %}
 
-        <div class="d-flex flex-column scroll">
-            {% if top_manual_users|length > 0 %}
+{% block main_content %}
+    <div class="d-flex flex-column scroll">
+        {% if top_manual_users|length > 0 %}
             <h3>Most frequent users</h3>
             <div class="d-flex flex-column">
                 <div class="d-flex flex-row flex-wrap">
                     {% for user in top_manual_users %}
-                    <div class="item" onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
-                        {{ user.name }} {{ user.prename }}
-                    </div>
+                        <div class="item"
+                             onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
+                            {{- user.name }} {{ user.prename -}}
+                        </div>
                     {% endfor %}
                 </div>
             </div>
-            {% endif %}
-
-            <h3 class="mt-5">All users</h3>
-            <div class="d-flex flex-column">
-                {% for char, userlist in users %}
+        {% endif %}
+        <h3 class="mt-5">All users</h3>
+        <div class="d-flex flex-column">
+            {% for char, userlist in users %}
                 <div class="d-flex justify-content-start my-2">
-                    <div class="h3 py-2 pr-2 mr-2 color-berry" style="border-right: 2px solid; min-width: 2.5ch;">{{char}}
-                    </div>
+                    <div class="h3 py-2 pr-2 mr-2 color-berry"
+                         style="border-right: 2px solid;
+                                min-width: 2.5ch">{{ char }}</div>
                     <div class="d-flex flex-row flex-wrap">
                         {% for user in userlist %}
-                        <div class="item" onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
-                            {{ user.name }} {{ user.prename }}
-                        </div>
+                            <div class="item"
+                                 onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
+                                {{- user.name }} {{ user.prename -}}
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-        <button id="btn-back" class="mt-auto align-self-end px-2" type="submit" name="logout">
-            <span class="btnbar-button-icon fas fa-backspace"></span>
-            <span>Back</span>
-        </button>
     </div>
-</body>
-
-</html>
+{% endblock main_content %}

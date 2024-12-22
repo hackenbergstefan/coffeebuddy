@@ -1,25 +1,67 @@
+/* #region colors */
+
 :root {
-    --color-engineering-light: #e9e6e7;
-    --color-engineering: #928285;
-    --color-engineering-dark: #644f54;
-    --color-berry: #ab377a;
+    --color-fg: #ecd9d1;
+    --color-bg: #422d26;
+    --color-highlight: #985e49;
+    --color-accent-2: #c6978e;
+    --color-accent-3: #b23939;
+    --color-accent-4: #583c33;
+    --bs-secondary-color: var(--color-accent-2);
+    --bs-body-bg: var(--color-bg);
+    --bs-body-color: var(--color-fg);
+    --bs-emphasis-color: var(--color-fg);
+    --bs-emphasis-color-rgb: 236, 217, 209;
+    --bs-link-color: var(--color-fg);
+    --bs-link-color-rgb: var(--color-fg);
 }
+
+.color-fg {
+    color: var(--color-fg);
+}
+
+.color-bg {
+    color: var(--color-bg);
+}
+
+.color-highlight {
+    color: var(--color-highlight);
+}
+
+.color-warning {
+    color: var(--color-accent-3);
+}
+
+.color-bg-warning {
+    background: var(--color-accent-3) !important;
+}
+
+/* #endregion */
+
+/* #region General */
 
 html,
 body {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    overscroll-behavior-x: none;
 }
 
 body {
-    color: var(--color-engineering-dark);
-    background-image: linear-gradient(45deg, var(--color-engineering-light), white 90%);
-    font-family: "Open Sans", sans-serif;
+    background: var(--color-fg);
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--color-fg);
 }
 
 h1 {
-    font-size: 70px
+    font-size: 50px
+}
+
+h2 {
+    font-size: 50px
 }
 
 h1,
@@ -29,114 +71,315 @@ h4,
 h5,
 h6,
 h7 {
-    color: var(--color-engineering-dark);
+    color: var(--color-fg);
 }
 
-/* Colors {{{ */
-
-.color-berry {
-    color: var(--color-berry);
+code {
+    font-family: "Source Code Pro", monospace;
+    color: var(--color-accent-2);
 }
 
-.color-engineering-dark {
-    color: var(--color-engineering-dark);
+label {
+    color: var(--color-accent-2);
 }
 
-.color-engineering-light {
-    color: var(--color-engineering-light);
+/* #endregion */
+
+/* #region Bootstrap */
+
+.row {
+    --bs-gutter-y: 10px;
+    margin-top: 0;
 }
-
-.bg-engineering-dark {
-    background: var(--color-engineering-dark);
-}
-
-/* }}} */
-
-/* Button {{{ */
 
 .btn,
+.btn-primary,
+.btn-secondary {
+    --bs-btn-color: var(--color-bg);
+    --bs-btn-bg: var(--color-fg);
+    --bs-btn-active-bg: var(--color-highlight);
+    --bs-btn-border-color: none;
+    min-width: 100px;
+    border-radius: 300px;
+    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.25));
+}
+
+.btn-primary {
+    font-weight: bold;
+}
+
+.modal {
+    --bs-modal-bg: var(--color-bg);
+}
+
+.hg-theme-default .hg-button {
+    background: var(--color-bg) !important;
+}
+
+.form-check-input {
+    background-color: var(--color-highlight) !important;
+    border-color: var(--color-highlight) !important;
+}
+
+.progress-bar {
+    background: var(--color-highlight);
+}
+
+.progress {
+    --bs-progress-bg: var(--color-fg);
+}
+
+.table {
+   --bs-table-striped-bg: var(--color-accent-4);
+   --bs-table-accent-bg: var(--color-bg);
+   --bs-table-active-bg: var(--color-bg);
+   --bs-table-bg: var(--color-bg);
+   --bs-table-color: var(--color-fg);
+}
+
+.table-active {
+   --bs-table-color-state: var(--color-bg);
+   --bs-table-bg-state: var(--color-accent-2);
+   font-weight: bold;
+}
+
+.table>:not(caption)>*>* {
+    padding: 0.1rem 0.5rem;
+}
+
 button {
-    color: var(--color-engineering-dark);
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    border: 1px solid var(--color-engineering);
-    border-radius: 5px;
+    border-style: none;
 }
 
-.btn:hover,
-button:hover {
-    background: rgba(255, 255, 255, 0.5);
-    color: var(--color-engineering-dark);
-    border-color: var(--color-engineering-dark);
-}
+/* #endregion */
 
-.btn-lg {
-    color: var(--color-berry);
-    background: none;
-    border: 1px solid var(--color-engineering);
-    font-size: 6rem;
-}
+/* #region Basic layout */
 
-/* }}} */
-
-/* Border {{{ */
-
-.border {
-    border: 1px solid var(--color-engineering-dark);
-}
-
-/* }}} */
-
-/* Autologout {{{ */
-
-#autologout-bar-container {
+#bg {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    background: var(--color-bg);
+    border-radius: 0 300px 300px 0;
+    height: 100%;
+    width: calc(100% - 20px);
+    border-right: var(--color-highlight) solid 10px;
+}
+
+#main {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#main-title {
+    width: 100%;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    color: var(--color-fg);
+}
+
+#main-title-user {
+    max-width: 50vw;
+}
+
+#main-title-user h1 {
+    line-height: 0.8;
+}
+
+.main-title-id {
+    font-family: "Source Code Pro", monospace;
+    font-size: 20px;
+}
+
+.icon-beans {
+    width: 70px;
+    height: 70px;
+    background: var(--color-fg);
+    mask: url("icon-coffee-beans.svg") center/contain no-repeat;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-left: 20px;
+    margin-right: 50px;
+    margin-top: 5px;
+    align-self: flex-start;
+}
+
+.icon-bean {
+    min-width: 10px;
+    min-height: 10px;
+    background: var(--color-highlight);
+    mask: url("icon-coffee-bean.svg") center/contain no-repeat;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.icon-coffee-edit {
+    min-height: 100%;
+    flex-grow: 1;
+    background: var(--color-bg);
+    mask: url("icon-coffee-edit.svg") center/contain no-repeat;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#main-nav-and-content {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+
+#main-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-right: 50px;
+    width: 100px;
+}
+
+.main-nav-btn {
+    display: flex;
+    border-radius: 0 40px 40px 0;
+    height: 70px;
+    background: var(--color-fg);
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
+}
+
+.main-nav-btn:disabled {
+    filter: opacity(50%);
+}
+
+.main-nav-btn:active {
+    background: var(--color-highlight);
+}
+
+.main-nav-btn-text {
+    position: relative;
+    margin: auto 20px auto 20px;
+    font-size: 40px;
+    color: var(--color-bg);
+    text-align: center;
+}
+
+#main-content {
+    display: flex;
+    overflow-y: scroll;
+    flex-grow: 1;
+    margin-right: 100px;
+}
+
+.main-title-balance-container {
+    margin-left: auto;
     width: 200px;
+    padding: 12px 20px 4px 20px;
+    border-radius: 300px 0 0 300px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
+    background: var(--color-highlight);
 }
 
-.autologout-bar-ruler {
-    height: 8px;
-    width: 6px;
-    background: var(--color-engineering);
-    border-radius: 30%;
+.main-title-balance {
+    font-size: 40px;
 }
 
-
-/* }}} */
-
-/* Plotly {{{ */
-
-.modebar {
-    display: none;
+.main-title-balance-label {
+    position: absolute;
+    margin-top: -1.1ex;
+    margin-left: 2ex;
 }
 
-/* }}} */
+/* #endregion */
 
-/* Bootstrap adjustments {{{ */
+/* #region Coffee Icons*/
 
-.nav-link.active {
-    color: white !important;
-    background: var(--color-berry) !important;
+.coffee-icon-icon {
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
 }
 
-.nav-link {
-    color: var(--color-berry) !important;
+.icon-americano {
+    background-image: url("icon_americano.svg");
 }
 
-.nav-item a {
-    color: var(--color-berry) !important;
+.icon-black-eye {
+    background-image: url("icon_black_eye.svg");
 }
 
-.modal-content {
-    background: var(--color-engineering-light) !important;
-    border-radius: 3ex;
+.icon-cappuccino {
+    background-image: url("icon_cappuccino.svg");
 }
 
-a {
-    color: var(--color-berry) !important;
+.icon-coffee {
+    background-image: url("icon_coffee.svg");
 }
 
-/* }}} */
+.icon-espresso {
+    background-image: url("icon_espresso.svg");
+}
+
+.icon-espresso-macchiato {
+    background-image: url("icon_espresso_macchiato.svg");
+}
+
+.icon-flat-white {
+    background-image: url("icon_flat_white.svg");
+}
+
+.icon-latte-macchiato {
+    background-image: url("icon_latte_macchiato.svg");
+}
+
+.main-title-coffeemeter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-self: center;
+    gap: 10px;
+    margin-left: 20px;
+    max-width: 150px;
+}
+
+.main-title-coffeemeter .icon-bean {
+    width: 20px;
+    height: 20px;
+}
+
+.main-title-coffeemeter-label {
+    position: absolute;
+    margin-top: -1.1ex;
+}
+
+/* #endregion */
+
+/* #region Buttons */
+
+.btn-big {
+    font-size: 30px;
+    min-width: 150px;
+    padding: 10px;
+    border-radius: 30px;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.25));
+}
+
+.btn-big:active {
+    background: var(--color-highlight);
+}
+
+/* #endregion */
+
+/* #region Auxillary classes */
+
+.flipx {
+    transform: scaleX(-1);
+}
+
+/* #endregion */

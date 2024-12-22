@@ -15,7 +15,7 @@ payment_notification_emails = flask.current_app.config.get(
 
 def handle_post():
     user = User.by_tag(escapefromhex(flask.request.args["tag"]))
-    amount = int(flask.request.form["amount"])
+    amount = float(flask.request.form["amount"])
     flask.current_app.db.session.add(Pay(user=user, amount=amount))
     flask.current_app.db.session.commit()
 
@@ -35,8 +35,11 @@ def handle_post():
                 f"Could not send webex message for email={payment_notification_email}"
             )
 
-    return flask.redirect(f'coffee.html?tag={flask.request.args["tag"]}')
-    # return flask.abort(404)
+    return flask.render_template(
+        "pay.html",
+        user=User.by_tag(escapefromhex(flask.request.args["tag"])),
+        payed=amount,
+    )
 
 
 def handle_get():
