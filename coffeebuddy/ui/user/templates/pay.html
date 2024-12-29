@@ -1,10 +1,14 @@
-{% extends "_basic.html" %}
+{% extends "_base.html" %}
 
 {% block header %}
     <script>
+        /* beautify ignore:start */
+        var balance = {{ user.balance }};
+        /* beautify ignore:end */
+
         $(() => {
-            $(".btn-pay").click((e) => {
-                var amount = $(e.target).html();
+            $(".btn-pay").click(function() {
+                const amount = $(this).html();
                 if (amount == "X") {
                     simple_keyboard_process();
                 } else {
@@ -15,23 +19,16 @@
         });
 
         function doPayment() {
-            var amount = $("#modal-confirm-amount").html();
-            $("#modal-confirm-form input").val(amount);
-            $("#modal-confirm-form").submit();
+            $("#modal-confirm").modal("hide");
+            const amount = $("#modal-confirm-amount").html();
+            $("#modal-thanks-amount").html(amount);
+            $.post(window.location.href, {
+                amount: amount
+            }, (data) => {
+                $("#modal-thanks-balance").html(data);
+                $("#modal-thanks").modal("show");
+            });
         }
-
-        /* beautify ignore:start */
-        {% if payed %}
-        /* beautify ignore:end */
-        $(() => {
-            $("#modal-thanks").modal("show");
-            window.setTimeout(() => {
-                window.location.replace("../coffee.html?" + window.location.search.substr(1));
-            }, 1500);
-        });
-        /* beautify ignore:start */
-        {% endif %}
-        /* beautify ignore:end */
     </script>
 
     <style>
@@ -76,9 +73,6 @@
                         Note that this is not actual payment! Did you really deposit the amount of
                         <span id="modal-confirm-amount" class="h4"></span> €?
                     </p>
-                    <form id="modal-confirm-form" method="post">
-                        <input type="hidden" name="amount">
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="doPayment()">Confirm</button>
@@ -96,13 +90,27 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content p-3">
-                <h3>
-                    Thanks for paying <span id="modal-thanks-amount" class="h2">{{ payed }}</span> €.
-                </h3>
-                <div class="d-flex flex-column justify-content-center text-center h-100">
-                    <div class="display-1 fas fa-hand-holding-usd my-3"></div>
+                <div class="modal-header">
+                    <h3>Thanks!</h3>
                 </div>
-                <h3>Your new balance is: {{ "%.2f €" | format(user.balance) }}</h3>
+                <div class="modal-body">
+                    <h3>
+                        Thanks for paying <span id="modal-thanks-amount" class="h2">{{ payed }}</span> €.
+                    </h3>
+                    <div class="d-flex flex-column justify-content-center text-center h-100">
+                        <div class="display-1 fas fa-hand-holding-usd my-3"></div>
+                    </div>
+                    <h3>
+                        Your new balance is: <span id="modal-thanks-balance"></span> €.
+                    </h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-default"
+                            onclick="window.location.replace('../coffee.html?' + window.location.search.substr(1))">
+                        Ok
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -139,10 +147,10 @@
 
             function onKeyPress(button) {
                 if (button == "{enter}") {
-                    var val = $("#simple-keyboard-input").val();
-                    if (validateInput(val)) {
+                    const amount = $("#simple-keyboard-input").val();
+                    if (validateInput(amount)) {
                         $("#modal-simple-keyboard").modal("hide");
-                        $("#modal-confirm-amount").html(val);
+                        $("#modal-confirm-amount").html(amount);
                         $("#modal-confirm").modal("show");
                     }
                 } else if (button == "{abort}") {

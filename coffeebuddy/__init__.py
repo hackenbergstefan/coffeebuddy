@@ -125,9 +125,9 @@ def init_app_context(app):
 
     flask.current_app.events = coffeebuddy.events.EventManager()
 
-    import coffeebuddy.routes
+    import coffeebuddy.ui
 
-    coffeebuddy.routes.init()
+    coffeebuddy.ui.init()
 
     import coffeebuddy.attachments
 

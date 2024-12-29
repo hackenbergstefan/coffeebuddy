@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple
 
 import flask
 import sqlalchemy
-from sqlalchemy import Column, ForeignKey, Integer, Table, text
+from sqlalchemy import Column, ForeignKey, Integer, Table, select, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -110,6 +110,10 @@ class User(flask.current_app.db.Model, Serializer):
             (User.tag == tag) | ((User.tag2 != None) & (User.tag2 == tag))
         ).first()  # noqa: E711
 
+    @staticmethod
+    def by_id(userid):
+        return User.query.filter(User.id == userid).first()
+
     @property
     def drinks_today(self):
         return (
@@ -193,6 +197,11 @@ class User(flask.current_app.db.Model, Serializer):
 
     def update_bill(self, newbill):
         flask.current_app.db.session.add(Pay(user=self, amount=self.unpayed - newbill))
+
+    def update_balance(self, newbalance):
+        flask.current_app.db.session.add(
+            Pay(user=self, amount=newbalance + self.unpayed)
+        )
 
     @staticmethod
     def top_selected_manually(
@@ -510,6 +519,12 @@ class CoffeeVariant(Base, Serializer):
             step=1,
         ),
     }
+
+    @staticmethod
+    def by_id(coffeeid: int) -> "CoffeeVariant":
+        return flask.current_app.db.session.scalar(
+            select(CoffeeVariant).where(CoffeeVariant.id == coffeeid)
+        )
 
     def setting_in_percent(self, setting_name: str) -> int:
         setting = self.settings[setting_name]
