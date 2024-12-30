@@ -1,11 +1,11 @@
 import socket
 
-# Price per cup in €
-PRICE = 0.30
-# Amount in € to pay by one pay
-PAY = 10
-# Card type (PCSC, MRFC522, PIRC522)
-CARD = "PCSC"
+# Global settings
+# ===============
+
+# Whether to prefill the database
+PREFILLED = True
+
 # Database connection details
 DB_BACKEND = "sqlite"
 if DB_BACKEND == "postgres":
@@ -16,36 +16,56 @@ if DB_BACKEND == "postgres":
 elif DB_BACKEND == "sqlite":
     SQLALCHEMY_DATABASE_URI = "sqlite:///coffee.db"
 
-# Enable camera
-CAMERA = False
-
-# Enable Facerecognition
-FACERECOGNITION = False
-
-# Illumination.
-# If set: `{"pins": (1, 2, 3), "color_motion_detected": "rose", "color_X": ...}`.
-# See ./coffeebuddy/illumination.py for details
-ILLUMINATION = False
-
-# PIR motion detection (None if not used, BCM pin number otherwise)
-PIR = None
-
-# Switch display on and off by motion detection
-MOTION_DISPLAY_CONTROL = False
+# Price per cup in €
+PRICE = 0.30
 
 # Guest account enabled
 GUEST = False
 
-# Disable automatic timeout from coffee.html
-NOTIMEOUT = False
-
 # Enable https
 SSL = False
 
+# Localization
+TIMEZONE = "Europe/Berlin"
+COUNTRY = {"country": "DE", "subdiv": "BY"}
+
+# Secret key for session cookies
+SECRET_KEY = "coffeebuddy"
+
+# Password for admin access
+ADMIN_PASSWORD = "coffeebuddy"
+
+
+# Extensions
+# ==========
+
+# Extension: Card (coffeebuddy.extensions.card)
+# ---------------------------------------------
+# Card type (PCSC, MRFC522, PIRC522)
+CARD = "PCSC"
+
+# Extension: Illumination (coffeebuddy.extensions.illumination)
+# ---------------------------------------------
+# If set: `{"pins": (1, 2, 3), "color_motion_detected": "rose", "color_X": ...}`.
+# See ./coffeebuddy/illumination.py for details
+ILLUMINATION = False
+
+# Extension: PIR (coffeebuddy.extensions.pir)
+# ---------------------------------------------
+# PIR motion detection (None if not used, BCM pin number otherwise)
+PIR = None
+
+# Extension: Display on-off (coffeebuddy.extensions.display_on_off)
+# ---------------------------------------------
+# Switch display on and off by motion detection
+DISPLAY_ON_OFF = False
+
+# Extension: WebEx (coffeebuddy.extensions.webex)
+# ---------------------------------------------
 # Webex Access Token
 WEBEX_ACCESS_TOKEN = None
 
-# Email default domains
+# Email default domains (used to autofill user's name)
 USER_EMAIL_DEFAULT_DOMAINS = ["@gmail.com", "@apple.com"]
 
 # Webex reminder message, where"{oneliner} is a randomized oneliner by coffeebuddy
@@ -61,16 +81,3 @@ WEBEX_DATABASE_BACKUP = False
 
 # List of peoples' emails who are notified when someone pays
 PAYMENT_NOTIFICATION_EMAILS = []
-
-# Localization
-TIMEZONE = "Europe/Berlin"
-COUNTRY = {"country": "DE", "subdiv": "BY"}
-
-# Secret key for session cookies
-SECRET_KEY = "coffeebuddy"
-
-# Password for admin access
-ADMIN_PASSWORD = "coffeebuddy"
-
-# Whether to prefill the database
-PREFILLED = True

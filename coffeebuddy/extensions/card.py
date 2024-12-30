@@ -4,6 +4,10 @@ import time
 
 import flask
 
+"""
+This extension reads RFID cards and emits a socket.io event when a card is connected.
+"""
+
 
 class PCSCCard(threading.Thread):
     PCSC_GET_UUID_APDU = bytes.fromhex("ff ca 00 00 00")
@@ -78,12 +82,12 @@ class PIRC522Card(threading.Thread):
 
 
 def init():
-    if flask.current_app.testing:
+    config = flask.current_app.config["CARD"]
+    if flask.current_app.testing or not config:
         return
 
-    if flask.current_app.config["CARD"] == "MRFC522":
-        MRFC522Card().start()
-    elif flask.current_app.config["CARD"] == "PCSC":
-        PCSCCard().start()
-    elif flask.current_app.config["CARD"] == "PIRC522":
-        PIRC522Card().start()
+    {
+        "MRFC522": MRFC522Card,
+        "PCSC": PCSCCard,
+        "PIRC522": PIRC522Card,
+    }[config]().start()

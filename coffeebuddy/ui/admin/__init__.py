@@ -8,8 +8,8 @@ import flask
 import flask_login
 from flask import Blueprint
 
-from ... import AdminUser
-from ...model import Drink, Pay, User
+from coffeebuddy.extensions.login import AdminUser
+from coffeebuddy.model import Drink, Pay, User
 
 blueprint = Blueprint("admin", __name__, template_folder="templates")
 
