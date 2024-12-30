@@ -7,13 +7,17 @@ import flask
 import yaml
 from flask_socketio import SocketIO
 
+"""
+This extension connects to a coffee maker and brews coffee.
+"""
+
 
 class CoffeeMaker:
     def __init__(self):
         super().__init__()
         self.socketio: SocketIO = flask.current_app.socketio
         self.socketio.on_event("brew", self.brew)
-        with (Path(__file__).parent / "static" / "coffee_facts.yml").open() as fp:
+        with (Path(__file__).parent / "coffee_facts.yml").open() as fp:
             self.coffee_facts = yaml.load(fp, Loader=yaml.FullLoader)["coffee"]
 
     def run(self):

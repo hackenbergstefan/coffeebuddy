@@ -1,5 +1,11 @@
 import logging
 
+import flask
+
+"""
+This module provides a simple event manager to register and fire events.
+"""
+
 
 class EventManager:
     def __init__(self):
@@ -19,20 +25,6 @@ class EventManager:
         else:
             self.events[eventname] = [func]
 
-    def fire_once(self, eventname, **kwargs):
-        """Fire eventname once until fire_reset is called."""
-        if eventname in self.locked:
-            return
 
-        self.locked.add(eventname)
-        self.fire(eventname, **kwargs)
-
-    def fire_reset(self, eventname):
-        if eventname in self.locked:
-            self.locked.remove(eventname)
-
-    def block(self, eventname):
-        if eventname in self.locked:
-            return
-
-        self.locked.add(eventname)
+def init():
+    flask.current_app.events = EventManager()

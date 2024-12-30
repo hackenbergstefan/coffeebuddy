@@ -2,13 +2,17 @@
 import logging
 
 import flask
-import pigpio
+
+"""
+This extension controls the illumination of the coffeebuddy
+using a RGB LED pins on Raspberry Pi.
+"""
 
 PIN_GREEN = 16
 PIN_BLUE = 20
 PIN_RED = 21
 
-pi = pigpio.pi()
+pi = None
 
 
 def setup(pin_red, pin_green, pin_blue):
@@ -50,8 +54,18 @@ def color_named(name):
 
 
 def init():
-    logging.getLogger(__name__).info("Init")
     config = flask.current_app.config.get("ILLUMINATION")
+    if not config or flask.current_app.testing:
+        return
+
+    try:
+        import pigpio
+    except ModuleNotFoundError:
+        return
+    global pi
+    pi = pigpio.pi()
+
+    logging.getLogger(__name__).info("Init")
     setup(*config["pins"])
 
     flask.current_app.events.register(

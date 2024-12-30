@@ -56,9 +56,11 @@ def inject_globals():
 
 def init():
     """Initialize the UI module."""
-    from . import admin, base, coffee, user
+    from . import admin, api, base, coffee, user
 
-    flask.current_app.register_blueprint(coffee.blueprint)
-    flask.current_app.register_blueprint(user.blueprint)
-    flask.current_app.register_blueprint(admin.blueprint)
-    flask.current_app.register_blueprint(base.blueprint)
+    app = flask.current_app
+    app.register_blueprint(coffee.blueprint)
+    app.register_blueprint(user.blueprint)
+    app.register_blueprint(admin.blueprint)
+    app.register_blueprint(base.blueprint)
+    app.register_blueprint(api.blueprint)
