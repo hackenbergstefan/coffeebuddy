@@ -74,29 +74,19 @@ coffee_variant_favorites = Table(
 )
 
 
-class User(flask.current_app.db.Model, Serializer):
-    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
-    tag = flask.current_app.db.Column(
-        flask.current_app.db.LargeBinary, nullable=False, unique=True
-    )
-    tag2 = flask.current_app.db.Column(
-        flask.current_app.db.LargeBinary, unique=True, default=None
-    )
-    name = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    prename = flask.current_app.db.Column(
-        flask.current_app.db.String(50), nullable=False
-    )
-    email = flask.current_app.db.Column(flask.current_app.db.String(50), nullable=False)
-    option_oneswipe = flask.current_app.db.Column(
-        flask.current_app.db.Boolean, default=False
-    )
-    enabled = flask.current_app.db.Column(flask.current_app.db.Boolean, default=True)
-    pays = flask.current_app.db.relationship(
-        "Pay", backref="user", cascade="all, delete"
-    )
-    drinks = flask.current_app.db.relationship(
-        "Drink", backref="user", cascade="all, delete"
-    )
+class User(Base, Serializer):
+    __tablename__ = "user"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tag: Mapped[bytes] = mapped_column(nullable=False, unique=True)
+    tag2: Mapped[Optional[bytes]] = mapped_column(unique=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+    prename: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(nullable=False)
+    option_oneswipe: Mapped[bool] = mapped_column(default=False)
+    enabled: Mapped[bool] = mapped_column(default=True)
+    pays = relationship("Pay", backref="user", cascade="all, delete")
+    drinks = relationship("Drink", backref="user", cascade="all, delete")
     variant_favorites = relationship(
         "CoffeeVariant",
         secondary=coffee_variant_favorites,
@@ -192,7 +182,9 @@ class User(flask.current_app.db.Model, Serializer):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized["unpayed"] = self.unpayed
+        serialized["unpayed"] = (
+            self.unpayed if self not in flask.current_app.db.session.new else 0
+        )
         return serialized
 
     def update_bill(self, newbill):
@@ -367,22 +359,18 @@ class User(flask.current_app.db.Model, Serializer):
         return sum(data) / len(data) if data else 0
 
 
-class Drink(flask.current_app.db.Model):
-    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
-    timestamp = flask.current_app.db.Column(flask.current_app.db.DateTime)
-    price = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
-    userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer,
-        flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),
-        nullable=False,
+class Drink(Base):
+    __tablename__ = "drink"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    timestamp: Mapped[datetime]
+    price: Mapped[float] = mapped_column(nullable=False)
+    userid: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
-    host = flask.current_app.db.Column(flask.current_app.db.String(50))
-    selected_manually = flask.current_app.db.Column(
-        flask.current_app.db.Boolean, default=False
-    )
-    coffeeid = flask.current_app.db.Column(
-        flask.current_app.db.Integer,
-        flask.current_app.db.ForeignKey("coffee_variant.id", ondelete="SET NULL"),
+    host: Mapped[str]
+    selected_manually: Mapped[bool] = mapped_column(default=False)
+    coffeeid: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("coffee_variant.id", ondelete="SET NULL"),
         default=None,
     )
 
@@ -409,18 +397,16 @@ class Drink(flask.current_app.db.Model):
         )
 
 
-class Pay(flask.current_app.db.Model):
-    id = flask.current_app.db.Column(flask.current_app.db.Integer, primary_key=True)
-    timestamp = flask.current_app.db.Column(
-        flask.current_app.db.DateTime, nullable=False
-    )
-    userid = flask.current_app.db.Column(
-        flask.current_app.db.Integer,
-        flask.current_app.db.ForeignKey("user.id", ondelete="CASCADE"),
+class Pay(Base):
+    __tablename__ = "pay"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    timestamp: Mapped[datetime] = mapped_column(nullable=False)
+    userid: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False,
     )
-    amount = flask.current_app.db.Column(flask.current_app.db.Float, nullable=False)
-    host = flask.current_app.db.Column(flask.current_app.db.String(50))
+    amount: Mapped[float] = mapped_column(nullable=False)
+    host: Mapped[str]
 
     def __init__(self, *args, **kwargs):
         if "timestamp" not in kwargs:
