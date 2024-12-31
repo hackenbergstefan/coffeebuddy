@@ -7,9 +7,12 @@ import math
 import flask
 import flask_login
 from flask import Blueprint
+from sqlalchemy.exc import IntegrityError
 
-from ...model import Drink, Pay, User, escapefromhex
-from .. import require_tag, url
+from coffeebuddy.extensions import webex
+
+from ...model import Pay, User, escapefromhex
+from .. import require_tag
 
 blueprint = Blueprint("user", __name__, template_folder="templates")
 
@@ -27,23 +30,26 @@ def edit_user():
 
     def post():
         old = user.serialize()
-        user.tag = escapefromhex(request.form["tag"])
-        user.tag2 = escapefromhex(request.form["tag2"])
-        user.name = request.form["last_name"]
-        user.prename = request.form["first_name"]
-        user.email = request.form["email"]
-        user.option_oneswipe = "oneswipe" in request.form
+        try:
+            user.tag = escapefromhex(request.form["tag"])
+            user.tag2 = escapefromhex(request.form["tag2"])
+            user.name = request.form["last_name"]
+            user.prename = request.form["first_name"]
+            user.email = request.form["email"]
+            user.option_oneswipe = "oneswipe" in request.form
 
-        if flask_login.current_user.is_authenticated:
-            user.enabled = "enabled" in request.form
-            balance = float(request.form["balance"])
-            if not math.isclose(balance, user.balance):
-                user.update_balance(balance)
-        db.session.commit()
-
-        return flask.jsonify(
-            {key: (old[key], new) for key, new in user.serialize().items()}
-        )
+            if flask_login.current_user.is_authenticated:
+                user.enabled = "enabled" in request.form
+                balance = float(request.form["balance"])
+                if not math.isclose(balance, user.balance):
+                    user.update_balance(balance)
+            db.session.commit()
+            return flask.jsonify(
+                {key: (old[key], new) for key, new in user.serialize().items()}
+            )
+        except IntegrityError as e:
+            db.session.rollback()
+            return flask.jsonify({"error": repr(e)})
 
     if request.method == "POST":
         return post()
@@ -65,6 +71,16 @@ def pay(user: User):
         amount = float(request.form["amount"])
         db.session.add(Pay(user=user, amount=amount))
         db.session.commit()
+
+        webex.send_message(
+            recipients=flask.current_app.config.get("PAYMENT_NOTIFICATION_EMAILS"),
+            message=(
+                f"{user} with balance of {user.balance - amount:.2f}€ "
+                f"just entered a payment of **{amount:.2f}€**. "
+                f"Their balance is now {user.balance:.2f}€."
+            ),
+        )
+
         return f"{user.balance:.2f}"
 
     if request.method == "POST":
@@ -80,27 +96,3 @@ def pay(user: User):
 @require_tag
 def stats(user: User):
     return flask.render_template("stats.html", user=user)
-
-
-# WEBEX_ACCESS_TOKEN = flask.current_app.config.get("WEBEX_ACCESS_TOKEN")
-# if WEBEX_ACCESS_TOKEN:
-#     api = webexteamssdk.WebexTeamsAPI(access_token=WEBEX_ACCESS_TOKEN)
-# payment_notification_emails = flask.current_app.config.get(
-#     "PAYMENT_NOTIFICATION_EMAILS"
-# )
-
-# for payment_notification_email in payment_notification_emails:
-#     message_md = (
-#         f"{user} with bill of {user.unpayed + amount:.2f}€ "
-#         f"just entered a payment of **{amount:.2f}€**. "
-#         f"Their bill is now {user.unpayed:.2f}€."
-#     )
-#     try:
-#         # pylint: disable=possibly-used-before-assignment
-#         api.messages.create(
-#             toPersonEmail=payment_notification_email, markdown=message_md
-#         )
-#     except webexteamssdk.ApiError:
-#         logging.getLogger(__name__).exception(
-#             f"Could not send webex message for email={payment_notification_email}"
-#         )

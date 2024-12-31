@@ -136,9 +136,5 @@ def init():
         # probably cannot connect to or init database
         os._exit(1)
 
-    # Do not prefill in testing mode
-    if app.testing:
-        return
-
     prefill_users()
     prefill_coffee_variants()

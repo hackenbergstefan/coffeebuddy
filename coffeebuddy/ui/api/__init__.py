@@ -6,30 +6,61 @@ from coffeebuddy.model import User
 blueprint = flask.Blueprint("api", __name__, template_folder="templates")
 
 
+def get_user() -> User:
+    user = (
+        User.by_id(flask.request.args["id"])
+        if "id" in flask.request.args
+        else User.by_tag(bytes.fromhex(flask.request.args["tag"]))
+    )
+    if not user:
+        return flask.abort(400)
+    return user
+
+
+@blueprint.route("/api/user/<string:endpoint>", methods=["GET", "POST"])
+def api_user(endpoint: str):
+    db = flask.current_app.db
+    match endpoint:
+        case "get":
+            if len(flask.request.args) == 0:
+                return flask.jsonify([u.serialize() for u in User.query.all()])
+            user = get_user()
+            return flask.jsonify(user.serialize())
+        case "drinks":
+            user = get_user()
+            return flask.jsonify([d.serialize() for d in user.drinks])
+        case "set":
+            if "id" in flask.request.args:
+                user: User = User.by_id(flask.request.args["id"])
+                if not user:
+                    return flask.abort(400)
+                for key in ("email", "name", "prename", "tag", "tag2"):
+                    if key in flask.request.args:
+                        setattr(user, key, flask.request.args[key])
+            else:
+                user = User(
+                    email=flask.request.args["email"],
+                    name=flask.request.args["name"],
+                    prename=flask.request.args["prename"],
+                    tag=bytes.fromhex(flask.request.args["tag"]),
+                    tag2=bytes.fromhex(flask.request.args["tag2"])
+                    if "tag2" in flask.request.args
+                    else None,
+                )
+                db.session.add(user)
+            if "balance" in flask.request.args:
+                user.update_balance(float(flask.request.args["balance"]))
+            db.session.commit()
+            return flask.jsonify(user.serialize())
+        case "del":
+            User.query.filter_by(id=flask.request.args["id"]).delete()
+            db.session.commit()
+            return ""
+    flask.abort(404)
+
+
 @blueprint.route("/api/<string:endpoint>", methods=["GET", "POST"])
 def api(endpoint: str):
-    if endpoint == "get_users":
-        return flask.jsonify([u.serialize() for u in User.query.all()])
-    if endpoint == "set_user":
-        data = flask.request.json
-        if "id" not in data:
-            return flask.abort(400)
-        user: User = User.query.filter(User.id == data["id"]).first()
-        if not user:
-            return flask.abort(400)
-
-        if "email" in data:
-            user.email = data["email"]
-        if "name" in data:
-            user.name = data["name"]
-        if "prename" in data:
-            user.prename = data["prename"]
-        if "tag" in data:
-            user.tag = bytes.fromhex(data["tag"])
-        if "tag2" in data:
-            user.tag2 = bytes.fromhex(data["tag2"])
-        flask.current_app.db.session.commit()
-        return flask.jsonify(user.serialize())
     if endpoint == "check_email":
         if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
             return "", 404

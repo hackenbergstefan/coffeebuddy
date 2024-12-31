@@ -61,7 +61,6 @@
                         $('#brew-brewing').removeClass('visually-hidden');
                         break;
                     case 'finished':
-                        $('#main-nav button[name="abort"]').first().click();
                         var form = $('#main-nav').first();
                         var btn = $('<button class="visually-hidden" name="brewed"></button>')
                         form.append(btn);
