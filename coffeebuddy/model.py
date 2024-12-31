@@ -182,8 +182,8 @@ class User(Base, Serializer):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized["unpayed"] = (
-            self.unpayed if self not in flask.current_app.db.session.new else 0
+        serialized["balance"] = (
+            self.balance if self not in flask.current_app.db.session.new else 0
         )
         return serialized
 
@@ -295,6 +295,8 @@ class User(Base, Serializer):
                     ).all()
                 )
             )
+            if not data:
+                return [], []
             return [weekday(int(i)) for i in data[0]], list(data[1])
         elif group_by == "day":
             return tuple(
@@ -359,8 +361,9 @@ class User(Base, Serializer):
         return sum(data) / len(data) if data else 0
 
 
-class Drink(Base):
+class Drink(Base, Serializer):
     __tablename__ = "drink"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     timestamp: Mapped[datetime]
     price: Mapped[float] = mapped_column(nullable=False)

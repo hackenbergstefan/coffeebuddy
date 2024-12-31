@@ -12,9 +12,10 @@ This extension connects to a coffee maker and brews coffee.
 """
 
 
-class CoffeeMaker:
-    def __init__(self):
+class CoffeeMakerMock:
+    def __init__(self, brew_time: float):
         super().__init__()
+        self.brew_time = brew_time
         self.socketio: SocketIO = flask.current_app.socketio
         self.socketio.on_event("brew", self.brew)
         with (Path(__file__).parent / "coffee_facts.yml").open() as fp:
@@ -30,7 +31,7 @@ class CoffeeMaker:
             print("brew", data)
             fact = random.choice(self.coffee_facts)
             self.socketio.emit("brew", {"state": "started", "fact": fact})
-            time.sleep(10)
+            time.sleep(self.brew_time)
             self.socketio.emit("brew", {"state": "finished"})
         elif data == "abort":
             print("brew abort!")
@@ -38,5 +39,7 @@ class CoffeeMaker:
 
 def init():
     logging.getLogger(__name__).info("Init")
+    app = flask.current_app
 
-    CoffeeMaker()
+    if (brew_time := app.config.get("COFFEEMAKER_MOCK_BREW_TIME", False)) is not False:
+        CoffeeMakerMock(brew_time=brew_time)

@@ -17,7 +17,7 @@ except ModuleNotFoundError:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    app = coffeebuddy.create_app()
+    app = coffeebuddy.create_app(eval(os.environ.get("FLASK_CONFIG", "{}")))
     try:
         with app.app_context():
             coffeebuddy.init_app_context(app)

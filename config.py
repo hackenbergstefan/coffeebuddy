@@ -81,3 +81,10 @@ WEBEX_DATABASE_BACKUP = False
 
 # List of peoples' emails who are notified when someone pays
 PAYMENT_NOTIFICATION_EMAILS = []
+
+# Set True if real coffeemaker is attached
+COFFEEMAKER = False
+
+# Number of seconds a coffee takes to be brewed.
+# Set to False to disable mock.
+COFFEEMAKER_MOCK_BREW_TIME = 10.0

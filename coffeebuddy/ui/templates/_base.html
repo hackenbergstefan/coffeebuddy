@@ -207,6 +207,28 @@
         </div>
     </body>
 
+    <div class="modal fade"
+         id="modal-error"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h2>Error</h2>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <!-- Filled by JS -->
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% block post_body %}
         {# Add e.g. keyboard here #}
     {% endblock post_body %}

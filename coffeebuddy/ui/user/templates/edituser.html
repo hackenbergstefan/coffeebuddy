@@ -88,18 +88,23 @@
             });
 
             $.post(window.location.href, user, (data) => {
-                $('#modal-updated').modal('show');
                 console.log(data);
-                const table = $('#modal-updated-content tbody');
-                table.empty();
-                for (const item in data) {
-                    const [
-                        val_old,
-                        val_new
-                    ] = data[item];
-                    line = $(`<tr><td>${item}</td><td>${val_old}</td><td>${val_new}</td></tr>`);
-                    line.addClass(val_old != val_new ? 'table-active' : '');
-                    table.append(line);
+                if (data.error) {
+                    $('#modal-error .modal-body p').text(data.error);
+                    $('#modal-error').modal('show');
+                } else {
+                    const table = $('#modal-updated-content tbody');
+                    table.empty();
+                    for (const item in data) {
+                        const [
+                            val_old,
+                            val_new
+                        ] = data[item];
+                        line = $(`<tr><td>${item}</td><td>${val_old}</td><td>${val_new}</td></tr>`);
+                        line.addClass(val_old != val_new ? 'table-active' : '');
+                        table.append(line);
+                    }
+                    $('#modal-updated').modal('show');
                 }
             });
         }
@@ -212,9 +217,7 @@
                onclick="simple_keyboard_process(this)">
     </div>
 </div>
-<div class="row my-3 py-3 {{ 'd-none' if not flask_login.current_user.is_authenticated }}"
-     style="border: 1px solid var(--color-berry);
-            border-radius: 10px">
+<div class="row my-3 py-3 {{ 'd-none' if not flask_login.current_user.is_authenticated }}">
     <div class="col">
         <h3 class="color-berry">Admin settings</h3>
         <div class="my-3">
