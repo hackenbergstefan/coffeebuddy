@@ -36,6 +36,10 @@
             text-align: center;
             line-height: 0.9;
         }
+
+        .coffee-icon-price {
+            font-size: 12px;
+        }
     </style>
     {% if not coffeemaker %}
         <style>
@@ -56,6 +60,10 @@
                 text-transform: uppercase;
                 text-align: center;
                 line-height: 0.9;
+            }
+
+            .coffee-icon-price {
+                font-size: 15px;
             }
         </style>
     {% endif %}
@@ -112,14 +120,22 @@
                      class="coffee-icon-container"
                      coffee-id="{{ variant.id }}">
                     <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
-                    <div class="coffee-icon-text">{{ variant.name }}</div>
+                    <div class="coffee-icon-text">
+                        {{ variant.name }}
+                        <br>
+                        <span class="coffee-icon-price">{{ "%.2f"|format(price) }}€</span>
+                    </div>
                 </div>
             {% endfor %}
         </form>
     {% else %}
         <div class="coffee-icon-container">
             <div class="coffee-icon-icon icon-coffee"></div>
-            <div class="coffee-icon-text">Coffee</div>
+            <div class="coffee-icon-text">
+                Coffee
+                <br>
+                <span class="coffee-icon-price">{{ "%.2f"|format(price) }}€</span>
+            </div>
         </div>
     {% endif %}
 {% endblock main_content %}

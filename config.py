@@ -82,6 +82,8 @@ WEBEX_DATABASE_BACKUP = False
 # List of peoples' emails who are notified when someone pays
 PAYMENT_NOTIFICATION_EMAILS = []
 
+# Extension: Coffeemaker (coffeebuddy.extensions.coffeemaker)
+# ---------------------------------------------
 # Set True if real coffeemaker is attached
 COFFEEMAKER = False
 

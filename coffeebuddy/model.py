@@ -446,6 +446,7 @@ class CoffeeVariant(Base, Serializer):
     milk: Mapped[int]
 
     editable: Mapped[bool] = mapped_column(default=True)
+    deleted: Mapped[bool] = mapped_column(default=False)
 
     settings = {
         "strength": CoffeeSettings(
@@ -539,8 +540,11 @@ class CoffeeVariant(Base, Serializer):
         )
 
     def all_for_user(user: User) -> List["CoffeeVariant"]:
+        db = flask.current_app.db
         return user.variant_favorites, [
             variant
-            for variant in CoffeeVariant.query.all()
+            for variant in db.session.scalars(
+                db.select(CoffeeVariant).where(CoffeeVariant.deleted == False)  # noqa: E712
+            )
             if variant not in user.variant_favorites
         ]
