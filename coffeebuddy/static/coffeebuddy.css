@@ -54,6 +54,8 @@ body {
     font-weight: 400;
     font-style: normal;
     color: var(--color-fg);
+    scrollbar-width: none;
+    overflow: hidden;
 }
 
 h1 {
