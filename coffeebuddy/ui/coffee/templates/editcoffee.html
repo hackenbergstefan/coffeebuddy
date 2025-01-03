@@ -88,6 +88,18 @@
             });
         }
 
+        function deleteVariant() {
+            $('#modal-confirm').modal('show');
+        }
+
+        function deleteVariantConfirmed() {
+            $.post(window.location.href,
+                "delete", (data) => {
+                    window.location.href = '../coffee.html?tag={{ user.tag.hex() }}';
+                });
+
+        }
+
         function goToBrew() {
             window.location.href = '../brew.html?tag={{ user.tag.hex() }}&coffeeid={{ variant.id }}';
         }
@@ -100,6 +112,7 @@
 
 {% block main_nav_items %}
     {{ nav_item('save', 'fas fa-save', type='button', onclick='submitVariant();') }}
+    {{ nav_item('delete', 'fas fa-trash-can', type='button', onclick='deleteVariant();', disabled=not variant.editable or is_new) }}
     {{ super() }}
 {% endblock main_nav_items %}
 
@@ -140,6 +153,7 @@
 {% endblock main_content %}
 
 {% block post_body %}
+    <!-- Modal updated -->
     <div class="modal fade"
          id="modal-updated"
          tabindex="-1"
@@ -162,6 +176,36 @@
                 </table>
                 <div>
                     <button class="btn btn-primary" onclick="goToBrew();">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirm -->
+    <div class="modal fade"
+         id="modal-confirm"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <div class="h2 modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmation required
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <p class="h5 font-weight-normal">
+                        Do you really want to delete the variant <strong>{{ variant.name }}</strong>?
+                        <br>
+                        This operation cannot be undone.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-primary"
+                            onclick="deleteVariantConfirmed()">Confirm</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Abort</button>
                 </div>
             </div>
         </div>

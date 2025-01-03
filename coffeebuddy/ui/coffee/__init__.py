@@ -56,6 +56,7 @@ def coffee(user: User):
         coffeemaker=flask.current_app.config.get("COFFEEMAKER", False)
         or flask.current_app.config.get("COFFEEMAKER_MOCK_BREW_TIME", False)
         is not False,
+        price=flask.current_app.config["PRICE"],
     )
 
 
@@ -132,6 +133,10 @@ def editcoffee(user: User):
         return flask.abort(404)
 
     def post():
+        if "delete" in request.form:
+            coffee.deleted = True
+            db.session.commit()
+            return ""
         old = coffee.serialize()
         for key in request.form:
             setattr(coffee, key, request.form[key])
@@ -151,6 +156,7 @@ def editcoffee(user: User):
         title_text=f'Edit "{coffee.name}"'
         if "coffeeid" in request.args
         else f"New {base_coffee.name}",
+        is_new="derive" in request.args,
     )
 
 
