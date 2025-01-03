@@ -29,6 +29,7 @@ def coffee(user: User):
                 )
             )
             db.session.commit()
+            return ""
         elif "pay" in request.form:
             return flask.redirect(url("pay.html", tag=user.tag))
         elif "back" in request.form:
@@ -41,6 +42,7 @@ def coffee(user: User):
             return flask.redirect(
                 url("brew.html", tag=user.tag, coffeeid=request.form["coffeeid"])
             )
+        return flask.abort(404)
 
     if request.method == "POST":
         return post()
@@ -51,6 +53,9 @@ def coffee(user: User):
         user=user,
         variants_favorites=variants_favorites,
         variants=variants,
+        coffeemaker=flask.current_app.config.get("COFFEEMAKER", False)
+        or flask.current_app.config.get("COFFEEMAKER_MOCK_BREW_TIME", False)
+        is not False,
     )
 
 

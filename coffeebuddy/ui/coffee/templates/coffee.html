@@ -11,10 +11,6 @@
             overflow-y: auto;
         }
 
-        ::-webkit-scrollbar {
-            width: 0;
-        }
-
         .coffee-icon-container {
             width: 170px;
             height: 170px;
@@ -41,16 +37,52 @@
             line-height: 0.9;
         }
     </style>
-    <script>
-        $(document).ready(() => {
-            $('.coffee-icon-container').click(event => {
-                const coffeeId = $(event.currentTarget).attr('coffee-id');
-                var form = $('.coffee-container').first();
-                form.append($(`<input type="hidden" name="coffeeid" value="${coffeeId}">`));
-                form.submit();
+    {% if not coffeemaker %}
+        <style>
+            .coffee-icon-container {
+                width: 300px;
+                height: 300px;
+                display: flex;
+                flex-direction: column;
+                row-gap: 10px;
+                position: relative;
+                margin: 0 auto;
+                align-self: center;
+            }
+
+            .coffee-icon-text {
+                margin-top: auto;
+                font-size: 20px;
+                text-transform: uppercase;
+                text-align: center;
+                line-height: 0.9;
+            }
+        </style>
+    {% endif %}
+    {% if coffeemaker %}
+        <script>
+            $(document).ready(() => {
+                $('.coffee-icon-container').click(event => {
+                    const coffeeId = $(event.currentTarget).attr('coffee-id');
+                    var form = $('.coffee-container').first();
+                    form.append($(`<input type="hidden" name="coffeeid" value="${coffeeId}">`));
+                    form.submit();
+                });
             });
-        });
-    </script>
+        </script>
+    {% else %}
+        <script>
+            $(document).ready(() => {
+                $('.coffee-icon-container').click(() => {
+                    $.post(window.location.href, "coffee");
+                    $('#modal-enjoy').modal('show');
+                    window.setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                });
+            });
+        </script>
+    {% endif %}
 {% endblock header %}
 
 {% block main_nav_items %}
@@ -62,25 +94,50 @@
 {% endblock main_nav_items %}
 
 {% block main_content %}
-    <form method="post" class="coffee-container">
-        {% for variant in variants_favorites %}
-            <div type="submit"
-                 class="coffee-icon-container"
-                 coffee-id="{{ variant.id }}">
-                <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
-                <div class="coffee-icon-text">
-                    {{ variant.name }}
-                    <sup class="fas fa-heart"></sup>
+    {% if coffeemaker %}
+        <form method="post" class="coffee-container">
+            {% for variant in variants_favorites %}
+                <div type="submit"
+                     class="coffee-icon-container"
+                     coffee-id="{{ variant.id }}">
+                    <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
+                    <div class="coffee-icon-text">
+                        {{ variant.name }}
+                        <sup class="fas fa-heart"></sup>
+                    </div>
+                </div>
+            {% endfor %}
+            {% for variant in variants %}
+                <div type="submit"
+                     class="coffee-icon-container"
+                     coffee-id="{{ variant.id }}">
+                    <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
+                    <div class="coffee-icon-text">{{ variant.name }}</div>
+                </div>
+            {% endfor %}
+        </form>
+    {% else %}
+        <div class="coffee-icon-container">
+            <div class="coffee-icon-icon icon-coffee"></div>
+            <div class="coffee-icon-text">Coffee</div>
+        </div>
+    {% endif %}
+{% endblock main_content %}
+
+{% block post_body %}
+    <div class="modal fade"
+         id="modal-enjoy"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-body">
+                    <h1>Enjoy your coffee!</h1>
+                    <div class="my-5 fas fa-mug-hot display-1 text-center w-100"></div>
+                    <p>Thank you for using Coffeebuddy.</p>
                 </div>
             </div>
-        {% endfor %}
-        {% for variant in variants %}
-            <div type="submit"
-                 class="coffee-icon-container"
-                 coffee-id="{{ variant.id }}">
-                <div class="coffee-icon-icon icon-{{ variant.icon }}"></div>
-                <div class="coffee-icon-text">{{ variant.name }}</div>
-            </div>
-        {% endfor %}
-    </form>
-{% endblock main_content %}
+        </div>
+    </div>
+{% endblock post_body %}
