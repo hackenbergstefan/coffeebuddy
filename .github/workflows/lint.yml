@@ -5,22 +5,22 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.10", "3.11"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        pip install --user pdm
-        pdm sync -G dev
-    - name: Format
-      run: |
-        pdm run ruff format --check .
-    - name: Lint
-      run: |
-        pdm run ruff check .
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          pip install --user pdm
+          pdm sync -G dev
+      - name: Format
+        run: |
+          pdm run ruff format --check .
+      - name: Lint
+        run: |
+          pdm run ruff check .
+      - name: Djlint
+        run: |
+          pdm run djlint coffeebuddy

@@ -22,7 +22,9 @@ def test_selectuser(web: CoffeeBuddyWebDriver, user):
     index = [user.text for user in users].index("Mustermann Max")
     assert index >= 0
     users[index].click()
-    assert web.current_url == f"{HOST}/coffee.html?tag={user['tag']}&manually"
+    assert (
+        web.current_url == f"{HOST}/coffee.html?tag={user['tag']}&manually&can-oneswipe"
+    )
 
 
 def test_coffee(web: CoffeeBuddyWebDriver, user):
@@ -72,14 +74,17 @@ def test_pay(web: CoffeeBuddyWebDriver, user):
             web.find_element_css(".hg-button-enter").click()
         balance += amount
 
-        web.wait(ec.visibility_of(web.find_element_css("#modal-confirm")))
+        modal = web.find_element_css("#modal-confirm")
+        web.wait(ec.visibility_of(modal))
         web.wait(
             ec.element_to_be_clickable(web.find_element_css("#modal-confirm button"))
         ).click()
+        web.wait(ec.invisibility_of_element(modal))
         assert web.api("user/get", id=user["id"])["balance"] == balance
 
 
 def test_pay_abort(web: CoffeeBuddyWebDriver, user):
+    assert user["balance"] == 0
     web.get(f"{HOST}/pay.html?tag={user['tag']}")
     web.find_element_css("button.btn-pay").click()
     web.wait(ec.visibility_of(web.find_element_css("#modal-confirm")))

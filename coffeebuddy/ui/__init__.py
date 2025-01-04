@@ -40,7 +40,11 @@ def url(site: str, **kwargs):
     for key, value in kwargs.items():
         if isinstance(value, bytes):
             kwargs[key] = value.hex()
-    return site + "?" + "&".join(f"{key}={value}" for key, value in kwargs.items())
+    return (
+        site
+        + "?"
+        + "&".join(f"{key}={value}" if value else key for key, value in kwargs.items())
+    )
 
 
 @flask.current_app.context_processor

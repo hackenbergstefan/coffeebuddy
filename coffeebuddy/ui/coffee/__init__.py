@@ -47,15 +47,22 @@ def coffee(user: User):
     if request.method == "POST":
         return post()
 
+    has_coffeemaker = flask.current_app.config.get("COFFEEMAKER", None) is not None
+
+    if (
+        not has_coffeemaker
+        and "can-oneswipe" in flask.request.args
+        and user.option_oneswipe
+    ):
+        return flask.redirect(url("oneswipe.html", **flask.request.args))
+
     variants_favorites, variants = CoffeeVariant.all_for_user(user)
     return flask.render_template(
         "coffee.html",
         user=user,
         variants_favorites=variants_favorites,
         variants=variants,
-        coffeemaker=flask.current_app.config.get("COFFEEMAKER", False)
-        or flask.current_app.config.get("COFFEEMAKER_MOCK_BREW_TIME", False)
-        is not False,
+        coffeemaker=has_coffeemaker,
         price=flask.current_app.config["PRICE"],
     )
 
@@ -160,12 +167,28 @@ def editcoffee(user: User):
     )
 
 
-@blueprint.route("/oneswipe.html", methods=["POST"])
+@blueprint.route("/oneswipe.html", methods=["GET", "POST"])
 @require_tag
 def oneswipe(user: User):
     db = flask.current_app.db
 
+    selected_manually = "manually" in flask.request.args
+
     if "coffee" in flask.request.form:
-        db.session.add(Drink(user=user, price=flask.current_app.config["PRICE"]))
+        db.session.add(
+            Drink(
+                user=user,
+                price=flask.current_app.config["PRICE"],
+                selected_manually=selected_manually,
+            )
+        )
         db.session.commit()
-    return ""
+    elif "undo" in flask.request.form:
+        return flask.redirect(
+            url(
+                "coffee.html",
+                tag=user.tag,
+                **{"manually" if selected_manually else None: None},
+            )
+        )
+    return flask.render_template("oneswipe.html", user=user)

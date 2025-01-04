@@ -53,7 +53,7 @@ def api_user(endpoint: str):
             db.session.commit()
             return flask.jsonify(user.serialize())
         case "del":
-            User.query.filter_by(id=flask.request.args["id"]).delete()
+            db.session.delete(get_user())
             db.session.commit()
             return ""
     flask.abort(404)

@@ -40,6 +40,7 @@ class CoffeeMakerMock:
 def init():
     logging.getLogger(__name__).info("Init")
     app = flask.current_app
+    config = app.config.get("COFFEEMAKER", None) or {}
 
-    if (brew_time := app.config.get("COFFEEMAKER_MOCK_BREW_TIME", False)) is not False:
-        CoffeeMakerMock(brew_time=brew_time)
+    if "mock" in config:
+        CoffeeMakerMock(brew_time=config["mock"])

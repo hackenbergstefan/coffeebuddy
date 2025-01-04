@@ -7,31 +7,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Patch docker-compose.yml
-      run: sed -i 's,.*/mnt/ssd/postgresql.*,#\\0,' database/docker-compose.yml
-    - name: Setup certificates
-      run: |
-        cd database
-        echo -e "1\nn" | ./gen_certs.sh
-        echo -e "2\ncoffeebuddydb" | ./gen_certs.sh
-        echo -e "3\ncoffeebuddy01\nn" | ./gen_certs.sh
-    - name: Create container
-      run: |
-        cd database
-        docker compose up
-    - name: Start container again
-      run: |
-        cd database
-        docker compose up -d
-        sleep 5
-        PGSSLMODE=require \
-          PGSSLROOTCERT=certs/ca/root.crt \
-          PGSSLCERT=certs/client_coffeebuddy01/postgresql.crt \
-          PGSSLKEY=certs/client_coffeebuddy01/postgresql.key \
-          psql -U coffeebuddy01 -h localhost -d coffeebuddy -lqt
-    - name: Stop containers
-      if: always()
-      run: |
-        cd database
-        docker compose down
+      - uses: actions/checkout@v2
+      - name: Patch docker-compose.yml
+        run: sed -i 's,.*/mnt/ssd/postgresql.*,#\\0,' database/docker-compose.yml
+      - name: Setup certificates
+        run: |
+          cd database
+          echo -e "1\nn" | ./gen_certs.sh
+          echo -e "2\ncoffeebuddydb" | ./gen_certs.sh
+          echo -e "3\ncoffeebuddy01\nn" | ./gen_certs.sh
+      - name: Create container
+        run: |
+          cd database
+          docker compose up
+      - name: Start container again
+        run: |
+          cd database
+          docker compose up -d
+          sleep 5
+          PGSSLMODE=require \
+            PGSSLROOTCERT=certs/ca/root.crt \
+            PGSSLCERT=certs/client_coffeebuddy01/postgresql.crt \
+            PGSSLKEY=certs/client_coffeebuddy01/postgresql.key \
+            psql -U coffeebuddy01 -h localhost -d coffeebuddy -lqt
+      - name: Stop containers
+        if: always()
+        run: |
+          cd database
+          docker compose down

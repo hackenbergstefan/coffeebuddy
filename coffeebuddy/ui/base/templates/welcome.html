@@ -5,7 +5,7 @@
         $(() => {
             var socket = io.connect(window.location.host);
             socket.on('card_connected', (msg) => {
-                window.location.href = `../coffee.html?tag=${msg['tag']}`;
+                window.location.href = `../coffee.html?tag=${msg['tag']}&can-oneswipe`;
             });
         });
 

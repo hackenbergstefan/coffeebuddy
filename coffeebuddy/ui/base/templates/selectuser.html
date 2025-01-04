@@ -43,7 +43,7 @@
                 <div class="d-flex flex-row flex-wrap">
                     {% for user in top_manual_users %}
                         <div class="item"
-                             onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
+                             onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually&can-oneswipe'">
                             {{- user.name }} {{ user.prename -}}
                         </div>
                     {% endfor %}
@@ -58,7 +58,7 @@
                     <div class="d-flex flex-row flex-wrap">
                         {% for user in userlist %}
                             <div class="item"
-                                 onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually'">
+                                 onclick="window.location.href = '../coffee.html?tag={{ user.tag.hex() }}&manually&can-oneswipe'">
                                 {{- user.name }} {{ user.prename -}}
                             </div>
                         {% endfor %}

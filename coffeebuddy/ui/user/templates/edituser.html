@@ -82,10 +82,21 @@
 
         function submit_edituser() {
             const form = $('#edituser-form');
-            user = {};
+            /* beautify ignore:start */
+            user = {
+                {% for key in user.serialize() -%}
+                {{ key }}: undefined,
+                {%- endfor %}
+            };
+            /* beautify ignore:end */
             form.find('input').map(function() {
                 user[$(this).attr('name')] = $(this).val();
             });
+            for (const key in user) {
+                const item = form.find(`input[name='${key}']`);
+                user[key] = item.attr('type') == 'checkbox' ? item[0].checked : item.val();
+            }
+            console.log(user);
 
             $.post(window.location.href, user, (data) => {
                 console.log(data);
@@ -150,105 +161,115 @@
                        class="btn btn-secondary"
                        onclick="updatetag(1)"
                        value="Update Tag">
-            </input>
-        </div>
-        <div class="col">
-            <label>Tag2 ID</label>
-            <input class="form-control form-control-lg"
-                   type="text"
-                   name="tag2"
-                   placeholder="Enter tag id"
-                   value="{{ hexstr(user.tag2) }}">
-            <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
-                <code>01 02 03 04</code></small>
-            <input type="button"
-                   class="btn btn-secondary"
-                   onclick="updatetag(2)"
-                   value="Update Tag">
-        </input>
-    </div>
-</div>
-<div class="form-group row">
-    <label>E-Mail</label>
-    <div class="col mt-0">
-        <div class="input-group has-validation">
-            <input class="form-control form-control-lg"
-                   id="form-item-email"
-                   type="email"
-                   name="email"
-                   placeholder="Enter E-Mail address"
-                   required
-                   value="{{ user.email or '' }}"
-                   autocomplete="off"
-                   onclick="simple_keyboard_process(this)">
-        </div>
-        <div class="invalid-tooltip">E-Mail address could not be found.</div>
-    </div>
-    <div class="col-auto">
-        <input type="button"
-               class="btn"
-               onclick="fill_from_mail()"
-               value="Fill from email" />
-    </div>
-</div>
-<div class="form-group row">
-    <div class="col">
-        <label>First name</label>
-        <input id="form-item-firstname"
-               class="form-control"
-               type="text"
-               name="first_name"
-               placeholder="Enter first name"
-               required
-               value="{{ user.prename }}"
-               autocomplete="off"
-               onclick="simple_keyboard_process(this)">
-    </div>
-    <div class="col">
-        <label>Last name</label>
-        <input id="form-item-lastname"
-               class="form-control"
-               type="text"
-               name="last_name"
-               placeholder="Enter last name"
-               required
-               value="{{ user.name }}"
-               autocomplete="off"
-               onclick="simple_keyboard_process(this)">
-    </div>
-</div>
-<div class="row my-3 py-3 {{ 'd-none' if not flask_login.current_user.is_authenticated }}">
-    <div class="col">
-        <h3 class="color-berry">Admin settings</h3>
-        <div class="my-3">
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="checkbox"
-                       name="enabled"
-                       {{ 'checked' if user.enabled }}>
-                <label class="form-check-label">Account Enabled</label>
+            </div>
+            <div class="col">
+                <label>Tag2 ID</label>
+                <input class="form-control form-control-lg"
+                       type="text"
+                       name="tag2"
+                       placeholder="Enter tag id"
+                       value="{{ hexstr(user.tag2) }}">
+                <small class="form-text text-muted">Enter UID as HEX-String, e.g. <code>01020304</code> or
+                    <code>01 02 03 04</code></small>
+                <input type="button"
+                       class="btn btn-secondary"
+                       onclick="updatetag(2)"
+                       value="Update Tag">
             </div>
         </div>
-        <div class="my-3">
-            <label>Balance</label>
-            <div class="input-group w-50">
-                <input class="form-control"
-                       type="number"
-                       id="form-item-unpayed"
-                       name="balance"
-                       step="0.01"
-                       pattern="[+-][0-9]+\.[0-9]+ €"
-                       placeholder="0.00 €"
+        <div class="form-group row">
+            <label>E-Mail</label>
+            <div class="col mt-0">
+                <div class="input-group has-validation">
+                    <input class="form-control form-control-lg"
+                           id="form-item-email"
+                           type="email"
+                           name="email"
+                           placeholder="Enter E-Mail address"
+                           required
+                           value="{{ user.email or '' }}"
+                           autocomplete="off"
+                           onclick="simple_keyboard_process(this)">
+                </div>
+                <div class="invalid-tooltip">E-Mail address could not be found.</div>
+            </div>
+            <div class="col-auto">
+                <input type="button"
+                       class="btn"
+                       onclick="fill_from_mail()"
+                       value="Fill from email" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col">
+                <label>First name</label>
+                <input id="form-item-firstname"
+                       class="form-control"
+                       type="text"
+                       name="prename"
+                       placeholder="Enter first name"
+                       required
+                       value="{{ user.prename }}"
                        autocomplete="off"
-                       value="{{ '%0.02f' | format(user.balance) }}" />
-                <div class="input-group-append">
-                    <div class="input-group-text">EUR</div>
+                       onclick="simple_keyboard_process(this)">
+            </div>
+            <div class="col">
+                <label>Last name</label>
+                <input id="form-item-lastname"
+                       class="form-control"
+                       type="text"
+                       name="name"
+                       placeholder="Enter last name"
+                       required
+                       value="{{ user.name }}"
+                       autocomplete="off"
+                       onclick="simple_keyboard_process(this)">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col">
+                <h3>Options</h3>
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="option_oneswipe"
+                           {{ "checked" if user.option_oneswipe }}>
+                    <label class="form-check-label">Oneswipe</label>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-</form>
+        <div class="row my-3 py-3 {{ 'd-none' if not flask_login.current_user.is_authenticated }}">
+            <div class="col">
+                <h3>Admin settings</h3>
+                <div class="my-3">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="enabled"
+                               {{ 'checked' if user.enabled }}>
+                        <label class="form-check-label">Account Enabled</label>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <label>Balance</label>
+                    <div class="input-group w-50">
+                        <input class="form-control"
+                               type="number"
+                               id="form-item-unpayed"
+                               name="balance"
+                               step="0.01"
+                               pattern="[+-][0-9]+\.[0-9]+ €"
+                               placeholder="0.00 €"
+                               autocomplete="off"
+                               value="{{ '%0.02f' | format(user.balance) }}" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">EUR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock main_content %}
 
 {% block post_body %}
@@ -262,9 +283,9 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content p-3">
-                <h2 class="color-berry">Tap new tag.</h2>
+                <h2>Tap new tag.</h2>
                 <div class="d-flex flex-column justify-content-center text-center h-100">
-                    <div class="display-1 color-berry fas fa-address-card mb-3"></div>
+                    <div class="display-1  fas fa-address-card mb-3"></div>
                 </div>
                 <div class="container">
                     <button class="float-right btn btn-primary" onclick="updatetag_abort()">Abort</button>
