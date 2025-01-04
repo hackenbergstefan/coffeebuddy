@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 import flask
 import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, Table, select, text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 
 from . import Base
 
@@ -85,8 +85,16 @@ class User(Base, Serializer):
     email: Mapped[str] = mapped_column(nullable=False)
     option_oneswipe: Mapped[bool] = mapped_column(default=False)
     enabled: Mapped[bool] = mapped_column(default=True)
-    pays = relationship("Pay", backref="user", cascade="all, delete")
-    drinks = relationship("Drink", backref="user", cascade="all, delete")
+    pays: Mapped[List["Pay"]] = relationship(
+        "Pay",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    drinks: Mapped[List["Drink"]] = relationship(
+        "Drink",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
     variant_favorites = relationship(
         "CoffeeVariant",
         secondary=coffee_variant_favorites,
@@ -368,8 +376,10 @@ class Drink(Base, Serializer):
     timestamp: Mapped[datetime]
     price: Mapped[float] = mapped_column(nullable=False)
     userid: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
     )
+    user: Mapped[User] = relationship("User", back_populates="drinks")
     host: Mapped[str]
     selected_manually: Mapped[bool] = mapped_column(default=False)
     coffeeid: Mapped[Optional[int]] = mapped_column(
@@ -408,6 +418,7 @@ class Pay(Base):
         ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False,
     )
+    user: Mapped[User] = relationship("User", back_populates="pays")
     amount: Mapped[float] = mapped_column(nullable=False)
     host: Mapped[str]
 

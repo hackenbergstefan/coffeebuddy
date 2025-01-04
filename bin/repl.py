@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-import code
 import logging
 import os
-import readline  # optional, will allow Up/Down/History in the console # noqa: F401
 import sys
+
+import IPython
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -25,9 +25,11 @@ if __name__ == "__main__":
             coffeebuddy.init_app_context(app)
             from coffeebuddy.model import Drink, Pay, User  # noqa: F401
 
+            db = app.db
+            dbsession = db.session
+
             variables = globals().copy()
             variables.update(locals())
-            shell = code.InteractiveConsole(variables)
-            shell.interact()
+            IPython.embed(colors="neutral")
     except:  # noqa: E722
         raise

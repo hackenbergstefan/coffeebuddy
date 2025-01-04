@@ -7,18 +7,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.10", "3.11"]
+        python-version: ["3.12", "3.13"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        sudo apt-get install libpcsclite-dev
-        pip install --user pdm
-        pdm sync -G dev
-    - name: Test with pytest
-      run: |
-        pdm run pytest -v
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get install libpcsclite-dev
+          pip install --user pdm
+          pdm install --without rpi --without pcsc --without camera
+      - name: Test with pytest
+        run: |
+          pdm run pytest -v
