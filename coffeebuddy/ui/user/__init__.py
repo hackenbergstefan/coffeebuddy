@@ -33,13 +33,13 @@ def edit_user():
         try:
             user.tag = escapefromhex(request.form["tag"])
             user.tag2 = escapefromhex(request.form["tag2"])
-            user.name = request.form["last_name"]
-            user.prename = request.form["first_name"]
+            user.name = request.form["name"]
+            user.prename = request.form["prename"]
             user.email = request.form["email"]
-            user.option_oneswipe = "oneswipe" in request.form
+            user.option_oneswipe = request.form["option_oneswipe"] == "true"
 
             if flask_login.current_user.is_authenticated:
-                user.enabled = "enabled" in request.form
+                user.enabled = request.form["enabled"] == "true"
                 balance = float(request.form["balance"])
                 if not math.isclose(balance, user.balance):
                     user.update_balance(balance)

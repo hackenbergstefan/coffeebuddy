@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 import flask
 import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, Table, select, text
-from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
 

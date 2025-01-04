@@ -70,7 +70,7 @@ def server(request, pytestconfig):
         config={
             "TESTING": True,
             "PREFILLED": True,
-            "COFFEEMAKER_MOCK_BREW_TIME": 0.1,
+            "COFFEEMAKER": {"mock": 0.1},
         },
         verbose=pytestconfig.get_verbosity() > 1,
     )
@@ -108,3 +108,5 @@ def user(server):
     assert response.status_code == 200
     yield response.json()
     requests.get(f"{HOST}/api/user/del", params={"id": user_id})
+    response = requests.get(f"{HOST}/api/user/get", params={"id": user_id})
+    assert response.status_code == 400
