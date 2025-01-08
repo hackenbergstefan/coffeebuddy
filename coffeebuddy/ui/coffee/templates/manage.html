@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <style></style>
+    <script>
+        var socket;
+        $(() => {
+            socket = io.connect(window.location.host);
+        });
+    </script>
+{% endblock header %}
+
+{% block title %}
+    <h2>Manage</h2>
+{% endblock title %}
+
+{% block main_content %}
+    <div class="form-group row">
+        <div class="col">
+            <h3>Coffeemaker</h3>
+            <div class="d-flex flex-col gap-3">
+                <button class="btn" onclick="socket.emit('coffeemaker:manage', 'unlock');">
+                    <div class="fas fa-unlock"></div>
+                    Unlock
+                </button>
+                <button class="btn" onclick="socket.emit('coffeemaker:manage', 'lock');">
+                    <div class="fas fa-lock"></div>
+                    Lock
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock main_content %}

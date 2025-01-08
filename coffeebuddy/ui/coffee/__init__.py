@@ -192,3 +192,8 @@ def oneswipe(user: User):
             )
         )
     return flask.render_template("oneswipe.html", user=user)
+
+
+@blueprint.route("/coffee/manage.html", methods=["GET", "POST"])
+def manage():
+    return flask.render_template("manage.html")

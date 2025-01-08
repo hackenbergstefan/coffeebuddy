@@ -17,7 +17,8 @@ class CoffeeMakerMock:
         super().__init__()
         self.brew_time = brew_time
         self.socketio: SocketIO = flask.current_app.socketio
-        self.socketio.on_event("brew", self.brew)
+        self.socketio.on_event("coffeemaker:brew", self.brew)
+        self.socketio.on_event("coffeemaker:manage", self.manage)
         with (Path(__file__).parent / "coffee_facts.yml").open() as fp:
             self.coffee_facts = yaml.load(fp, Loader=yaml.FullLoader)["coffee"]
 
@@ -26,15 +27,21 @@ class CoffeeMakerMock:
             pass
 
     def brew(self, data):
-        print("brew", data)
         if data == "start":
             print("brew", data)
             fact = random.choice(self.coffee_facts)
-            self.socketio.emit("brew", {"state": "started", "fact": fact})
+            self.socketio.emit("coffeemaker:brew", {"state": "started", "fact": fact})
             time.sleep(self.brew_time)
-            self.socketio.emit("brew", {"state": "finished"})
+            self.socketio.emit("coffeemaker:brew", {"state": "finished"})
         elif data == "abort":
             print("brew abort!")
+
+    def manage(self, data):
+        match data:
+            case "unlock":
+                print("unlock")
+            case "lock":
+                print("lock")
 
 
 def init():
