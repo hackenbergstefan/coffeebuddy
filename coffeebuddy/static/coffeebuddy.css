@@ -101,6 +101,7 @@ label {
     --bs-btn-bg: var(--color-fg);
     --bs-btn-active-bg: var(--color-highlight);
     --bs-btn-border-color: none;
+    --bs-btn-hover-border-color: var(--color-fg);
     min-width: 100px;
     border-radius: 300px;
     filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.25));
@@ -151,6 +152,10 @@ label {
 
 button {
     border-style: none;
+}
+
+.btn:hover {
+    border-top-style: groove;
 }
 
 /* #endregion */

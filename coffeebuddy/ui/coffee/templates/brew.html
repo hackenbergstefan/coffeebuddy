@@ -51,7 +51,7 @@
         var socket;
         $(() => {
             socket = io.connect(window.location.host);
-            socket.on('brew', (msg) => {
+            socket.on('coffeemaker:brew', (msg) => {
                 console.log(msg);
                 switch (msg['state']) {
                     case 'started':
@@ -69,7 +69,7 @@
                 }
             });
             $('#main-nav button[name="abort"]').click(() => {
-                socket.emit('brew', 'abort');
+                socket.emit('coffeemaker:brew', 'abort');
             });
         });
     </script>
@@ -106,7 +106,7 @@
             <button type="button"
                     name="yes"
                     class="btn-big fas fa-check"
-                    onclick="socket.emit('brew', 'start');"></button>
+                    onclick="socket.emit('coffeemaker:brew', 'start');"></button>
             <button type="submit" name="no" class="btn-big fas fa-xmark"></button>
         </form>
     </div>
