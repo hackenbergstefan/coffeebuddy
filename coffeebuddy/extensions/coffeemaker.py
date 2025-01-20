@@ -28,12 +28,15 @@ class CoffeeMakerMock:
 
     def brew(self, data):
         if data == "start":
+            flask.current_app.events.fire("coffeemaker:brew:start")
             print("brew", data)
             fact = random.choice(self.coffee_facts)
             self.socketio.emit("coffeemaker:brew", {"state": "started", "fact": fact})
             time.sleep(self.brew_time)
             self.socketio.emit("coffeemaker:brew", {"state": "finished"})
+            flask.current_app.events.fire("coffeemaker:brew:stop")
         elif data == "abort":
+            flask.current_app.events.fire("coffeemaker:brew:stop")
             print("brew abort!")
 
     def manage(self, data):
