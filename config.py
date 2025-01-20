@@ -84,9 +84,7 @@ PAYMENT_NOTIFICATION_EMAILS = []
 
 # Extension: Coffeemaker (coffeebuddy.extensions.coffeemaker)
 # ---------------------------------------------
-# Set True if real coffeemaker is attached
-COFFEEMAKER = False
-
-# Number of seconds a coffee takes to be brewed.
-# Set to False to disable mock.
-COFFEEMAKER_MOCK_BREW_TIME = 10.0
+# Coffeemaker configuration
+# Set None to disable
+# Set `{"mock": 10.0}` to enable mock with 10 seconds brew time
+COFFEEMAKER = {"mock": 10.0}
