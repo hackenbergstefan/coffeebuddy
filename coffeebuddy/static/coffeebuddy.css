@@ -133,17 +133,17 @@ label {
 }
 
 .table {
-   --bs-table-striped-bg: var(--color-accent-4);
-   --bs-table-accent-bg: var(--color-bg);
-   --bs-table-active-bg: var(--color-bg);
-   --bs-table-bg: var(--color-bg);
-   --bs-table-color: var(--color-fg);
+    --bs-table-striped-bg: var(--color-accent-4);
+    --bs-table-accent-bg: var(--color-bg);
+    --bs-table-active-bg: var(--color-bg);
+    --bs-table-bg: var(--color-bg);
+    --bs-table-color: var(--color-fg);
 }
 
 .table-active {
-   --bs-table-color-state: var(--color-bg);
-   --bs-table-bg-state: var(--color-accent-2);
-   font-weight: bold;
+    --bs-table-color-state: var(--color-bg);
+    --bs-table-bg-state: var(--color-accent-2);
+    font-weight: bold;
 }
 
 .table>:not(caption)>*>* {
@@ -275,7 +275,6 @@ button {
 
 #main-content {
     display: flex;
-    overflow-y: scroll;
     flex-grow: 1;
     margin-right: 100px;
 }
