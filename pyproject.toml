@@ -22,7 +22,12 @@ readme = "README.md"
 license = { text = "MIT" }
 
 [project.optional-dependencies]
-rpi = ["mfrc522~=0.0.7", "pi-rc522~=2.3.0", "pigpio~=1.78"]
+rpi = [
+    "mfrc522~=0.0.7",
+    "pi-rc522~=2.3.0",
+    "pigpio~=1.78",
+    "spidev>=3.6",
+]
 pcsc = ["pyscard>=2.0.10"]
 camera = ["opencv-python>=4.10.0.84"]
 dev = [

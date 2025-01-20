@@ -55,7 +55,7 @@ def color_named(name):
 
 def init():
     config = flask.current_app.config.get("ILLUMINATION")
-    if not config or flask.current_app.testing:
+    if not config or not config.get("pins") or flask.current_app.testing:
         return
 
     try:

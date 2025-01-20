@@ -44,11 +44,34 @@ ADMIN_PASSWORD = "coffeebuddy"
 # Card type (PCSC, MRFC522, PIRC522)
 CARD = "PCSC"
 
-# Extension: Illumination (coffeebuddy.extensions.illumination)
+# Extension: Illumination
+# (coffeebuddy.extensions.illumination, coffeebuddy.extensions.illumination_neopixel)
 # ---------------------------------------------
-# If set: `{"pins": (1, 2, 3), "color_motion_detected": "rose", "color_X": ...}`.
+# If using coffeebuddy.extensions.illumination:
+# `{"pins": (1, 2, 3), "color_motion_detected": "rose", "color_X": ...}`.
 # See ./coffeebuddy/illumination.py for details
-ILLUMINATION = False
+# If using coffeebuddy.extensions.illumination_neopixel. E.g.
+# ```py
+# ILLUMINATION = {
+#     "neopixel": {
+#         "bus": 0,
+#         "device": 0,
+#         "leds": 12,
+#         "events": {
+#             "route_welcome": lambda neo: neo.fill(20, 10, 10),
+#             "route_notwelcome": lambda neo: neo.fill(235, 90, 7),
+#             "coffeemaker:brew:stop": lambda neo: neo.fill(235, 90, 7),
+#             "coffeemaker:brew:start": lambda neo: neo.pulse(
+#                 (250, 170, 10),
+#                 amplitude=0.8,
+#                 duration=2,
+#             ),
+#         },
+#     }
+# }
+# ```
+# See ./coffeebuddy/illumination_neopixel.py for details
+ILLUMINATION = None
 
 # Extension: PIR (coffeebuddy.extensions.pir)
 # ---------------------------------------------
