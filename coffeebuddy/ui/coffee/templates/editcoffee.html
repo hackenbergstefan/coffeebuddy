@@ -5,19 +5,21 @@
         .coffee-icon {
             position: absolute;
             top: calc(50% - 150px);
-            right: 50px;
+            right: 10px;
             width: 300px;
             height: 300px;
             background-repeat: no-repeat;
             background-size: contain;
             background-position: center;
+            filter: drop-shadow(10px 10px 10px black);
         }
 
         .settings-container {
             display: flex;
             width: calc(100% - 300px);
             flex-direction: column;
-            justify-content: space-evenly;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
 
         .settings-name {
@@ -40,12 +42,13 @@
         /* beautify ignore:end */
 
         function sliderDrag() {
+            let clientX = event.type == "click" ? event.clientX:event.touches[0].clientX;
             let slider = $(this);
             let min = parseFloat(slider.attr('aria-valuemin'));
             let max = parseFloat(slider.attr('aria-valuemax'));
             let step = parseFloat(slider.attr('aria-valuestep'));
             let width = slider.width();
-            let x = (event.touches[0].clientX - slider.offset().left) / width;
+            let x = (clientX - slider.offset().left) / width;
             let percent = Math.min(1.0, Math.max(0.0, x));
             let value = min + (Math.round((max - min) * percent / step) * step);
             let valuePercent = (value - min) / (max - min);
@@ -60,6 +63,7 @@
 
         $(() => {
             $('.settings-slider').on("touchmove", sliderDrag);
+            $('.settings-slider').on("click", sliderDrag);
         });
     </script>
     <script>
@@ -119,7 +123,7 @@
 {% block main_content %}
     <div class="coffee-icon icon-{{ variant.icon }}"></div>
     <form id="variant-settings" class="settings-container">
-        <div class="form-group row">
+        <div class="form-group">
             <div class="col">
                 <label>Name</label>
                 <input class="form-control"
