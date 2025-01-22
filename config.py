@@ -58,8 +58,8 @@ CARD = "PCSC"
 #         "device": 0,
 #         "leds": 12,
 #         "events": {
-#             "route_welcome": lambda neo: neo.fill(20, 10, 10),
-#             "route_notwelcome": lambda neo: neo.fill(235, 90, 7),
+#             "route:/": lambda neo: neo.fill(20, 10, 10),
+#             re.compile("route:/.+"): lambda neo: neo.fill(235, 90, 7),
 #             "coffeemaker:brew:stop": lambda neo: neo.fill(235, 90, 7),
 #             "coffeemaker:brew:start": lambda neo: neo.pulse(
 #                 (250, 170, 10),

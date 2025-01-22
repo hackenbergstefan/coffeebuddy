@@ -159,6 +159,11 @@
                     // main_title.css("font-size", `calc(0.06vw * ${main_title.text().length})`);
                 }
             });
+            $(() => {
+                let socket = io.connect(window.location.host);
+                socket.emit('route', window.location.pathname);
+                socket.disconnect();
+            });
         </script>
 
         {% block header %}

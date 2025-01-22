@@ -37,16 +37,6 @@ def selectuser():
     )
 
 
-@blueprint.after_request
-def after_request(response):
-    if flask.request.endpoint:
-        if flask.request.endpoint == "base.welcome":
-            flask.current_app.events.fire("route_welcome")
-        elif flask.request.endpoint != "static":
-            flask.current_app.events.fire("route_notwelcome")
-    return response
-
-
 @blueprint.errorhandler(Exception)
 def route_error(exception):
     return flask.render_template("error.html", exception=exception), 400

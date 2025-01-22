@@ -15,7 +15,6 @@ blueprint = Blueprint("coffee", __name__, template_folder="templates")
 @require_tag
 def coffee(user: User):
     request = flask.request
-    flask.current_app.events.fire("route_coffee")
 
     def post():
         db = flask.current_app.db
