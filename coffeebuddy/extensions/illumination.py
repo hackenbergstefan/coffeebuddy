@@ -77,11 +77,11 @@ def init():
         lambda: color_named(config.get("color_motion_lost")),
     )
     flask.current_app.events.register(
-        "route_coffee",
+        "route:/coffee",
         lambda: color_named(config.get("color_route_coffee")),
     )
     flask.current_app.events.register(
-        "route_welcome",
+        "route:/",
         lambda: color_named(config.get("color_route_welcome")),
     )
     flask.current_app.events.register(
