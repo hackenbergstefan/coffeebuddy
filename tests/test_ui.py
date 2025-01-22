@@ -129,3 +129,36 @@ def test_brew(web: CoffeeBuddyWebDriver, user):
     assert web.current_url == f"{HOST}/coffee.html?tag={user['tag']}"
     assert len(web.api("user/drinks", id=user["id"])) == 1
     assert web.api("user/get", id=user["id"])["balance"] < 0
+
+
+def test_screenshots(web: CoffeeBuddyWebDriver):
+    web.set_window_size(1024, 600 + 139)
+    web.get(f"{HOST}/")
+    web.save_screenshot("doc/welcome.png")
+
+    web.get(f"{HOST}/selectuser.html")
+    web.save_screenshot("doc/selectuser.png")
+
+    web.get(f"{HOST}/coffee.html?tag=01")
+    web.save_screenshot("doc/coffee.png")
+
+    web.get(f"{HOST}/brew.html?coffeeid=1&tag=01")
+    web.save_screenshot("doc/brew.png")
+
+    web.get(f"{HOST}/brew.html?coffeeid=1&tag=01")
+    web.save_screenshot("doc/brew.png")
+
+    web.get(f"{HOST}/editcoffee.html?derive=1&tag=01")
+    web.save_screenshot("doc/editcoffee.png")
+
+    web.get(f"{HOST}/edituser.html?tag=01")
+    web.save_screenshot("doc/edituser.png")
+
+    web.get(f"{HOST}/stats.html?tag=01")
+    web.save_screenshot("doc/stats.png")
+
+    web.get(f"{HOST}/pay.html?tag=01")
+    web.save_screenshot("doc/pay.png")
+
+    web.get(f"{HOST}/cardnotfound.html?uuid=01020304")
+    web.save_screenshot("doc/cardnotfound.png")
