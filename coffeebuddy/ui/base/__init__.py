@@ -25,6 +25,7 @@ def welcome():
         dataset=data,
         hostname=socket.gethostname(),
         version=__version__,
+        help_url=f"github.com/hackenbergstefan/coffeebuddy/blob/v{__version__}/HELP.md",
     )
 
 

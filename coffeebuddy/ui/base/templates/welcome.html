@@ -1,6 +1,8 @@
 {% extends "_base.html" %}
 
 {% block header %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.js"
+            referrerpolicy="no-referrer"></script>
     <script>
         $(() => {
             const socket = io.connect(window.location.host);
@@ -62,6 +64,17 @@
                 minute: '2-digit'
             }));
         }, 1000)
+
+        $(() => {
+            QRCode.toCanvas(document.getElementById('qr-help'), '{{ help_url }}', {
+                color: {
+                    dark: '#ecd9d1',
+                    light: '#00000000'
+                },
+                width: 100,
+                margin: 0,
+            });
+        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"
             async
@@ -106,6 +119,19 @@
             align-items: center;
             margin-left: 10vw;
         }
+
+        #qr-help-container {
+            position: absolute;
+            right: 0;
+            background: var(--color-highlight);
+            border-radius: 300px 0 0 300px;
+            padding: 20px 10px 30px 45px;
+            filter: drop-shadow(10px 10px 10px black);
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 {% endblock header %}
 
@@ -123,6 +149,10 @@
 {% endblock main_nav_items %}
 
 {% block main_content %}
+    <div id="qr-help-container">
+        <h4>Need help?</h4>
+        <canvas id="qr-help"></canvas>
+    </div>
     <div id="info">
         <div class="info-label">Hostname</div>
         <div class="info-field">{{ hostname }}</div>
