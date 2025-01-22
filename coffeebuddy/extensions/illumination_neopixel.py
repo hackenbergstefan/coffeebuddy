@@ -35,7 +35,6 @@ class PulsingTask(threading.Thread):
         self._running = False
 
     def run(self):
-        print("Start pulsing....")
         while True:
             if self._running is False:
                 return
