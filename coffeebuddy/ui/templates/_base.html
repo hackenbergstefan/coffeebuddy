@@ -162,7 +162,6 @@
             $(() => {
                 let socket = io.connect(window.location.host);
                 socket.emit('route', window.location.pathname);
-                socket.disconnect();
             });
         </script>
 
