@@ -144,8 +144,9 @@
 {% endblock title %}
 
 {% block main_nav_items %}
-    {{ nav_item("selectuser", "fas fa-list", type="button", onclick="window.location.href='../selectuser.html'") }}
-    {{ nav_item("manage", "fas fa-gear", type="button", onclick="window.location.href='../coffee/manage.html'") }}
+    {{ nav_item("selectuser", "fas fa-address-book", type="button", onclick="window.location.href='../selectuser.html'") }}
+    {{ nav_item("guest", "fas fa-person-walking-luggage", type="button", onclick="window.location.href='../coffee.html?tag=ffffffff'") }}
+    {{ nav_item("manage", "fas fa-gear", type="button", onclick="window.location.href='../coffee/manage.html'", class="mt-auto") }}
 {% endblock main_nav_items %}
 
 {% block main_content %}
