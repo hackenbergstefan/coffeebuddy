@@ -2,13 +2,21 @@
 Coffee related routes.
 """
 
+import random
+from pathlib import Path
+
 import flask
+import yaml
 from flask import Blueprint
 
+from ...extensions.coffeemaker import JuraCoffeeMaker
 from ...model import CoffeeVariant, Drink, User
 from .. import require_coffeeid, require_tag, url
 
 blueprint = Blueprint("coffee", __name__, template_folder="templates")
+
+with (Path(__file__).parent / "../../extensions/coffee_facts.yml").open() as fp:
+    coffee_facts = yaml.load(fp, Loader=yaml.FullLoader)["coffee"]
 
 
 @blueprint.route("/coffee.html", methods=["GET", "POST"])
@@ -72,11 +80,17 @@ def coffee(user: User):
 def brew(user: User, coffee: CoffeeVariant):
     request = flask.request
     db = flask.current_app.db
+    coffeemaker: JuraCoffeeMaker = flask.current_app.coffeemaker
 
     def post():
-        if "no" in request.form:
+        print(request.form)
+        if "start" in request.form:
+            coffeemaker.brew(coffee)
+            return ""
+        elif "no" in request.form:
             return flask.redirect(url("coffee.html", tag=user.tag))
         elif "abort" in request.form:
+            coffeemaker.brew_abort()
             return flask.redirect(url("coffee.html", tag=user.tag))
         elif "fav" in request.form:
             if coffee in user.variant_favorites:
@@ -84,6 +98,7 @@ def brew(user: User, coffee: CoffeeVariant):
             else:
                 user.variant_favorites.append(coffee)
             db.session.commit()
+            return ""
         elif "new" in request.form:
             return flask.redirect(
                 url("editcoffee.html", tag=user.tag, derive=coffee.id)
@@ -106,7 +121,12 @@ def brew(user: User, coffee: CoffeeVariant):
     if flask.request.method == "POST":
         return post()
 
-    return flask.render_template("brew.html", user=user, variant=coffee)
+    return flask.render_template(
+        "brew.html",
+        user=user,
+        variant=coffee,
+        fact=random.choice(coffee_facts),
+    )
 
 
 @blueprint.route("/editcoffee.html", methods=["GET", "POST"])

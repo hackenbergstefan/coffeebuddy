@@ -51,27 +51,27 @@
         var socket;
         $(() => {
             socket = io.connect(window.location.host);
-            socket.on('coffeemaker:brew', (msg) => {
-                console.log(msg);
-                switch (msg['state']) {
-                    case 'started':
-                        $('#brew-normal').addClass('visually-hidden');
-                        $('#main-nav').children().toggleClass('visually-hidden');
-                        $(`<p>${msg['fact']}</p>`).appendTo('#fact');
-                        $('#brew-brewing').removeClass('visually-hidden');
-                        break;
-                    case 'finished':
-                        var form = $('#main-nav').first();
-                        var btn = $('<button class="visually-hidden" name="brewed"></button>')
-                        form.append(btn);
-                        btn.click();
-                        break;
-                }
+            socket.on('coffeemaker:brew:finished', () => {
+                var form = $('#main-nav').first();
+                var btn = $('<button class="visually-hidden" name="brewed"></button>')
+                form.append(btn);
+                btn.click();
             });
             $('#main-nav button[name="abort"]').click(() => {
-                socket.emit('coffeemaker:brew', 'abort');
+                var form = $('#main-nav').first();
+                var btn = $('<button class="visually-hidden" name="abort"></button>')
+                form.append(btn);
+                btn.click();
             });
         });
+
+        function brew_start() {
+            $.post(window.location.href, 'start', () => {
+                $('#brew-normal').addClass('visually-hidden');
+                $('#main-nav').children().toggleClass('visually-hidden');
+                $('#brew-brewing').removeClass('visually-hidden');
+            });
+        }
     </script>
 {% endblock header %}
 
@@ -102,11 +102,12 @@
             </div>
             <div class="coffee-icon icon-{{ variant.icon }} flex-grow-2"></div>
         </div>
-        <form method="post" class="d-flex flex-row justify-content-around mt-auto mb-3">
+        <form method="post"
+              class="d-flex flex-row justify-content-around mt-auto mb-3">
             <button type="button"
                     name="yes"
                     class="btn-big fas fa-check"
-                    onclick="socket.emit('coffeemaker:brew', 'start');"></button>
+                    onclick="brew_start()"></button>
             <button type="submit" name="no" class="btn-big fas fa-xmark"></button>
         </form>
     </div>
@@ -116,6 +117,8 @@
         <div class="d-flex justify-content-center align-items-center my-4">
             <div class="spinner-border" role="status"></div>
         </div>
-        <div id="fact"></div>
+        <div id="fact">
+            <p>{{ fact }}</p>
+        </div>
     </div>
 {% endblock main_content %}

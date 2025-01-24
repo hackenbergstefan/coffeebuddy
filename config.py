@@ -108,6 +108,7 @@ PAYMENT_NOTIFICATION_EMAILS = []
 # Extension: Coffeemaker (coffeebuddy.extensions.coffeemaker)
 # ---------------------------------------------
 # Coffeemaker configuration
-# Set None to disable
+# Set `None` to disable
 # Set `{"mock": 10.0}` to enable mock with 10 seconds brew time
-COFFEEMAKER = {"mock": 10.0}
+# Set `{"jura_ble": {"model": "xzy", "address": "00:00:00"}}`
+COFFEEMAKER = {"jura_ble": {"model": "xzy", "address": "00:00:00"}}
