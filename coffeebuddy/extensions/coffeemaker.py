@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from asyncio import Queue
 import random
 import time
 from pathlib import Path
@@ -10,7 +11,7 @@ from typing import Self, Type
 import flask
 import yaml
 from flask_socketio import SocketIO
-from jura_ble import CoffeeProduct, JuraBle, Machine
+from jura_ble import CoffeeProduct, JuraBle
 
 from coffeebuddy.model import CoffeeVariant
 
@@ -100,30 +101,43 @@ class JuraBle2:
         return None
 
 
-class JuraCoffeeMaker:
-    def __init__(self, **kwargs):
+class JuraCoffeeMaker(Thread):
+    def __init__(self, model: str, address: str):
         self.socketio = flask.current_app.socketio
         self.events = flask.current_app.events
-        self.jura = asyncio.run(JuraBle2.create(**kwargs))
-        self.machine = Machine("EF658S_C")
+        self.model = model
+        self.address = address
         self._brewing = False
+        self.queue = Queue()
 
-        async def heartbeat():
-            await self.jura._heartbeat_periodic()
+        super().__init__()
 
-        Thread(target=lambda: asyncio.run(heartbeat()), daemon=True).start()
+    def run(self):
+        asyncio.run(self._run())
 
-    def brew(self, coffee: CoffeeVariant):
-        Thread(target=lambda: asyncio.run(self._brew(coffee))).start()
+    async def _run(self):
+        while True:
+            self.jura = await JuraBle.create(model=self.model, address=self.address)
+            try:
+                async with self.jura:
+                    while True:
+                        coffee = await self.queue.get()
+                        logging.getLogger(__name__).info(f"Brewing {coffee}")
+                        await self._brew(coffee)
+            except Exception:
+                pass
 
     def brew_abort(self):
         self._brewing = False
+
+    def brew(self, coffee: CoffeeVariant):
+        self.queue.put_nowait(coffee)
 
     async def _brew(self, coffee: CoffeeVariant):
         self.events.fire("coffeemaker:brew:start")
         self._brewing = True
         coffee = CoffeeProduct(
-            code=coffee.derived_from,
+            code=1,
             name=coffee.name,
             strength=coffee.strength,
             grinder_ratio=coffee.grinder_ratio,
@@ -134,19 +148,22 @@ class JuraCoffeeMaker:
             milk=coffee.milk,
             milk_break=0,
             stroke=0,
-            _props=self.machine.product_properties,
+            _props=self.jura.model.product_properties,
         )
 
         await self.jura.unlock_machine()
         await self.jura.brew_product(coffee)
 
         async def _brew():
+            await asyncio.sleep(3)
             try:
-                async with asyncio.timeout(2):
+                async with asyncio.timeout(40):
                     while self._brewing:
-                        if await self.jura.product_progress() is None:
+                        progress = await self.jura.product_progress()
+                        logging.getLogger(__name__).debug(f"Progress: {progress}")
+                        if progress is None or not any(progress["rest"]):
                             return
-                        await asyncio.sleep(0.2)
+                        await asyncio.sleep(0.5)
             except asyncio.TimeoutError:
                 raise Exception("Brewing timeout!")
 
@@ -168,4 +185,8 @@ def init():
         CoffeeMakerMock(brew_time=config["mock"])
     elif "jura_ble" in config:
         config = config["jura_ble"]
-        flask.current_app.coffeemaker = JuraCoffeeMaker()
+        flask.current_app.coffeemaker = JuraCoffeeMaker(
+            model=config["model"],
+            address=config["address"],
+        )
+        flask.current_app.coffeemaker.start()

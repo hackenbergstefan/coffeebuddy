@@ -23,7 +23,7 @@ license = { text = "MIT" }
 
 [project.optional-dependencies]
 coffeemaker = [
-    "jura-ble @ git+https://github.com/hackenbergstefan/jura_ble.git",
+    "jura-ble @ git+https://github.com/hackenbergstefan/jura_ble.git@v1.0.0",
 ]
 rpi = ["mfrc522>=0.0.7", "pi-rc522>=2.3.0", "pigpio>=1.78", "spidev>=3.6"]
 pcsc = [
