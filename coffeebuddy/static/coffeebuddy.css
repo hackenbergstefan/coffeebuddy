@@ -217,7 +217,7 @@ button {
 .icon-bean {
     min-width: 10px;
     min-height: 10px;
-    background: var(--color-highlight);
+    background: var(--color-fg);
     mask: url("icon-coffee-bean.svg") center/contain no-repeat;
     background-size: contain;
     background-repeat: no-repeat;
@@ -346,8 +346,9 @@ button {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-self: center;
+    align-self: flex-start;
     gap: 10px;
+    margin-top: 15px;
     margin-left: 20px;
     max-width: 150px;
 }

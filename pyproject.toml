@@ -16,6 +16,7 @@ dependencies = [
     "holidays>=0.65",
     "pytz>=2024.2",
     "pyyaml>=6.0.2",
+    "qrcode>=8.0",
 ]
 requires-python = "<3.14,>=3.12"
 readme = "README.md"
