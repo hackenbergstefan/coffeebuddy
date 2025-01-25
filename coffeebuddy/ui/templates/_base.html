@@ -152,16 +152,13 @@
         <link rel="stylesheet"
               href="{{ url_for('static', filename='coffeebuddy.css') }}">
         <script>
-            // Adjust main title font size to fit in container
+            const socket = io.connect(window.location.host);
             $(() => {
-                const main_title = $("#main-title-user h1");
-                if (main_title != undefined) {
-                    // main_title.css("font-size", `calc(0.06vw * ${main_title.text().length})`);
-                }
-            });
-            $(() => {
-                let socket = io.connect(window.location.host);
                 socket.emit('route', window.location.pathname);
+            })
+            socket.on('error', (data) => {
+                $('#modal-error .modal-body p').text(data);
+                $('#modal-error').modal('show');
             });
         </script>
 

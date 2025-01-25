@@ -12,11 +12,6 @@
     </style>
 
     <script>
-        var socket;
-        $(() => {
-            socket = io.connect(window.location.host);
-        });
-
         function updatetag(num) {
             console.log("update tag");
             $("#modal-tag").modal("show");

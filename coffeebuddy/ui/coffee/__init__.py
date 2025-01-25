@@ -83,7 +83,6 @@ def brew(user: User, coffee: CoffeeVariant):
     coffeemaker: JuraCoffeeMaker = flask.current_app.coffeemaker
 
     def post():
-        print(request.form)
         if "start" in request.form:
             coffeemaker.brew(coffee)
             return ""
@@ -215,4 +214,20 @@ def oneswipe(user: User):
 
 @blueprint.route("/coffee/manage.html", methods=["GET", "POST"])
 def manage():
+    def post():
+        if "coffeemaker" in flask.request.form:
+            coffeemaker = flask.current_app.coffeemaker
+            match flask.request.form["coffeemaker"]:
+                case "unlock":
+                    coffeemaker.unlock_machine()
+                    return ""
+                case "lock":
+                    coffeemaker.lock_machine()
+                    return ""
+                case "machine_status":
+                    return flask.jsonify(coffeemaker.machine_status())
+        return ""
+
+    if flask.request.method == "POST":
+        return post()
     return flask.render_template("manage.html")
