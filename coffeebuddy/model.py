@@ -433,8 +433,6 @@ class Pay(Base):
 @dataclass
 class CoffeeSettings:
     display_name: str
-    xml_name: str
-    xml_argument_number: int
     min: int
     max: int
     step: int
@@ -447,6 +445,7 @@ class CoffeeVariant(Base, Serializer):
     id: Mapped[int] = mapped_column(primary_key=True)
     derived_from: Mapped[Optional[int]] = mapped_column(ForeignKey("coffee_variant.id"))
     name: Mapped[str] = mapped_column(unique=True)
+    code: Mapped[int]
     icon: Mapped[str]
     strength: Mapped[int]
     grinder_ratio: Mapped[int]
@@ -462,8 +461,6 @@ class CoffeeVariant(Base, Serializer):
     settings = {
         "strength": CoffeeSettings(
             "Strength",
-            "COFFEE_STRENGTH",
-            xml_argument_number=3,
             min=1,
             max=5,
             step=1,
@@ -471,8 +468,6 @@ class CoffeeVariant(Base, Serializer):
         ),
         "grinder_ratio": CoffeeSettings(
             "Grinder ratio",
-            "GRINDER_RATIO",
-            xml_argument_number=2,
             min=0,
             max=4,
             step=1,
@@ -480,16 +475,12 @@ class CoffeeVariant(Base, Serializer):
         ),
         "water": CoffeeSettings(
             "Water amount",
-            "WATER_AMOUNT",
-            xml_argument_number=4,
             min=25,
             max=290,
             step=5,
         ),
         "temperature": CoffeeSettings(
             "Temperature",
-            "TEMPERATURE",
-            xml_argument_number=7,
             min=0,
             max=2,
             step=1,
@@ -497,24 +488,18 @@ class CoffeeVariant(Base, Serializer):
         ),
         "bypass": CoffeeSettings(
             "Bypass",
-            "BYPASS",
-            xml_argument_number=10,
             min=0,
             max=580,
             step=5,
         ),
         "milk_foam": CoffeeSettings(
             "Milk foam",
-            "MILK_FOAM_AMOUNT",
-            xml_argument_number=6,
             min=0,
             max=120,
             step=1,
         ),
         "milk": CoffeeSettings(
             "Milk",
-            "MILK_AMOUNT",
-            xml_argument_number=5,
             min=0,
             max=120,
             step=1,

@@ -48,9 +48,7 @@
         }
     </style>
     <script>
-        var socket;
         $(() => {
-            socket = io.connect(window.location.host);
             socket.on('coffeemaker:brew:finished', () => {
                 var form = $('#main-nav').first();
                 var btn = $('<button class="visually-hidden" name="brewed"></button>')

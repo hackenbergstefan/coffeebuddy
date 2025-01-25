@@ -109,6 +109,7 @@ PAYMENT_NOTIFICATION_EMAILS = []
 # ---------------------------------------------
 # Coffeemaker configuration
 # Set `None` to disable
-# Set `{"mock": 10.0}` to enable mock with 10 seconds brew time
-# Set `{"jura_ble": {"model": "xzy", "address": "00:00:00"}}`
-COFFEEMAKER = {"jura_ble": {"model": "xzy", "address": "00:00:00"}}
+# Set `{"jura_ble": {"model": "EF658S_C", "address": "00:00:00"}}`
+# for a JURA ble machine. Adjust model and address appropriately.
+# Set `{"jura_ble_mock": {"model": "EF658S_C"}}` to enable a jura mock
+COFFEEMAKER = {"jura_mock": {"model": "EF658S_C"}}

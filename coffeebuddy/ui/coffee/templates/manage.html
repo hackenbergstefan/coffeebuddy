@@ -1,11 +1,18 @@
 {% extends "_base.html" %}
 
 {% block header %}
-    <style></style>
     <script>
-        var socket;
         $(() => {
-            socket = io.connect(window.location.host);
+            setInterval(() => {
+                $.post(window.location.href, {
+                    coffeemaker: 'machine_status'
+                }, (data) => {
+                    $('#coffeemaker-status').empty();
+                    for (d of data) {
+                        $('#coffeemaker-status').append(`<li>${d}</li>`);
+                    }
+                });
+            }, 10000);
         });
     </script>
 {% endblock header %}
@@ -18,16 +25,21 @@
     <div class="form-group row">
         <div class="col">
             <h3>Coffeemaker</h3>
-            <div class="d-flex flex-col gap-3">
-                <button class="btn" onclick="socket.emit('coffeemaker:manage', 'unlock');">
+            <div class="d-flex flex-col gap-3 form-group">
+                <button class="btn"
+                        onclick="$.post(window.location.href, {coffeemaker:'unlock'});">
                     <div class="fas fa-unlock"></div>
                     Unlock
                 </button>
-                <button class="btn" onclick="socket.emit('coffeemaker:manage', 'lock');">
+                <button class="btn"
+                        onclick="$.post(window.location.href, {coffeemaker:'lock'});">
                     <div class="fas fa-lock"></div>
                     Lock
                 </button>
             </div>
+            <h4 class="mt-3">Status</h4>
+            <ul id="coffeemaker-status">
+            </ul>
         </div>
     </div>
 {% endblock main_content %}

@@ -1,7 +1,6 @@
 import datetime
 import os
 import random
-from pathlib import Path
 
 import flask
 from sqlalchemy.exc import OperationalError
@@ -78,49 +77,6 @@ def prefill_users():
             db.session.commit()
 
 
-def prefill_coffee_variants():
-    import xml.etree.ElementTree as ET
-
-    from coffeebuddy.model import CoffeeVariant
-
-    db = flask.current_app.db
-
-    tree = ET.parse(Path(__file__).parent / "8xc_pro_1.0.xml")
-    for product in tree.findall(".//{*}PRODUCT"):
-        if product.attrib["DoubleProduct"] == "true":
-            continue
-        settings = {
-            name: int(item.attrib.get("Value", 0) or item.attrib.get("Default", 0))
-            if (item := product.find(f"{{*}}{setting.xml_name}")) is not None
-            else 0
-            for name, setting in CoffeeVariant.settings.items()
-        }
-        icon = {
-            "espresso_1": "espresso",
-            "ristretto_1": "espresso",
-            "kaffee_1": "coffee",
-            "cappuccino_1": "cappuccino",
-            "milchkaffee_1": "flat-white",
-            "latte_macchiato_1": "latte-macchiato",
-            "latte_macchiato_long_1": "latte-macchiato",
-            "milchschaum_long_1": "latte-macchiato",
-            "milchportion_long_1": "latte-macchiato",
-            "espresso_macchiato_1": "espresso-macchiato",
-        }.get(product.attrib["PictureIdle"].replace(".png", ""), None)
-        if not icon:
-            continue
-
-        variant = CoffeeVariant(
-            name=product.attrib["Name"],
-            icon=icon,
-            editable=False,
-            **settings,
-        )
-        db.session.add(variant)
-
-    db.session.commit()
-
-
 def init():
     app = flask.current_app
     prefilled = app.config.get("PREFILLED")
@@ -137,4 +93,3 @@ def init():
         os._exit(1)
 
     prefill_users()
-    prefill_coffee_variants()
