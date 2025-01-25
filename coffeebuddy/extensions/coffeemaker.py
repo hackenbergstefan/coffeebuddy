@@ -22,12 +22,14 @@ class JuraCoffeeMaker(Thread):
         address: str,
         brew_timeout: float = 40,
         is_mock: bool = False,
+        brew_time: float = 10,
     ):
         self.socketio = flask.current_app.socketio
         self.events = flask.current_app.events
         self.model = model
         self.address = address
         self.is_mock = is_mock
+        self.brew_time = brew_time
         self.brew_timeout = brew_timeout
         self._brewing = False
         self.queue_in = queue.Queue()
@@ -111,7 +113,10 @@ class JuraCoffeeMaker(Thread):
             except asyncio.TimeoutError:
                 raise Exception("Brewing timeout!")
 
-        await _brew()
+        if not self.is_mock:
+            await _brew()
+        else:
+            await asyncio.sleep(self.brew_time)
 
         if self._brewing:
             self.socketio.emit("coffeemaker:brew:finished")
@@ -136,12 +141,13 @@ def init():
         config = config["jura_ble_mock"]
         flask.current_app.coffeemaker = JuraCoffeeMaker(
             model=config["model"],
+            brew_time=config.get("brew_time", 10),
             address=None,
             is_mock=True,
         )
         flask.current_app.coffeemaker.start()
 
-    if config != {} and app.config.get("PREFILLED") and not app.testing:
+    if config != {} and app.config.get("PREFILLED"):
         prefill_coffee_variants()
 
 
@@ -156,6 +162,7 @@ def prefill_coffee_variants():
                 for icon in (Path(__file__).parent.parent / "static").glob("icon_*.svg")
             ],
             key=lambda n: len(n),
+            reverse=True,
         )
     )
     for product in products:

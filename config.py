@@ -111,5 +111,5 @@ PAYMENT_NOTIFICATION_EMAILS = []
 # Set `None` to disable
 # Set `{"jura_ble": {"model": "EF658S_C", "address": "00:00:00"}}`
 # for a JURA ble machine. Adjust model and address appropriately.
-# Set `{"jura_ble_mock": {"model": "EF658S_C"}}` to enable a jura mock
-COFFEEMAKER = {"jura_mock": {"model": "EF658S_C"}}
+# Set `{"jura_ble_mock": {"model": "EF658S_C", "brew_time": 10}}` to enable a jura mock
+COFFEEMAKER = {"jura_ble_mock": {"model": "EF658S_C", "brew_time": 10}}

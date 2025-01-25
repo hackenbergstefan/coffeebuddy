@@ -49,7 +49,9 @@ def test_coffee(web: CoffeeBuddyWebDriver, user):
     assert web.current_url == (
         f"{HOST}/brew.html?tag={user['tag']}&coffeeid={coffee_id}"
     )
-    web.find_element_css("button[name='no']").click()
+    el = web.find_element_css("button[name='no']")
+    web.wait(ec.element_to_be_clickable(el))
+    el.click()
 
     web.nav("logout")
     assert web.current_url == f"{HOST}/"
