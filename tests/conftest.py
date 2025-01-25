@@ -70,7 +70,7 @@ def server(request, pytestconfig):
         config={
             "TESTING": True,
             "PREFILLED": True,
-            "COFFEEMAKER": {"mock": 0.1},
+            "COFFEEMAKER": {"jura_ble_mock": {"model": "EF658S_C", "brew_time": 0.1}},
         },
         verbose=pytestconfig.get_verbosity() > 1,
     )
