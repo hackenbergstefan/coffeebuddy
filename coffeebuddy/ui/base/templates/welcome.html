@@ -1,8 +1,6 @@
 {% extends "_base.html" %}
 
 {% block header %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.js"
-            referrerpolicy="no-referrer"></script>
     <script>
         $(() => {
             socket.on('card_connected', (msg) => {
@@ -63,17 +61,6 @@
                 minute: '2-digit'
             }));
         }, 1000)
-
-        $(() => {
-            QRCode.toCanvas(document.getElementById('qr-help'), '{{ help_url }}', {
-                color: {
-                    dark: '#ecd9d1',
-                    light: '#00000000'
-                },
-                width: 100,
-                margin: 0,
-            });
-        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.3/plotly.min.js"
             async
@@ -131,6 +118,15 @@
             flex-direction: column;
             align-items: center;
         }
+
+        .qrhelp {
+            width: 100px;
+            height: 100px;
+        }
+
+        .qrhelp path {
+            fill: var(--color-fg);
+        }
     </style>
 {% endblock header %}
 
@@ -151,7 +147,7 @@
 {% block main_content %}
     <div id="qr-help-container">
         <h4>Need help?</h4>
-        <canvas id="qr-help"></canvas>
+        {{ qrcode|safe }}
     </div>
     <div id="info">
         <div class="info-label">Hostname</div>

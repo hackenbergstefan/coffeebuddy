@@ -4,6 +4,7 @@ Basic routes.
 
 import datetime
 import socket
+from pathlib import Path
 
 import flask
 from flask import Blueprint
@@ -25,7 +26,9 @@ def welcome():
         dataset=data,
         hostname=socket.gethostname(),
         version=__version__,
-        help_url=f"github.com/hackenbergstefan/coffeebuddy/blob/v{__version__}/HELP.md",
+        qrcode=(
+            Path(__file__).parent.parent.parent / "static" / "qrhelp.svg"
+        ).read_text(),
     )
 
 

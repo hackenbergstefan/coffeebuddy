@@ -5,7 +5,7 @@
 groups = ["default", "coffeemaker", "dev", "pcsc", "rpi"]
 strategy = []
 lock_version = "4.5.0"
-content_hash = "sha256:f73169fc955cbacf6dec32f66ac4df76328fc85e56a8ace986a9a888c91ef2be"
+content_hash = "sha256:0a9bd7d610c23a00b3f2b3e52eb4fd8e77261a159392a5314dfb6056717787cd"
 
 [[metadata.targets]]
 requires_python = ">=3.12,<3.14"
@@ -475,10 +475,10 @@ files = [
 
 [[package]]
 name = "jura-ble"
-version = "1.0.0"
+version = "1.1.0"
 git = "https://github.com/hackenbergstefan/jura_ble.git"
-ref = "v1.0.0"
-revision = "2e251f6836e21c4d0b43beabb04a9de7290220a6"
+ref = "v1.1.0"
+revision = "5c854deff95d0a5513d94fb56f8b9401059b953f"
 summary = ""
 dependencies = [
     "bleak",
@@ -885,6 +885,18 @@ files = [
     {file = "PyYAML-6.0.2-cp313-cp313-win32.whl", hash = "sha256:bc2fa7c6b47d6bc618dd7fb02ef6fdedb1090ec036abab80d4681424b84c1183"},
     {file = "PyYAML-6.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:8388ee1976c416731879ac16da0aff3f63b286ffdd57cdeb95f3f2e085687563"},
     {file = "pyyaml-6.0.2.tar.gz", hash = "sha256:d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"},
+]
+
+[[package]]
+name = "qrcode"
+version = "8.0"
+summary = ""
+dependencies = [
+    "colorama; sys_platform == \"win32\"",
+]
+files = [
+    {file = "qrcode-8.0-py3-none-any.whl", hash = "sha256:9fc05f03305ad27a709eb742cf3097fa19e6f6f93bb9e2f039c0979190f6f1b1"},
+    {file = "qrcode-8.0.tar.gz", hash = "sha256:025ce2b150f7fe4296d116ee9bad455a6643ab4f6e7dce541613a4758cbce347"},
 ]
 
 [[package]]

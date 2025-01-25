@@ -36,6 +36,6 @@ def init():
     flask.current_app.socketio.on_event(
         "route",
         lambda route: flask.current_app.events.fire(
-            f"route:{route.replace('.html','')}"
+            f"route:{route.replace('.html', '')}"
         ),
     )
