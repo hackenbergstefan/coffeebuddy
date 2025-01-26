@@ -5,8 +5,12 @@ from pathlib import Path
 from threading import Thread
 
 import flask
-from jura_ble import CoffeeProduct, JuraBle, Machine
-from jura_ble.mock import JuraBleMock
+
+try:
+    from jura_ble import CoffeeProduct, JuraBle, Machine
+    from jura_ble.mock import JuraBleMock
+except ImportError:
+    pass
 
 from coffeebuddy.model import CoffeeVariant
 
