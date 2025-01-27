@@ -2,17 +2,19 @@
 
 {% block header %}
     <script>
+        function getMachineStatus() {
+            $.post(window.location.href, {
+                coffeemaker: 'machine_status'
+            }, (data) => {
+                $('#coffeemaker-status').empty();
+                for (d of data) {
+                    $('#coffeemaker-status').append(`<li>${d}</li>`);
+                }
+            });
+        }
         $(() => {
-            setInterval(() => {
-                $.post(window.location.href, {
-                    coffeemaker: 'machine_status'
-                }, (data) => {
-                    $('#coffeemaker-status').empty();
-                    for (d of data) {
-                        $('#coffeemaker-status').append(`<li>${d}</li>`);
-                    }
-                });
-            }, 10000);
+            setInterval(getMachineStatus, 5000);
+            getMachineStatus();
         });
     </script>
 {% endblock header %}

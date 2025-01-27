@@ -53,7 +53,11 @@ class JuraCoffeeMaker(Thread):
             try:
                 async with self.jura:
                     while True:
-                        method, data = self.queue_in.get()
+                        try:
+                            method, data = self.queue_in.get_nowait()
+                        except queue.Empty:
+                            await asyncio.sleep(0.3)
+                            continue
                         if method == "brew":
                             await self._brew(**data)
                         else:
