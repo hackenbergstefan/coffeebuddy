@@ -454,6 +454,7 @@ class CoffeeVariant(Base, Serializer):
     bypass: Mapped[int]
     milk_foam: Mapped[int]
     milk: Mapped[int]
+    price: Mapped[float]
 
     editable: Mapped[bool] = mapped_column(default=True)
     deleted: Mapped[bool] = mapped_column(default=False)
@@ -552,6 +553,7 @@ class CoffeeVariant(Base, Serializer):
                     "bypass",
                     "milk_foam",
                     "milk",
+                    "price",
                     "editable",
                     "deleted",
                 )

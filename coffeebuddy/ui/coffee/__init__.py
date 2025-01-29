@@ -112,14 +112,15 @@ def brew(user: User, coffee: CoffeeVariant):
                 url("editcoffee.html", tag=user.tag, coffeeid=coffee.id)
             )
         elif "brewed" in request.form:
-            db.session.add(
-                Drink(
-                    user=user,
-                    price=flask.current_app.config["PRICE"],
-                    coffeeid=coffee.id,
+            if coffee.price > 0:
+                db.session.add(
+                    Drink(
+                        user=user,
+                        price=coffee.price,
+                        coffeeid=coffee.id,
+                    )
                 )
-            )
-            db.session.commit()
+                db.session.commit()
             return flask.redirect(url("coffee.html", tag=user.tag))
 
     if flask.request.method == "POST":

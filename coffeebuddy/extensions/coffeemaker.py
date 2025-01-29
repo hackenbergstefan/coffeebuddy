@@ -190,6 +190,9 @@ def prefill_coffee_variants():
                 bypass=product.water_bypass,
                 milk_foam=product.milk_foam,
                 milk=product.milk,
+                price=0.0
+                if "water" in product.name
+                else flask.current_app.config["PRICE"],
             )
         )
 
