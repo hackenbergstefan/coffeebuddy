@@ -527,10 +527,34 @@ class CoffeeVariant(Base, Serializer):
 
     def __str__(self):
         return (
-            "<CoffeeVariant "
+            f"<CoffeeVariant name={self.name} code={self.code} "
             + " ".join(
                 f"{setting_name}={self.setting_display(setting_name)}"
                 for setting_name in self.settings
+            )
+            + ">"
+        )
+
+    def __repr__(self):
+        return (
+            "<CoffeeVariant "
+            + " ".join(
+                f"{k}={getattr(self, k)}"
+                for k in (
+                    "id",
+                    "name",
+                    "code",
+                    "icon",
+                    "strength",
+                    "grinder_ratio",
+                    "water",
+                    "temperature",
+                    "bypass",
+                    "milk_foam",
+                    "milk",
+                    "editable",
+                    "deleted",
+                )
             )
             + ">"
         )
