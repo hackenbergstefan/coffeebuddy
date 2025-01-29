@@ -97,7 +97,12 @@ def brew(user: User, coffee: CoffeeVariant):
             else:
                 user.variant_favorites.append(coffee)
             db.session.commit()
-            return ""
+            return flask.render_template(
+                "brew.html",
+                user=user,
+                variant=coffee,
+                fact=random.choice(coffee_facts),
+            )
         elif "new" in request.form:
             return flask.redirect(
                 url("editcoffee.html", tag=user.tag, derive=coffee.id)
