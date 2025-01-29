@@ -342,6 +342,14 @@ button {
     background-image: url("icon_latte_macchiato.svg");
 }
 
+.icon-hotwater {
+    background-image: url("icon_hotwater.svg");
+}
+
+.icon-milkfoam {
+    background-image: url("icon_milkfoam.svg");
+}
+
 .main-title-coffeemeter {
     display: flex;
     flex-direction: row;
