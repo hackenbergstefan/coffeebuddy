@@ -23,7 +23,7 @@ if __name__ == "__main__":
     try:
         with app.app_context():
             coffeebuddy.init_app_context(app)
-            from coffeebuddy.model import Drink, Pay, User  # noqa: F401
+            from coffeebuddy.model import CoffeeVariant, Drink, Pay, User  # noqa: F401
 
             db = app.db
             dbsession = db.session
