@@ -62,6 +62,8 @@ Below your name you can see your tag ids.
 On the top right you see your balance:
 A positive value means you have credit, a negative value means you owe money.
 
+The total number of coffees you have had today is displayed right of your name displayed as coffee beans.
+
 #### Actions
 
 - <img src="https://github.com/FortAwesome/Font-Awesome/raw/refs/heads/6.x/svgs/solid/euro-sign.svg" width="20px"></img>

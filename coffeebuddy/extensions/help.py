@@ -9,7 +9,7 @@ from coffeebuddy import __version__
 This extension just generates a qr code to the help pages.
 """
 
-HELP_URL = f"github.com/hackenbergstefan/coffeebuddy/blob/v{__version__}/HELP.md"
+HELP_URL = f"github.com/hackenbergstefan/coffeebuddy/blob/v{__version__}/doc/HELP.md"
 
 
 def init():
