@@ -176,6 +176,7 @@ def editcoffee(user: User):
         db.session.commit()
         return flask.jsonify(
             {key: (old[key], new) for key, new in coffee.serialize().items()}
+            | {"id": (coffee.id, coffee.id)}
         )
 
     if request.method == "POST":

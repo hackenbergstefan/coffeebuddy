@@ -42,7 +42,7 @@
         /* beautify ignore:end */
 
         function sliderDrag() {
-            let clientX = event.type == "click" ? event.clientX:event.touches[0].clientX;
+            let clientX = event.type == "click" ? event.clientX : event.touches[0].clientX;
             let slider = $(this);
             let min = parseFloat(slider.attr('aria-valuemin'));
             let max = parseFloat(slider.attr('aria-valuemax'));
@@ -67,6 +67,8 @@
         });
     </script>
     <script>
+        var variantId = undefined;
+
         function submitVariant() {
             newVariant = {
                 name: $('#variant-name').val()
@@ -88,6 +90,9 @@
                     line = $(`<tr><td>${item}</td><td>${val_old}</td><td>${val_new}</td></tr>`);
                     line.addClass(val_old != val_new ? 'table-active' : '');
                     table.append(line);
+                    if (item == 'id') {
+                        variantId = val_new;
+                    }
                 }
             });
         }
@@ -105,7 +110,7 @@
         }
 
         function goToBrew() {
-            window.location.href = '../brew.html?tag={{ user.tag.hex() }}&coffeeid={{ variant.id }}';
+            window.location.href = `../brew.html?tag={{ user.tag.hex() }}&coffeeid=${variantId}`;
         }
     </script>
 {% endblock header %}
