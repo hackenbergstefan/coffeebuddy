@@ -146,6 +146,7 @@ def editcoffee(user: User):
         base_coffee = CoffeeVariant.by_id(request.args["derive"])
         coffee = CoffeeVariant(
             name=f"New {base_coffee.name}",
+            code=base_coffee.code,
             derived_from=base_coffee.id,
             icon=base_coffee.icon,
             strength=base_coffee.strength,
@@ -155,6 +156,7 @@ def editcoffee(user: User):
             bypass=base_coffee.bypass,
             milk_foam=base_coffee.milk_foam,
             milk=base_coffee.milk,
+            price=base_coffee.price,
             editable=True,
         )
         db.session.add(coffee)
