@@ -24,7 +24,7 @@ class JuraCoffeeMaker(Thread):
         self,
         model: str,
         address: str,
-        brew_timeout: float = 40,
+        brew_timeout: float = 120,
         is_mock: bool = False,
         brew_time: float = 10,
     ):
@@ -109,7 +109,7 @@ class JuraCoffeeMaker(Thread):
         await self.jura.brew_product(coffee)
 
         async def _brew():
-            await asyncio.sleep(3)
+            await asyncio.sleep(5)
             try:
                 async with asyncio.timeout(self.brew_timeout):
                     while self._brewing:

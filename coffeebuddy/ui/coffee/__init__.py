@@ -47,7 +47,12 @@ def coffee(user: User):
             return flask.redirect(url("stats.html", tag=user.tag))
         elif "coffeeid" in request.form:
             return flask.redirect(
-                url("brew.html", tag=user.tag, coffeeid=request.form["coffeeid"])
+                url(
+                    "brew.html",
+                    tag=user.tag,
+                    coffeeid=request.form["coffeeid"],
+                    **{"manually" if "manually" in request.args else None: None},
+                )
             )
         return flask.abort(404)
 
@@ -82,15 +87,17 @@ def brew(user: User, coffee: CoffeeVariant):
     db = flask.current_app.db
     coffeemaker: JuraCoffeeMaker = flask.current_app.coffeemaker
 
+    manually = {"manually" if "manually" in request.args else None: None}
+
     def post():
         if "start" in request.form:
             coffeemaker.brew(coffee)
             return ""
         elif "no" in request.form:
-            return flask.redirect(url("coffee.html", tag=user.tag))
+            return flask.redirect(url("coffee.html", tag=user.tag, **manually))
         elif "abort" in request.form:
             coffeemaker.brew_abort()
-            return flask.redirect(url("coffee.html", tag=user.tag))
+            return flask.redirect(url("coffee.html", tag=user.tag, **manually))
         elif "fav" in request.form:
             if coffee in user.variant_favorites:
                 user.variant_favorites.remove(coffee)
@@ -105,11 +112,11 @@ def brew(user: User, coffee: CoffeeVariant):
             )
         elif "new" in request.form:
             return flask.redirect(
-                url("editcoffee.html", tag=user.tag, derive=coffee.id)
+                url("editcoffee.html", tag=user.tag, derive=coffee.id, **manually)
             )
         elif "edit" in request.form:
             return flask.redirect(
-                url("editcoffee.html", tag=user.tag, coffeeid=coffee.id)
+                url("editcoffee.html", tag=user.tag, coffeeid=coffee.id, **manually)
             )
         elif "brewed" in request.form:
             if coffee.price > 0:
@@ -118,10 +125,17 @@ def brew(user: User, coffee: CoffeeVariant):
                         user=user,
                         price=coffee.price,
                         coffeeid=coffee.id,
+                        selected_manually="manually" in request.args,
                     )
                 )
                 db.session.commit()
-            return flask.redirect(url("coffee.html", tag=user.tag))
+            return flask.redirect(
+                url(
+                    "coffee.html",
+                    tag=user.tag,
+                    **manually,
+                )
+            )
 
     if flask.request.method == "POST":
         return post()

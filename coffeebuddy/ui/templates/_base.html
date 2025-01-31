@@ -160,6 +160,35 @@
                 $('#modal-error .modal-body p').text(data);
                 $('#modal-error').modal('show');
             });
+
+            var logoutTimer = [];
+
+            function startAutologout(autologoutTime = 20,
+                elementCount = 100) {
+                if (window.location.href.includes("noautologout")) {
+                    return;
+                }
+                $(() => {
+                    const slider = $("#icon-beans");
+                    logoutTimer.push(setTimeout(() => {
+                        window.location.href = '../';
+                    }, autologoutTime * 1000));
+                    let widthValue = 100;
+                    logoutTimer.push(setInterval((subtractValue) => {
+                        slider.css(
+                            'background',
+                            `linear-gradient(90deg, var(--color-fg) ${widthValue}%, var(--color-highlight) ${widthValue+5}%)`
+                        );
+                        widthValue -= subtractValue;
+                    }, autologoutTime / elementCount * 1000, 100 / elementCount));
+                });
+            }
+
+            function cancelAutologout() {
+                clearInterval(logoutTimer.pop());
+                clearTimeout(logoutTimer.pop());
+                $("#icon-beans").css('background', 'var(--color-fg)');
+            }
         </script>
 
         {% block header %}
@@ -169,7 +198,7 @@
         <div id="bg"></div>
         <div id="main">
             <div id="main-title">
-                <div class="icon-beans"></div>
+                <div id="icon-beans" class="icon-beans"></div>
 
                 {% block title %}
                     <div id="main-title-user">
@@ -193,7 +222,6 @@
             </div>
             <div id="main-nav-and-content">
                 <form method="post" id="main-nav">
-
                     {% block main_nav_items %}
                         {# Add "back" as default nav item #}
                         {{ nav_item("back", "fas fa-left-long", class="mt-auto", type="button", onclick="history.back()") }}

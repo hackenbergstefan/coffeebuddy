@@ -190,7 +190,7 @@ def init():
     backups = flask.current_app.config.get("WEBEX_DATABASE_BACKUP")
     access_token = flask.current_app.config.get("WEBEX_ACCESS_TOKEN")
 
-    if not access_token and not reminders and not backups:
+    if not access_token:
         return
 
     app = flask.current_app

@@ -68,8 +68,11 @@
                 $('#brew-normal').addClass('visually-hidden');
                 $('#main-nav').children().toggleClass('visually-hidden');
                 $('#brew-brewing').removeClass('visually-hidden');
+                cancelAutologout();
             });
         }
+
+        startAutologout();
     </script>
 {% endblock header %}
 
