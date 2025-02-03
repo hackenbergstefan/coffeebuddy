@@ -51,7 +51,7 @@ def coffee(user: User):
                     "brew.html",
                     tag=user.tag,
                     coffeeid=request.form["coffeeid"],
-                    **{"manually" if "manually" in request.args else None: None},
+                    **{"manually": None} if "manually" in request.args else {},
                 )
             )
         return flask.abort(404)
@@ -87,7 +87,7 @@ def brew(user: User, coffee: CoffeeVariant):
     db = flask.current_app.db
     coffeemaker: JuraCoffeeMaker = flask.current_app.coffeemaker
 
-    manually = {"manually" if "manually" in request.args else None: None}
+    manually = {"manually": None} if "manually" in request.args else {}
 
     def post():
         if "start" in request.form:
@@ -229,7 +229,7 @@ def oneswipe(user: User):
             url(
                 "coffee.html",
                 tag=user.tag,
-                **{"manually" if selected_manually else None: None},
+                **{"manually": None} if selected_manually else {},
             )
         )
     return flask.render_template("oneswipe.html", user=user)
