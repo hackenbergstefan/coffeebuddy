@@ -116,6 +116,8 @@
                     <div class="coffee-icon-text">
                         {{ variant.name }}
                         <sup class="fas fa-heart"></sup>
+                        <br>
+                        <span class="coffee-icon-price">{{ "%.2f"|format(variant.price) }}€</span>
                     </div>
                 </div>
             {% endfor %}
