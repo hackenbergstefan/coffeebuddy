@@ -46,11 +46,13 @@ class JuraCoffeeMaker(Thread):
 
     async def _run(self):
         while True:
-            if self.is_mock:
-                self.jura = await JuraBleMock.create(model=self.model)
-            else:
-                self.jura = await JuraBle.create(model=self.model, address=self.address)
             try:
+                if self.is_mock:
+                    self.jura = await JuraBleMock.create(model=self.model)
+                else:
+                    self.jura = await JuraBle.create(
+                        model=self.model, address=self.address
+                    )
                 async with self.jura:
                     while True:
                         try:
@@ -67,6 +69,7 @@ class JuraCoffeeMaker(Thread):
             except Exception as e:
                 logging.getLogger(__name__).error(e)
                 self.socketio.emit("error", data=str(e))
+                await asyncio.sleep(5)
 
     def brew_abort(self):
         self._brewing = False

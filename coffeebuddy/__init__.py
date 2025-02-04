@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
-__version__ = "2.0.5"
+__version__ = "2.0.6"
 
 
 class Base(DeclarativeBase):
