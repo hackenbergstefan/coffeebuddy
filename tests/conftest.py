@@ -89,6 +89,7 @@ def web(server):
     options.add_argument("--disable-dev-shm-using")
     options.add_argument("--disable-extensions")
     options.add_argument("--remote-debugging-port=9222")
+    options.add_argument(f"--window-size=1024,{600 + 139}")
     yield CoffeeBuddyWebDriver(options=options)
 
 

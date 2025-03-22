@@ -50,9 +50,7 @@ def test_coffee(web: CoffeeBuddyWebDriver, user):
         f"{HOST}/brew.html?tag={user['tag']}&coffeeid={coffee_id}"
     )
     el = web.find_element_css("button[name='no']")
-    web.wait(ec.element_to_be_clickable(el))
     el.click()
-
     web.nav("logout")
     assert web.current_url == f"{HOST}/"
 
@@ -134,7 +132,6 @@ def test_brew(web: CoffeeBuddyWebDriver, user):
 
 
 def test_screenshots(web: CoffeeBuddyWebDriver):
-    web.set_window_size(1024, 600 + 139)
     web.get(f"{HOST}/")
     web.save_screenshot("doc/welcome.png")
 
