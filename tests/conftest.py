@@ -6,6 +6,7 @@ import pytest
 import requests
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 import coffeebuddy
@@ -18,7 +19,9 @@ class CoffeeBuddyWebDriver(Chrome):
         """
         Click on a button in the nav bar with the given name.
         """
+        current_url = self.current_url
         self.find_element(By.CSS_SELECTOR, f"button[name='{name}']").click()
+        self.wait(ec.url_changes(current_url))
 
     def find_elements_css(self, value=None):
         return super().find_elements(By.CSS_SELECTOR, value)

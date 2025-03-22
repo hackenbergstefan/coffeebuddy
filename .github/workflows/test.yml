@@ -21,4 +21,4 @@ jobs:
           pdm install --without rpi --without pcsc --without camera
       - name: Test with pytest
         run: |
-          pdm run pytest -v
+          pdm run pytest -sxv

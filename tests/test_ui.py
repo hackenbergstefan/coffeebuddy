@@ -45,12 +45,16 @@ def test_coffee(web: CoffeeBuddyWebDriver, user):
 
     el = web.find_element_css(".coffee-icon-container")
     coffee_id = el.get_attribute("coffee-id")
+    current_url = web.current_url
     el.click()
+    web.wait(ec.url_changes(current_url))
     assert web.current_url == (
         f"{HOST}/brew.html?tag={user['tag']}&coffeeid={coffee_id}"
     )
     el = web.find_element_css("button[name='no']")
+    current_url = web.current_url
     el.click()
+    web.wait(ec.url_changes(current_url))
     web.nav("logout")
     assert web.current_url == f"{HOST}/"
 

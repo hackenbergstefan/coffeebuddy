@@ -395,19 +395,29 @@ class Drink(Base, Serializer):
         super().__init__(*args, **kwargs)
 
     @staticmethod
-    def drinks_vs_days(timedelta):
-        return (
+    def drinks_vs_days(since):
+        previous_date = datetime.now() - since
+        data = (
             flask.current_app.db.session.query(
+                flask.current_app.db.func.Date(Drink.timestamp),
                 flask.current_app.db.func.count(
                     flask.current_app.db.func.Date(Drink.timestamp)
                 ),
-                flask.current_app.db.func.Date(Drink.timestamp),
             )
-            .filter(Drink.timestamp > datetime.now() - timedelta)
+            .filter(Drink.timestamp > previous_date)
             .order_by(sqlalchemy.asc(flask.current_app.db.func.Date(Drink.timestamp)))
             .group_by(flask.current_app.db.func.Date(Drink.timestamp))
             .all()
         )
+        data = {
+            day if isinstance(day, str) else day.strftime("%Y-%m-%d"): count
+            for day, count in data
+        }
+        dates_timedelta = [
+            (previous_date + timedelta(days=i)).strftime("%Y-%m-%d")
+            for i in range(since.days + 1)
+        ]
+        return [(date, data.get(date, 0)) for date in dates_timedelta]
 
 
 class Pay(Base):
