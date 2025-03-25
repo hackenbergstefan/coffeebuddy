@@ -8,7 +8,15 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
-__version__ = "2.0.6"
+__version__ = "2.0.7"
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s:%(levelname)s:%(name)s:%(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+# logging.getLogger("jura_ble").setLevel(logging.DEBUG)
 
 
 class Base(DeclarativeBase):
