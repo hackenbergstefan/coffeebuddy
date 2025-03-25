@@ -11,8 +11,8 @@
         function plotlyLoaded() {
             const data = [{
                 /* beautify ignore:start */
-                x: {{ dataset | map(attribute = 1) | list | tojson }},
-                y: {{ dataset | map(attribute = 0) | list | tojson }},
+                x: {{ dataset | map(attribute = 0) | list | tojson }},
+                y: {{ dataset | map(attribute = 1) | list | tojson }},
                 /* beautify ignore:end */
                 type: "scatter",
                 mode: "lines",

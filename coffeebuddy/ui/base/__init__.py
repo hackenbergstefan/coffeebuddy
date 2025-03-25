@@ -18,8 +18,8 @@ blueprint = Blueprint("base", __name__, template_folder="templates")
 @blueprint.route("/")
 def welcome():
     data = [
-        (amount, date if isinstance(date, str) else date.strftime("%Y-%m-%d"))
-        for amount, date in Drink.drinks_vs_days(datetime.timedelta(weeks=12))
+        (date if isinstance(date, str) else date.strftime("%Y-%m-%d"), amount)
+        for date, amount in Drink.drinks_vs_days(datetime.timedelta(weeks=12))
     ]
     return flask.render_template(
         "welcome.html",
