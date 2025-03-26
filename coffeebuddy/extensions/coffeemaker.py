@@ -7,7 +7,7 @@ from threading import Thread
 import flask
 
 try:
-    from jura_ble import CoffeeProduct, JuraBle, Machine
+    from jura_ble import CoffeeProduct, JuraBle, Machine, ProductProgressState
     from jura_ble.mock import JuraBleMock
 except ImportError:
     pass
@@ -24,7 +24,7 @@ class JuraCoffeeMaker(Thread):
         self,
         model: str,
         address: str,
-        brew_timeout: float = 120,
+        brew_timeout: float = 240,
         is_mock: bool = False,
         brew_time: float = 10,
     ):
@@ -112,13 +112,16 @@ class JuraCoffeeMaker(Thread):
         await self.jura.brew_product(coffee)
 
         async def _brew():
-            await asyncio.sleep(5)
             try:
                 async with asyncio.timeout(self.brew_timeout):
                     while self._brewing:
                         progress = await self.jura.product_progress()
                         logging.getLogger(__name__).debug(f"Progress: {progress}")
-                        if progress is None or not any(progress["rest"]):
+                        if (
+                            not progress.valid
+                            or progress.state
+                            == ProductProgressState.LAST_PROGRESS_STATE
+                        ):
                             return
                         await asyncio.sleep(0.5)
             except asyncio.TimeoutError:

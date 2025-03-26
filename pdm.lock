@@ -5,7 +5,7 @@
 groups = ["default", "coffeemaker", "dev", "pcsc", "rpi"]
 strategy = []
 lock_version = "4.5.0"
-content_hash = "sha256:fc0397b776d8c37fab0536ca23cdc42064f84f4b7e69f1fef86da23df48bf552"
+content_hash = "sha256:b95384e1104b84eab9ecf9637d479911b6b03f2281f9eb47effbef32bf482917"
 
 [[metadata.targets]]
 requires_python = ">=3.12,<3.14"
@@ -525,10 +525,10 @@ files = [
 
 [[package]]
 name = "jura-ble"
-version = "1.1.1"
+version = "2.0.1"
 git = "https://github.com/hackenbergstefan/jura_ble.git"
-ref = "v1.1.1"
-revision = "05a9a1d152b9b8d90f536a7163a148b9522be205"
+ref = "v2.0.1"
+revision = "cad183dc2e117bfd4ad14996115d23983c6e540b"
 summary = ""
 dependencies = [
     "bleak",
