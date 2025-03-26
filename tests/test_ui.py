@@ -130,7 +130,7 @@ def test_brew(web: CoffeeBuddyWebDriver, user):
     web.find_element_css("button[name='yes']").click()
     web.wait(ec.visibility_of(web.find_element_css("#brew-brewing")))
     time.sleep(1)
-    assert web.current_url == f"{HOST}/coffee.html?tag={user['tag']}"
+    assert web.current_url == f"{HOST}/coffee.html?tag={user['tag']}&brewed"
     assert len(web.api("user/drinks", id=user["id"])) == 1
     assert web.api("user/get", id=user["id"])["balance"] < 0
 
