@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
-__version__ = "2.0.7"
+__version__ = "2.1.0"
 
 
 logging.basicConfig(

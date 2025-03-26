@@ -160,6 +160,9 @@
                 $('#modal-error .modal-body p').text(data);
                 $('#modal-error').modal('show');
             });
+            socket.on('card_connected', (msg) => {
+                window.location.href = `../coffee.html?tag=${msg['tag']}&can-oneswipe`;
+            });
 
             var logoutTimer = [];
 

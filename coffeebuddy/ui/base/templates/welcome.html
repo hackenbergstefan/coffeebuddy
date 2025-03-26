@@ -2,12 +2,6 @@
 
 {% block header %}
     <script>
-        $(() => {
-            socket.on('card_connected', (msg) => {
-                window.location.href = `../coffee.html?tag=${msg['tag']}&can-oneswipe`;
-            });
-        });
-
         function plotlyLoaded() {
             const data = [{
                 /* beautify ignore:start */
