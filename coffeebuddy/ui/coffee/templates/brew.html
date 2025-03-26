@@ -61,6 +61,14 @@
                 form.append(btn);
                 btn.click();
             });
+
+            /* beautify ignore:start */
+            {% if clean_reason %}
+            /* beautify ignore:end */
+            $('#modal-clean').modal('show');
+            /* beautify ignore:start */
+            {% endif %}
+            /* beautify ignore:end */
         });
 
         function brew_start() {
@@ -123,3 +131,31 @@
         </div>
     </div>
 {% endblock main_content %}
+
+{% block post_body %}
+    <div class="modal fade"
+         id="modal-clean"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h3 class="fw-bold">{{ clean_reason | title }}</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="fs-3">{{ clean_request }}</p>
+                    <p class="pt-4 mb-0">Pro Tip: The instruction manual is right next to the coffeemaker.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-face-grin-stars"></i> Cleaning time!
+                    </button>
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-face-sad-tear"></i> Skipping for now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock post_body %}
