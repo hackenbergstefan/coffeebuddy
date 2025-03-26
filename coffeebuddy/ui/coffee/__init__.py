@@ -133,6 +133,7 @@ def brew(user: User, coffee: CoffeeVariant):
                 url(
                     "coffee.html",
                     tag=user.tag,
+                    brewed=None,
                     **manually,
                 )
             )
