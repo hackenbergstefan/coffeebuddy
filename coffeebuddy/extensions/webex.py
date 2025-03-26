@@ -89,19 +89,15 @@ def remind(app):
     """
     # pylint: disable=too-many-locals
     with app.app_context():
-        User.query.filter(User.enabled).all()
-
         # get timezone
-        timezone_str = flask.current_app.config.get("TIMEZONE")
+        timezone_str = app.config.get("TIMEZONE")
         timezone = pytz.timezone(timezone_str)
 
         # get the holidays for the specified country
-        country = flask.current_app.config.get("COUNTRY")
+        country = app.config.get("COUNTRY")
         local_holidays = holidays.country_holidays(**country)
 
-        api = webexteamssdk.WebexTeamsAPI(
-            access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
-        )
+        api = webexteamssdk.WebexTeamsAPI(access_token=app.config["WEBEX_ACCESS_TOKEN"])
         coffeebuddy_email = api.people.me().emails[0]
 
         now = datetime.datetime.now(timezone)
@@ -154,7 +150,7 @@ def remind(app):
             # if it's time, send reminder
             if (now - last_reminder) > reminder_interval:
                 message_oneliner = random_debt_message(user.unpayed)
-                message_md = flask.current_app.config.get("REMINDER_MESSAGE").format(
+                message_md = app.config.get("REMINDER_MESSAGE").format(
                     oneliner=message_oneliner
                 )
                 try:
@@ -183,24 +179,24 @@ def send_message(recipients: List[str], message: str):
 
 
 def init():
-    if flask.current_app.testing:
+    app = flask.current_app
+    if app.testing:
         return
 
-    reminders = flask.current_app.config.get("REMINDER_MESSAGE")
-    backups = flask.current_app.config.get("WEBEX_DATABASE_BACKUP")
-    access_token = flask.current_app.config.get("WEBEX_ACCESS_TOKEN")
+    reminders = app.config.get("REMINDER_MESSAGE")
+    backups = app.config.get("WEBEX_DATABASE_BACKUP")
+    access_token = app.config.get("WEBEX_ACCESS_TOKEN")
 
     if not access_token:
         return
 
-    app = flask.current_app
     scheduler = BackgroundScheduler()
     scheduler.start()
 
     if reminders:
         scheduler.add_job(
             func=remind,
-            args=(app,),
+            args=(app._get_current_object(),),
             trigger="interval",
             minutes=60,
             id="webex dept reminder",
@@ -209,6 +205,7 @@ def init():
         )
 
     if backups:
+        app = app._get_current_object()
 
         @scheduler.scheduled_job("cron", day_of_week="sun")
         def backup_database():
@@ -235,9 +232,9 @@ def init():
                 )
 
                 api = webexteamssdk.WebexTeamsAPI(
-                    access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
+                    access_token=app.config["WEBEX_ACCESS_TOKEN"]
                 )
                 api.messages.create(
-                    roomId=flask.current_app.config["WEBEX_DATABASE_BACKUP"],
+                    roomId=app.config["WEBEX_DATABASE_BACKUP"],
                     files=[str(backupfile)],
                 )
