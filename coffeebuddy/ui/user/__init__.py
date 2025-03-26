@@ -73,12 +73,13 @@ def pay(user: User):
         db.session.commit()
 
         webex.send_message(
-            recipients=flask.current_app.config.get("PAYMENT_NOTIFICATION_EMAILS"),
             message=(
                 f"{user} with balance of {user.balance - amount:.2f}€ "
                 f"just entered a payment of **{amount:.2f}€**. "
                 f"Their balance is now {user.balance:.2f}€."
             ),
+            recipients=flask.current_app.config.get("PAYMENT_NOTIFICATION_EMAILS"),
+            roomids=flask.current_app.config.get("PAYMENT_NOTIFICATION_ROOMIDS"),
         )
 
         return f"{user.balance:.2f}"
