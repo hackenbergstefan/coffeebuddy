@@ -9,9 +9,12 @@
 {% endblock title %}
 
 {% block main_content %}
-    <div class="d-flex flex-column gap-4">
+    <div class="d-flex flex-column gap-3">
         <h3>Error message</h3>
 
-        <p>{{ exception }}</p>
+        <p>{{ exception.__class__.__name__ }}: {{ exception }}</p>
+        <code class="overflow-auto">
+            {{ traceback | join("</br>") | safe }}
+        </code>
     </div>
 {% endblock main_content %}

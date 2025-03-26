@@ -4,6 +4,7 @@ Basic routes.
 
 import datetime
 import socket
+import traceback
 from pathlib import Path
 
 import flask
@@ -43,4 +44,8 @@ def selectuser():
 
 @blueprint.errorhandler(Exception)
 def route_error(exception):
-    return flask.render_template("error.html", exception=exception), 400
+    return flask.render_template(
+        "error.html",
+        exception=exception,
+        traceback=traceback.format_exc().splitlines(),
+    ), 400
