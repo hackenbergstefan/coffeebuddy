@@ -104,6 +104,8 @@ WEBEX_DATABASE_BACKUP = False
 
 # List of peoples' emails who are notified when someone pays
 PAYMENT_NOTIFICATION_EMAILS = []
+# List of roomids which are notified when someone pays
+PAYMENT_NOTIFICATION_ROOMIDS = []
 
 # Extension: Coffeemaker (coffeebuddy.extensions.coffeemaker)
 # ---------------------------------------------

@@ -87,7 +87,10 @@ def api(endpoint: str):
             access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
         )
         data = flask.request.json
-        api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
+        if "email" in data:
+            api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
+        if "roomid" in data:
+            api.messages.create(roomId=data["roomid"], markdown=data["text"])
         return ""
 
     return flask.abort(404)

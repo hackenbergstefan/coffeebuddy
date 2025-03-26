@@ -4,7 +4,6 @@ import random
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List
 
 import flask
 import holidays
@@ -162,19 +161,30 @@ def remind(app):
                     continue
 
 
-def send_message(recipients: List[str], message: str):
+def send_message(
+    message: str,
+    recipients: list[str] | None = None,
+    roomids: list[str] | None = None,
+):
     access_token = flask.current_app.config.get("WEBEX_ACCESS_TOKEN")
-    if len(recipients) == 0 or not access_token:
+    if not access_token or (not recipients and not roomids):
         return  # nothing to do
 
     api = webexteamssdk.WebexTeamsAPI(access_token)
-
-    for mail in recipients:
+    for email in recipients or []:
         try:
-            api.messages.create(toPersonEmail=mail, markdown=message)
+            api.messages.create(toPersonEmail=email, markdown=message)
         except webexteamssdk.ApiError:
             logging.getLogger(__name__).exception(
-                f"Could not send webex message for email={mail}"
+                f"Could not send webex message for email={email}"
+            )
+
+    for roomid in roomids or []:
+        try:
+            api.messages.create(roomId=roomid, markdown=message)
+        except webexteamssdk.ApiError:
+            logging.getLogger(__name__).exception(
+                f"Could not send webex message for roomid={roomid}"
             )
 
 
