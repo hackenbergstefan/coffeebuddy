@@ -1,4 +1,5 @@
 import calendar
+import itertools
 import socket
 import string
 from dataclasses import dataclass
@@ -184,7 +185,7 @@ class User(Base, Serializer):
 
     def __repr__(self):
         return (
-            f"<User tag={self.tag} tag2={self.tag2} "
+            f"<User id={self.id} tag={self.tag} tag2={self.tag2} "
             f"name={self.name} prename={self.prename} email={self.email}>"
         )
 
@@ -367,6 +368,45 @@ class User(Base, Serializer):
             .group_by(db.func.Date(Drink.timestamp))
         ).all()
         return sum(data) / len(data) if data else 0
+
+    @staticmethod
+    def check_consistency():
+        """
+        Check database for errors.
+        """
+        db = flask.current_app.db
+        all_users = db.session.scalars(db.select(User).where(User.enabled)).all()
+        # 1. Check if user pre and post name are distinct
+        keyfunc = lambda user: (user.name, user.prename)  # noqa: E731
+        for key, users in itertools.groupby(
+            sorted(all_users, key=keyfunc),
+            key=keyfunc,
+        ):
+            users = set(users)
+            if len(users) > 1:
+                raise Exception(f"Duplicate names: {key}: {users!r}")
+        # 2. Check if user emails are distinct
+        keyfunc = lambda user: user.email  # noqa: E731
+        for key, users in itertools.groupby(
+            sorted(all_users, key=keyfunc),
+            key=keyfunc,
+        ):
+            users = set(users)
+            if len(users) > 1:
+                raise Exception(f"Duplicate emails: {key}: {users!r}")
+        # 3. Check if all tags are distinct
+        keyfunc = lambda tag_user: tag_user[0]  # noqa: E731
+        for key, users in itertools.groupby(
+            sorted(
+                [(u.tag or b"", u) for u in all_users]
+                + [(u.tag2 or b"", u) for u in all_users],
+                key=keyfunc,
+            ),
+            key=keyfunc,
+        ):
+            users = set(users)
+            if key and len(users) > 1:
+                raise Exception(f"Duplicate tags: {key}: {users!r}")
 
 
 class Drink(Base, Serializer):
