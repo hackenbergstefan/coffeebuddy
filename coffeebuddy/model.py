@@ -626,7 +626,19 @@ class CoffeeVariant(Base, Serializer):
         return user.variant_favorites, [
             variant
             for variant in db.session.scalars(
-                db.select(CoffeeVariant).where(CoffeeVariant.deleted == False)  # noqa: E712
-            )
+                db.select(CoffeeVariant)
+                .where(Drink.coffeeid == CoffeeVariant.id)
+                .group_by(CoffeeVariant.id)
+                .order_by(db.func.count(Drink.id).desc())
+            ).all()
+            + db.session.scalars(
+                db.select(CoffeeVariant)
+                .where(
+                    CoffeeVariant.id.not_in(
+                        db.select(Drink.coffeeid).where(Drink.coffeeid).distinct()
+                    )
+                )
+                .order_by(CoffeeVariant.name)
+            ).all()
             if variant not in user.variant_favorites
         ]
