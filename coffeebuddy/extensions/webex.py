@@ -1,9 +1,11 @@
 import datetime
 import logging
 import random
+import re
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from textwrap import dedent
 
 import flask
 import holidays
@@ -11,7 +13,7 @@ import pytz
 import webexteamssdk
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from coffeebuddy.model import User
+from coffeebuddy.model import Pay, User
 
 """
 This extension handles webex messages.
@@ -82,7 +84,7 @@ def random_debt_message(dept):
     )
 
 
-def remind(app):
+def remind(app: flask.Flask):
     """
     Remind users about their dept via webex.
     """
@@ -161,6 +163,37 @@ def remind(app):
                     continue
 
 
+def notify_payment(app: flask.Flask) -> None:
+    with app.app_context():
+        roomid = app.config.get("PAYMENT_NOTIFICATION_ROOMIDS")[0]
+        api = webexteamssdk.WebexTeamsAPI(access_token=app.config["WEBEX_ACCESS_TOKEN"])
+        last_mentioned_id = [
+            int(match.group(1))
+            for message in api.messages.list(roomId=roomid, mentionedPeople="me")
+            if (match := re.search(r"pay\.id: (\d+)", message.text)) is not None
+        ]
+        last_mentioned_id = last_mentioned_id[0] if last_mentioned_id else -1
+        for pay in Pay.todays():
+            if pay.id <= last_mentioned_id:
+                continue
+            send_message(
+                message=dedent(
+                    f"""\
+                    ### 💰 {pay.user.name} {pay.user.prename} payed {pay.amount:.2f}€
+
+                    Their balance was: **{pay.user.balance - pay.amount:.2f}€**.
+                    Their balance now: **{pay.user.balance:.2f}€**.
+
+                    User details: {pay.user} (id: `{pay.user.id}`)
+
+                    _Your <@personEmail:{api.people.me().emails[0]}>_ (pay.id: `{pay.id}`)
+                    """
+                ),
+                recipients=app.config.get("PAYMENT_NOTIFICATION_EMAILS"),
+                roomids=app.config.get("PAYMENT_NOTIFICATION_ROOMIDS"),
+            )
+
+
 def send_message(
     message: str,
     recipients: list[str] | None = None,
@@ -196,6 +229,8 @@ def init():
     reminders = app.config.get("REMINDER_MESSAGE")
     backups = app.config.get("WEBEX_DATABASE_BACKUP")
     access_token = app.config.get("WEBEX_ACCESS_TOKEN")
+    payment_notification_roomids = app.config.get("PAYMENT_NOTIFICATION_ROOMIDS")
+    payment_notification_emails = app.config.get("PAYMENT_NOTIFICATION_EMAILS")
 
     if not access_token:
         return
@@ -211,6 +246,17 @@ def init():
             minutes=60,
             id="webex dept reminder",
             name="webex dept reminder",
+            replace_existing=True,
+        )
+
+    if payment_notification_roomids or payment_notification_emails:
+        scheduler.add_job(
+            func=notify_payment,
+            args=(app._get_current_object(),),
+            trigger="interval",
+            minutes=1,
+            id="webex payment notification",
+            name="webex payment notification",
             replace_existing=True,
         )
 
