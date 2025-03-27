@@ -184,7 +184,9 @@ def notify_payment(app: flask.Flask) -> None:
                     Their balance was: **{pay.user.balance - pay.amount:.2f}€**.
                     Their balance now: **{pay.user.balance:.2f}€**.
 
-                    User details: {pay.user} (id: `{pay.user.id}`)
+                    ##### Details
+                    - User: {pay.user} (id: `{pay.user.id}`)
+                    - Timestamp: {pay.timestamp}
 
                     _Your <@personEmail:{api.people.me().emails[0]}>_ (pay.id: `{pay.id}`)
                     """

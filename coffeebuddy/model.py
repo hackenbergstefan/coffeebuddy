@@ -446,7 +446,7 @@ class Pay(Base):
         return db.session.scalars(
             db.select(Pay)
             .where(db.func.Date(Pay.timestamp) == date.today())
-            .order_by(Pay.id.desc())
+            .order_by(Pay.id.asc())
         ).all()
 
 
