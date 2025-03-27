@@ -9,8 +9,6 @@ import flask_login
 from flask import Blueprint
 from sqlalchemy.exc import IntegrityError
 
-from coffeebuddy.extensions import webex
-
 from ...model import Pay, User, escapefromhex
 from .. import require_tag
 
@@ -71,17 +69,6 @@ def pay(user: User):
         amount = float(request.form["amount"])
         db.session.add(Pay(user=user, amount=amount))
         db.session.commit()
-
-        webex.send_message(
-            message=(
-                f"{user} with balance of {user.balance - amount:.2f}€ "
-                f"just entered a payment of **{amount:.2f}€**. "
-                f"Their balance is now {user.balance:.2f}€."
-            ),
-            recipients=flask.current_app.config.get("PAYMENT_NOTIFICATION_EMAILS"),
-            roomids=flask.current_app.config.get("PAYMENT_NOTIFICATION_ROOMIDS"),
-        )
-
         return f"{user.balance:.2f}"
 
     if request.method == "POST":

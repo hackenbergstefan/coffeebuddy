@@ -439,6 +439,16 @@ class Pay(Base):
             kwargs["host"] = socket.gethostname()
         super().__init__(*args, **kwargs)
 
+    @staticmethod
+    def todays() -> list["Pay"]:
+        """Return all payments of today."""
+        db = flask.current_app.db
+        return db.session.scalars(
+            db.select(Pay)
+            .where(db.func.Date(Pay.timestamp) == date.today())
+            .order_by(Pay.id.desc())
+        ).all()
+
 
 @dataclass
 class CoffeeSettings:
