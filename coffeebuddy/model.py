@@ -228,7 +228,7 @@ class User(Base, Serializer):
         ).all()
 
     @staticmethod
-    def all_enabled() -> List["User"]:
+    def all_enabled() -> list[str, list["User"]]:
         db = flask.current_app.db
         users = [
             (

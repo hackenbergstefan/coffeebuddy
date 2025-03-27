@@ -223,6 +223,24 @@ def send_message(
             )
 
 
+def disable_deleted_accounts(app: flask.Flask) -> None:
+    """Disable accounts that have been deleted in the webex."""
+    with app.app_context():
+        api = webexteamssdk.WebexTeamsAPI(access_token=app.config["WEBEX_ACCESS_TOKEN"])
+        for user in User.query.filter(User.enabled).all():
+            try:
+                if not list(api.people.list(email=user.email)):
+                    user.enabled = False
+                    app.db.session.commit()
+                    api.messages.create(
+                        roomId=app.config["WEBEX_DATABASE_BACKUP"],
+                        markdown=f"## Disabled: {user} ({user.id})",
+                    )
+            except webexteamssdk.ApiError:
+                # Maybe error in email address
+                pass
+
+
 def init():
     app = flask.current_app
     if app.testing:
@@ -296,3 +314,7 @@ def init():
                     roomId=app.config["WEBEX_DATABASE_BACKUP"],
                     files=[str(backupfile)],
                 )
+
+        scheduler.scheduled_job("cron", day_of_week="sat", args=(app,))(
+            disable_deleted_accounts
+        )
