@@ -19,12 +19,14 @@ jobs:
       - name: Create container
         run: |
           cd database
-          docker compose up
+          docker compose up &
+          sleep 60
+          docker compose down
       - name: Start container again
         run: |
           cd database
-          docker compose up -d
-          sleep 5
+          docker compose up &
+          sleep 20
           PGSSLMODE=require \
             PGSSLROOTCERT=certs/ca/root.crt \
             PGSSLCERT=certs/client_coffeebuddy01/postgresql.crt \
