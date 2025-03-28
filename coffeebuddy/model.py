@@ -635,7 +635,9 @@ class CoffeeVariant(Base, Serializer):
                 db.select(CoffeeVariant)
                 .where(
                     CoffeeVariant.id.not_in(
-                        db.select(Drink.coffeeid).where(Drink.coffeeid).distinct()
+                        db.select(Drink.coffeeid)
+                        .where(Drink.coffeeid != None)
+                        .distinct()
                     )
                 )
                 .order_by(CoffeeVariant.name)
