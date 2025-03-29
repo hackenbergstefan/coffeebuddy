@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import List, Optional, Tuple
 
 import flask
+import pandas
 import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, Table, select, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -27,6 +28,13 @@ def db_date_format(column):
         return sqlalchemy.func.to_char(column, "YYYY-MM-DD")
     else:
         return sqlalchemy.func.strftime("%Y-%m-%d", column)
+
+
+def db_date_week(column):
+    if flask.current_app.db.engine.name == "postgresql":
+        return sqlalchemy.func.to_char(column, "YYYY-IW")
+    else:
+        return sqlalchemy.func.strftime("%Y-%W", column)
 
 
 def weekday(number):
@@ -356,6 +364,29 @@ class User(Base, Serializer):
             )
         )
         return [weekday(int(i)) for i in data[0]], list(data[1])
+
+    @staticmethod
+    def drinks_statistics() -> dict["User", list[tuple[str, int]]]:
+        """Generate overall statistic for each user."""
+        db = flask.current_app.db
+        data = db.session.execute(
+            db.select(
+                User,
+                (db.func.Date(Drink.timestamp)).label("date"),
+                db.func.count(Drink.id),
+            )
+            .where(User.enabled)
+            .join(Drink, User.id == Drink.userid)
+            .group_by(User.id, "date")
+            .order_by(User.name)
+        ).all()
+        df = pandas.DataFrame(
+            data,
+            columns=("user", "date", "count"),
+        )
+        df["date"] = pandas.to_datetime(df["date"])
+        df = df.pivot(index="date", columns="user", values="count").fillna(0)
+        return df.resample("D").sum()
 
     def drinks_avg_today(self) -> float:
         db = flask.current_app.db
