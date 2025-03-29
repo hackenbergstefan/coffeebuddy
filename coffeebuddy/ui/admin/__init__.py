@@ -76,4 +76,5 @@ def tables():
             }
             for user in User.query.filter(User.enabled == False).all()  # noqa: E712
         ],
+        overall_statistics=User.drinks_statistics(),
     )
