@@ -15,8 +15,10 @@ from .. import require_coffeeid, require_tag, url
 
 blueprint = Blueprint("coffee", __name__, template_folder="templates")
 
-with (Path(__file__).parent / "../../extensions/coffee_facts.yml").open() as fp:
-    coffee_facts = yaml.load(fp, Loader=yaml.FullLoader)["coffee"]
+with (Path(__file__).parent / "../../extensions/sayings.yml").open() as fp:
+    content = yaml.load(fp, Loader=yaml.FullLoader)
+    coffee_facts = content["coffee"]
+    clean_requests = content["clean"]
 
 
 @blueprint.route("/coffee.html", methods=["GET", "POST"])
@@ -141,11 +143,17 @@ def brew(user: User, coffee: CoffeeVariant):
     if flask.request.method == "POST":
         return post()
 
+    machine_status = flask.current_app.coffeemaker.machine_status()
+    clean_reason = [
+        alert for alert in ("cleaning alert", "decalc alert") if alert in machine_status
+    ]
     return flask.render_template(
         "brew.html",
         user=user,
         variant=coffee,
         fact=random.choice(coffee_facts),
+        clean_request=random.choice(clean_requests),
+        clean_reason=clean_reason[0] if len(clean_reason) > 0 else None,
     )
 
 
