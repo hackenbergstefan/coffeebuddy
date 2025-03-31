@@ -675,3 +675,7 @@ class CoffeeVariant(Base, Serializer):
             ).all()
             if variant not in user.variant_favorites
         ]
+
+    @property
+    def virtual(self):
+        return self.code == -1
