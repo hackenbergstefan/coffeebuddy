@@ -19,6 +19,9 @@ elif DB_BACKEND == "sqlite":
 # Price per cup in €
 PRICE = 0.30
 
+# Charge only prices
+PRICES_CHARGE_ONLY = {0.30, 0.55}
+
 # Guest account enabled
 GUEST = False
 

@@ -49,12 +49,7 @@
     </style>
     <script>
         $(() => {
-            socket.on('coffeemaker:brew:finished', () => {
-                var form = $('#main-nav').first();
-                var btn = $('<button class="visually-hidden" name="brewed"></button>')
-                form.append(btn);
-                btn.click();
-            });
+            socket.on('coffeemaker:brew:finished', brew_done);
             $('#main-nav button[name="abort"]').click(() => {
                 var form = $('#main-nav').first();
                 var btn = $('<button class="visually-hidden" name="abort"></button>')
@@ -70,6 +65,13 @@
             {% endif %}
             /* beautify ignore:end */
         });
+
+        function brew_done() {
+            var form = $('#main-nav').first();
+            var btn = $('<button class="visually-hidden" name="brewed"></button>')
+            form.append(btn);
+            btn.click();
+        }
 
         function brew_start() {
             $.post(window.location.href, 'start', () => {
@@ -95,20 +97,22 @@
     <div id="brew-normal" class="d-flex flex-column flex-grow-1 gap-4">
         <h2>Brew {{ variant.name }}?</h2>
         <div id="coffee-settings-icon-container">
-            <div id="coffee-settings-container">
-                {% for setting_name, setting in variant.settings.items() %}
-                    <div class="d-flex flex-column">
-                        <div class="setting-name">
-                            {{ setting.display_name }}:
-                            <strong>{{ variant.setting_display(setting_name) }}</strong>
+            {% if not variant.virtual %}
+                <div id="coffee-settings-container">
+                    {% for setting_name, setting in variant.settings.items() %}
+                        <div class="d-flex flex-column">
+                            <div class="setting-name">
+                                {{ setting.display_name }}:
+                                <strong>{{ variant.setting_display(setting_name) }}</strong>
+                            </div>
+                            <div class="progress setting-slider">
+                                <div class="progress-bar"
+                                     style="width: {{ variant.setting_in_percent(setting_name) }}%"></div>
+                            </div>
                         </div>
-                        <div class="progress setting-slider">
-                            <div class="progress-bar"
-                                 style="width: {{ variant.setting_in_percent(setting_name) }}%"></div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="coffee-icon icon-{{ variant.icon }} flex-grow-2"></div>
         </div>
         <form method="post"
@@ -116,7 +120,7 @@
             <button type="button"
                     name="yes"
                     class="btn-big fas fa-check"
-                    onclick="brew_start()"></button>
+                    onclick="brew_{{ "start" if not variant.virtual else "done" }}()"></button>
             <button type="submit" name="no" class="btn-big fas fa-xmark"></button>
         </form>
     </div>

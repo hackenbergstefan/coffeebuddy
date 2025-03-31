@@ -201,5 +201,21 @@ def prefill_coffee_variants():
                 else flask.current_app.config["PRICE"],
             )
         )
+    for price in flask.current_app.config.get("PRICES_CHARGE_ONLY", []):
+        db.session.add(
+            CoffeeVariant(
+                name=f"Charge {price:.2f}€",
+                code=-1,
+                icon="coffee",
+                strength=0,
+                grinder_ratio=0,
+                water=0,
+                temperature=0,
+                bypass=0,
+                milk_foam=0,
+                milk=0,
+                price=price,
+            )
+        )
 
     db.session.commit()
