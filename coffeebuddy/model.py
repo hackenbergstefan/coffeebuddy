@@ -554,9 +554,20 @@ class CoffeeVariant(Base, Serializer):
         "strength": CoffeeSettings(
             "Strength",
             min=1,
-            max=5,
+            max=10,
             step=1,
-            names=["XMild", "Mild", "Normal", "Strong", "XStrong"],
+            names=[
+                "XMild",
+                "XMild+",
+                "Mild",
+                "Mild+",
+                "Normal",
+                "Normal+",
+                "Strong",
+                "Strong+",
+                "XStrong",
+                "XStrong+",
+            ],
         ),
         "grinder_ratio": CoffeeSettings(
             "Grinder ratio",
