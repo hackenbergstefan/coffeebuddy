@@ -2,6 +2,9 @@
 
 {% block header %}
     <script>
+        socket.off('card_connected');
+    </script>
+    <script>
         /* beautify ignore:start */
         var balance = {{ user.balance }};
         /* beautify ignore:end */

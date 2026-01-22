@@ -1,6 +1,9 @@
 {% extends "_base.html" %}
 
 {% block header %}
+    <script>
+        socket.off('card_connected');
+    </script>
     <style>
         #edituser-form {
             overflow-x: hidden;
