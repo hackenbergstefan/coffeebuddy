@@ -118,8 +118,7 @@ class JuraCoffeeMaker(Thread):
                         progress = await self.jura.product_progress()
                         logging.getLogger(__name__).debug(f"Progress: {progress}")
                         if (
-                            not progress.valid
-                            or progress.state
+                            progress.state
                             == ProductProgressState.LAST_PROGRESS_STATE
                         ):
                             return
