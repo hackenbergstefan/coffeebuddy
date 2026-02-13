@@ -18,4 +18,4 @@ screen -S coffeebuddy_server -dm bash -c '
 sleep 20
 
 # Open browser
-chromium-browser --kiosk --noerrdialogs --disable-translate --no-first-run --fast --fast-start --disable-infobars --disable-features=TranslateUI http://127.0.0.1:5000
+chromium --kiosk --password-store=basic --noerrdialogs --disable-translate --no-first-run --fast --fast-start --disable-infobars --disable-features=TranslateUI http://127.0.0.1:5000
