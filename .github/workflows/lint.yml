@@ -7,20 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
       - name: Install dependencies
         run: |
-          pip install --user pdm
-          pdm sync -G dev
+          uv sync --locked --no-default-groups --group dev
       - name: Format
         run: |
-          pdm run ruff format --check .
+          uv run --no-sync ruff format --check .
       - name: Lint
         run: |
-          pdm run ruff check .
+          uv run --no-sync ruff check .
       - name: Djlint
         run: |
-          pdm run djlint coffeebuddy
+          uv run --no-sync djlint coffeebuddy

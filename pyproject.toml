@@ -41,13 +41,13 @@ dev = [
 [tool.setuptools]
 packages = ["coffeebuddy"]
 
-[tool.pdm]
-distribution = false
-
-[tool.pdm.scripts]
-lock.composite = [
-    "pdm lock --platform=linux",
-    "pdm lock --platform=manylinux_2_36_aarch64 --append",
+[tool.uv]
+package = false
+default-groups = "all"
+environments = ["sys_platform == 'linux'"]
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
 ]
 
 [tool.ruff.lint]

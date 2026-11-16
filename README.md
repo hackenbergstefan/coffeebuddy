@@ -7,12 +7,12 @@ Do you use a paper based tally sheet to count your team's coffee consumption? Th
 
 ## Setup
 
-Coffebuddy uses [pdm](https://pdm-project.org/en/latest/) to manage its python dependencies.
+Coffebuddy uses [uv](https://docs.astral.sh/uv/) to manage its python dependencies.
 
-0. Install pdm
+0. Install uv
 
    ```sh
-   curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
 1. Install dependencies
@@ -52,15 +52,20 @@ Details are described in [Setting up postgresql database](./doc/postgresql.md).
 2. Install Python dependencies
 
    ```sh
-   pip install --user pdm
+   uv sync
+   ```
 
-   pdm sync
+   This installs all dependency groups (`coffeemaker`, `rpi`, `pcsc`, `dev`).
+   Unneeded groups can be skipped, e.g.:
+
+   ```sh
+   uv sync --no-group rpi
    ```
 
 3. Start `production` environment
 
     ```sh
-    ./bin/run.py
+    uv run ./bin/run.py
     ```
 
 ##### Debugging
@@ -68,12 +73,12 @@ Details are described in [Setting up postgresql database](./doc/postgresql.md).
 The `development` environment can be run using
 
 ```sh
-FLASK_DEBUG=1 ./bin/run.py
+FLASK_DEBUG=1 uv run ./bin/run.py
 ```
 
 ## Tests
 
-Run tests with `pytest -v tests`
+Run tests with `uv run pytest -v tests`
 
 ## Application
 
@@ -139,8 +144,8 @@ The final application uses a Raspberry Pi attached to a 7" touchscreen. Thus, th
    ```sh
    git clone https://github.com/hackenbergstefan/coffeebuddy.git
    cd coffeebuddy
-   curl -sSL https://pdm-project.org/install-pdm.py | python3 -
-   pdm sync
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   uv sync
    ```
 
 7. Create and copy certificates for database connection:
