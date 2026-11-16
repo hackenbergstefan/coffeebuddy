@@ -1,6 +1,6 @@
 import flask
-import webexteamssdk
 
+from coffeebuddy.extensions.msteams import GraphError, TeamsClient
 from coffeebuddy.model import User
 
 blueprint = flask.Blueprint("api", __name__, template_folder="templates")
@@ -62,35 +62,30 @@ def api_user(endpoint: str):
 @blueprint.route("/api/<string:endpoint>", methods=["GET", "POST"])
 def api(endpoint: str):
     if endpoint == "check_email":
-        if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
+        client = TeamsClient.from_config(flask.current_app.config)
+        if client is None:
             return "", 404
-        api = webexteamssdk.WebexTeamsAPI(
-            access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
-        )
         data = flask.request.json
-        people = api.people.list(email=data["email"])
         try:
-            people = list(people)
-            if len(people) > 0:
-                return {
-                    "valid": True,
-                    "firstname": people[0].firstName,
-                    "lastname": people[0].lastName,
-                }
+            person = client.find_user(data["email"])
+        except GraphError:
             return {"valid": False}
-        except webexteamssdk.exceptions.ApiError:
-            return {"valid": False}
+        if person is not None:
+            return {
+                "valid": True,
+                "firstname": person.get("givenName") or "",
+                "lastname": person.get("surname") or "",
+            }
+        return {"valid": False}
     if endpoint == "send_message":
-        if not flask.current_app.config.get("WEBEX_ACCESS_TOKEN"):
+        client = TeamsClient.from_config(flask.current_app.config)
+        if client is None:
             return flask.abort(404)
-        api = webexteamssdk.WebexTeamsAPI(
-            access_token=flask.current_app.config["WEBEX_ACCESS_TOKEN"]
-        )
         data = flask.request.json
         if "email" in data:
-            api.messages.create(toPersonEmail=data["email"], markdown=data["text"])
-        if "roomid" in data:
-            api.messages.create(roomId=data["roomid"], markdown=data["text"])
+            client.send_markdown(data["text"], email=data["email"])
+        if "chatid" in data:
+            client.send_markdown(data["text"], chat_id=data["chatid"])
         return ""
 
     return flask.abort(404)

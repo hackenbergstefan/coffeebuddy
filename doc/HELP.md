@@ -145,7 +145,7 @@ Click on "Update Tag" to update your primary or secondary tag.
 
 ##### Fill from email
 
-Enter your "E-Mail" and click on "Fill from email" to fill in your first and last name according your corresponding WebEx account.
+Enter your "E-Mail" and click on "Fill from email" to fill in your first and last name according your corresponding Microsoft Teams account.
 
 ##### Options
 
