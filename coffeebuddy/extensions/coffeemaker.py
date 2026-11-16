@@ -117,10 +117,7 @@ class JuraCoffeeMaker(Thread):
                     while self._brewing:
                         progress = await self.jura.product_progress()
                         logging.getLogger(__name__).debug(f"Progress: {progress}")
-                        if (
-                            progress.state
-                            == ProductProgressState.LAST_PROGRESS_STATE
-                        ):
+                        if progress.state == ProductProgressState.LAST_PROGRESS_STATE:
                             return
                         await asyncio.sleep(0.5)
             except asyncio.TimeoutError:

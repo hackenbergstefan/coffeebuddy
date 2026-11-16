@@ -8,15 +8,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: 3.13
+          python-version: "3.13"
       - name: Install dependencies
         run: |
           sudo apt-get install libpcsclite-dev
-          pip install --user pdm
-          pdm sync --prod
+          uv sync --locked --no-default-groups
       - name: Test backend sqlite
         run: |
           sed -i 's/^CARD.*/CARD = ""/' config.py
@@ -24,7 +23,7 @@ jobs:
           sed -i 's/^PIR.*/PIR = False/' config.py
           sed -i 's/^ILLUMINATION.*/ILLUMINATION = False/' config.py
           sed -i 's/^DB_BACKEND.*/DB_BACKEND = "sqlite"/' config.py
-          pdm run ./bin/run.py &
+          uv run --no-sync ./bin/run.py &
           pid=$!
           sleep 1
           ps | grep -c $pid || wait $pid
@@ -36,7 +35,7 @@ jobs:
           sed -i 's/^PIR.*/PIR = False/' config.py
           sed -i 's/^ILLUMINATION.*/ILLUMINATION = False/' config.py
           sed -i 's/^DB_BACKEND.*/DB_BACKEND = "postgres"/' config.py
-          pdm run ./bin/run.py &
+          uv run --no-sync ./bin/run.py &
           pid=$!
           sleep 1
           ps | grep -c $pid || wait $pid
@@ -50,7 +49,7 @@ jobs:
           sed -i 's/^DB_BACKEND.*/DB_BACKEND = "sqlite"/' config.py
           export FLASK_ENV=prefilled
           export FLASK_DEBUG=true
-          pdm run ./bin/run.py &
+          uv run --no-sync ./bin/run.py &
           pid=$!
           sleep 1
           ps | grep -c $pid || wait $pid

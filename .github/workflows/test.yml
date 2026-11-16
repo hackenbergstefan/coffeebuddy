@@ -10,15 +10,14 @@ jobs:
         python-version: ["3.12", "3.13"]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           sudo apt-get install libpcsclite-dev
-          pip install --user pdm
-          pdm install --without rpi --without pcsc --without camera
+          uv sync --locked --no-group rpi --no-group pcsc
       - name: Test with pytest
         run: |
-          pdm run pytest -sxv
+          uv run --no-sync pytest -sxv
