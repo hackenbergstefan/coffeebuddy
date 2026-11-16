@@ -86,15 +86,29 @@ PIR = None
 # Switch display on and off by motion detection
 DISPLAY_ON_OFF = False
 
-# Extension: WebEx (coffeebuddy.extensions.webex)
+# Extension: Microsoft Teams (coffeebuddy.extensions.msteams)
 # ---------------------------------------------
-# Webex Access Token
-WEBEX_ACCESS_TOKEN = None
+# Coffeebuddy sends messages on behalf of a dedicated Microsoft 365 account via
+# Microsoft Graph. Setup:
+# 1. Register an app in Microsoft Entra ID, create a client secret and add the
+#    delegated Graph permissions User.Read.All, Chat.ReadWrite and Chat.Create
+#    and ChannelMessage.Send, ChannelMessage.Read.All (payment notifications)
+#    and Files.ReadWrite.All (MSTEAMS_DATABASE_BACKUP). Grant consent for them.
+# 2. The Coffeebuddy account must not require MFA (username/password sign-in).
+# Teams is disabled unless all of the following are set.
+# Directory (tenant) id
+MSTEAMS_TENANT_ID = None
+# Application (client) id and client secret of the Entra ID app registration
+MSTEAMS_CLIENT_ID = None
+MSTEAMS_CLIENT_SECRET = None
+# Credentials of the Coffeebuddy Microsoft 365 account
+MSTEAMS_USERNAME = None
+MSTEAMS_PASSWORD = None
 
 # Email default domains (used to autofill user's name)
 USER_EMAIL_DEFAULT_DOMAINS = ["@gmail.com", "@apple.com"]
 
-# Webex reminder message, where"{oneliner} is a randomized oneliner by coffeebuddy
+# Teams reminder message (markdown), where "{oneliner}" is a randomized oneliner
 REMINDER_MESSAGE = """Beep bop - greetings from the Coffeebuddy bot!
 
 {oneliner}
@@ -102,13 +116,14 @@ REMINDER_MESSAGE = """Beep bop - greetings from the Coffeebuddy bot!
 NAME ROOM is looking forward to seeing you(r money)!
 """
 
-# If not False, the webex roomid where to post database backup files
-WEBEX_DATABASE_BACKUP = False
+# If not False, the Teams channel link ("Get link to channel") where to post
+# database backup files and disabled accounts.
+# The Coffeebuddy account must be a member of this channel.
+MSTEAMS_DATABASE_BACKUP = False
 
-# List of peoples' emails who are notified when someone pays
-PAYMENT_NOTIFICATION_EMAILS = []
-# List of roomids which are notified when someone pays
-PAYMENT_NOTIFICATION_ROOMIDS = []
+# List of Teams channel links ("Get link to channel") which are notified when
+# someone pays. The Coffeebuddy account must be a member of these channels.
+PAYMENT_NOTIFICATION_CHANNELS = []
 
 # Extension: Coffeemaker (coffeebuddy.extensions.coffeemaker)
 # ---------------------------------------------
